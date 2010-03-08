@@ -1,0 +1,110 @@
+#summary Grails Portal - Introduction
+#labels Featured
+
+= Introduction =
+
+This article is the first in a series that describes a simple way to build a dynamic framework for a user portal. This framework builds upon popular features available for Grails as well as previous functionality built in previous articles published in Fall of 2009 . This article describes concepts that a novice Grails developer may find challenging.
+
+
+= Details =
+
+Grails Portal – Making it Dynamic Part I
+Building a platform for dynamic behavior
+
+
+Joshua Davis
+Joshua.davis@cognizant.com
+
+In this article and the second article in the series a step-by-step approach will show how to use different methods to implement dynamic Grails user interface components and then integrate them with the Grails portal framework previously outlined. In this article there are two parts: the first part outlines the principles and the decision process involved in designing a system that is dynamic; and the second gives a set of practical examples that show how it can be implemented within the Grails environment.
+
+By the end of this article the reader will be familiar with the issues around implementing dynamic behavior using traditional methods and by using the dynamic language features inherent in Groovy.  The reader will be given an example of extending the built in Grails tag libraries and should have a greater understanding of the use of some of the dynamic features within Grails. I have not included all of the classes referenced in the code examples in the text of this article, but they are located at http://www.webtech20.com/article4.zip .
+Why is it important to have a dynamic portal?
+
+In my first set of articles the main purpose was to create a set of functionality that could be easily manipulated by a software developer using style sheets and Groovy Server Pages.  This type of Portal can be very useful for a certain class of application that does not change very often and has a static set of relationships inside the database.  Grails and Groovy development offers many options for dynamic software development where the software can adapt to the needs of the user and the developer based upon the nature of being based upon a dynamic language such as Groovy. 
+
+After continuing to develop websites with the first release of the Grails Portal it was immediately apparent that although Grails plug-in functionality could be added without much work, the visual components remained static.  The default scaffolding, although very powerful did not have the ability to take into account what kind of user was accessing the generated page, and what would be the appropriate filtered information to display to the authenticated user.  In addition, the application would have no value beyond the specific domain of collecting information for a Registration process. 
+
+As time was spent investigating a solution to it was found that although the first release of the Grails Portal had value in the implementation, future releases must have the ability to handle all of the above cases within the Grails environment.  In addition, the work that it would take to create a new set of functionality from the existing database and application design became larger than it would be to implement the equivalent dynamic functionality.
+Principles
+
+As the software development work for this project started research was done on the different dynamic Portals available through open source.  There is more open source Portals than you can shake a stick at.  The ones that were investigated are written in PHP, Java, and C#.  All of these have value and work well in their own environments.  They are based around the concept of a pluggable Portal Framework where there is a base set of functionality that has been built, and developers can build their own code as a layer on top of the framework.  They also have unique features that define them by either their use of specific standards (JSR 286 for example) or the functionality implemented in a specific language or development environment.
+
+To build a dynamic portal the project must have some basic high level requirements and principles to reference when building the underlying framework.  This applies completely to the Grails Portal. We are abiding by the intention to not change the way that Grails works when implementing the functionality needed. 
+
+·       As always, use as much of the default Grails functionality as possible
+
+·       Fit the configuration of the Portal within the normal Grails process.
+
+·       Enable a consistent user interface that enables user and portal personalization.
+
+·       Simplification of Portal development that enables developers to plug-in functionality without restrictions from the framework.
+
+·       The collection of these types of information are the building blocks for the system:
+
+o      Demographic Information
+
+o      Contact Information
+
+o      Product Selection for a business event that occurs.
+
+·       Enable an efficient way to add fields to a view using configuration.
+Decision Process
+
+Design decisions become evident by looking at each architectural layer of the application based upon the guiding principles.  The new functionality creates a situation where many new challenges have to be overcome.  Some of the challenges are:
+
+1.    Storing and displaying dynamic fields must be selectable at runtime. 
+
+a.    This will enable the extension of existing functionality to be available without tremendous amounts of extra coding.
+
+b.    A simple component model will need to handle lookup values, Ajax lookups, and tool tips.
+
+2.    Deploying a consistent user interface
+
+a.    Enabled not just through manual coding but through a mechanism that the developer or user can employ without a high degree of complexity. 
+
+b.    Simplifies user interface development by implementing a layered “skinning” of an application without a high degree of complexity.
+
+3.    Dynamic component data should not have static representation.
+
+a.    When you are using a dynamic system the number of addresses, phone numbers, and emails may vary by context. 
+
+b.    The database relationships that define this must not be static and the application must have a way to define this at runtime.
+
+4.    Re-use of common view based components.
+
+a.    Enable the building of dynamic fields and components in larger, more complex components that have their own logic.
+Implementation
+To meet the challenges of the
+What is covered in this article?
+ 
+Database Changes
+Changing the scaffolding
+Managing the default Grails Portal Skin
+Why augment an existing Tag Library?
+Learn More
+
+The files for this article are contained on my website at http://www.webtech20.com/article3.zip
+
+Bad URL (404)
+
+. 
+
+Shiro plugin: http://www.grails.org/plugin/shiro
+
+GrailsUI plugin: http://grails.org/plugin/grails-ui
+
+YahooUI plugin: http://www.grails.org/YUI%20Plugin
+
+Bubbling plugin: http://grails.org/Bubbling%20Plugin
+
+RichUI plugin:
+
+Grails Framework Reference Guide: http://grails.org/doc/1.1.1/
+
+Java Serialization: http://java.sun.com/developer/technicalArticles/Programming/serialization/
+
+The Definitive Guide to Grails (second edition) by Graeme Rocher and Jeff Brown ISBN: 9781590599952
+
+Enterprise Patterns and MDA: Building Better Software with Achetype Patterns and UML by Jim Arlow, Ila Neustadt Addison Wesley Press ISBN-13: 978-0321112309
+
+ 
