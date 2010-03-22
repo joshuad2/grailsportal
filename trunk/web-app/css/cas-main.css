@@ -1,0 +1,221 @@
+/* CSS Document */
+.style16 {
+	font-size: large;
+	font-family:"Cooper Black"
+}
+.style19 {
+	margin-left: 6px;
+	margin-right: 6px;
+	margin-top: 2px;
+}
+.style20 {
+	margin-left: 20px;
+}
+.style21 {
+	font-size: xx-large;
+	color: #008000;
+}
+.style23 {
+	font-size: large;
+	color: #008000;
+	text-align: center;
+}
+.style29 {
+	color: #000080;
+	background-color: #FFFFFF;
+	margin-right: 76px;
+	font-size: x-large;
+}
+.style37 {
+	border: 25px #FFFFFF solid;
+}
+.style38 {
+	border-color: #0070C0;
+	border: thick #0070C0;
+	left: 0;
+	color: #0070C0;
+	font-size: 35pt;
+	font-family: "Bradley Hand ITC";
+	background-color: #CCFFFF;
+	margin-left: 2px;
+	text-align: center;
+	border-left-color: #0070C0;
+}
+.style47 {
+	font-size: x-large;
+	text-align: center;
+}
+.style50 {
+	border: medium #0070C0;
+	border-color: #99CCFF #0070C0 #99CCFF #0070C0;
+	border-style: solid;
+	border-width: 5px;
+	margin-left: 25px;
+	margin-right: 11px;
+}
+.seasScape {
+	border-style: solid;
+	border-width: 5px;
+}
+.style52 {
+	float: left;
+}
+.style53 {
+	font-size: medium;
+}
+.style54 {
+	border-width: 0px;
+}
+.style55 {
+	border-style: solid;
+	border-width: 1px;
+}
+.style57 {
+	font-size: x-large;
+}
+.title {
+    float:right;
+	width: 738px;
+	height: 134px;
+	border: 1px;
+	padding: 0 1em 1em 1em;
+	background-color:#006633;
+}
+.heading{
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:24px;
+	font-weight:bold;
+	padding-bottom:10px;
+}
+p{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	margin-left: 130px;
+}
+td p{
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+}
+.time{
+  font-size:12px;
+}
+.address{
+  font-size:10px;
+}
+.header{
+  position: absolute;
+  top: 0px;
+  left:0px;
+  width:985px;
+  height:158px;
+  border:thick;
+}
+.middlePage{
+	padding: 1em .1em .1em .1em;
+	margin: 0px 0px 0px 0px;
+	width: 800px;
+	height:1000px;
+	float: right;
+}
+.leftPage{
+	margin: .1em .1em .1em .1em;
+	padding: .1em .5em .5em .1em;
+	width: 200px;
+	float: left;
+	height: 500px;
+	background-color: #009999;
+	border: medium;
+	border-color: #000000;
+	margin-bottom: .2em;
+	margin-left: .5em;
+	margin-right: .2em;
+	margin-top: .8em;
+}
+.marquee{
+  position: absolute;
+  top: 0px;
+  left:300px;
+  width:300px;
+  height:86px;
+}
+.logo{
+  float:left;
+  width:150px;
+  height:150px;
+}
+
+.navBar{
+float:left;
+	border:1px;
+	border:medium;
+	border-color:#000000;
+	width:700px;
+	height: 40px;
+}
+
+.navBarLink{
+	background-color: #006666;
+	color: #000000;
+	border: thin;
+	border-style: inset;
+	border-color: #000000;
+	margin-left: 20px;
+	padding: .1em .1em .1em .1em;
+	text-decoration: none;
+}
+
+.headshot{
+	background: #99CCFF;
+	float: left;
+	border: 1px;
+	border-color: #000000;
+	height: 150px;
+	width: 150px;
+	padding: .1em .2em .2em .1em;
+}
+.footer{
+  font-size:12px;
+  width:800px;
+  float:bottom;
+}
+.style2 {
+	border-style: none;
+	border-color: inherit;
+	border-width: 1px;
+	float: right;
+	padding: .5em 1em 1em 1em;
+	color: #FFFFFF;
+	font-size: 50px;
+	margin-left: 3px;
+	background: #99CCFF;
+	border: #99CCFF;
+	height:224px
+}
+.style4 {
+	float: left;
+	height: 198px;
+	width: 201px;
+}
+.style48 {
+	color: #0070C0;
+	font-family: "Cooper Black";
+	font-size: 28pt;
+}
+.style49 {
+	background: #99CCFF;
+	font-size: large;
+	color: #0070C0;
+	font-family: "Cooper Black";
+}
+.explanationText{
+	font-family: "Cooper Black";
+	padding: .5em 1em 1em 1em;
+	margin-left:10px;
+	margin-right:10px;
+	margin-top:10px;
+	margin-bottom:10px;
+	font-size: medium;;
+	border: medium #0070C0;
+	border-style: solid;
+	border-width: 5px;
+}
