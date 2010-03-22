@@ -1,0 +1,165 @@
+﻿.registerOuter{
+  font-size:16;
+  width:800px;
+  border: thin; 
+  font-family: Verdana;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-style: solid;
+}
+
+.registerOuterBlock{
+  font-size:12;
+  width:800px;
+  height:800px;
+  border: thin;
+  font-family: Verdana;
+  padding-left: 20;
+  padding-right: 20;
+  padding-top: 20;
+  padding-bottom: 20;
+  border-style: solid;
+}
+
+.registerInnerBlock{
+  font-size:12;
+  border: thin; 
+  font-family: Verdana;
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:5px;
+  padding-bottom:5px;
+  border-style: solid;
+  width : 800px;
+  height : 800px;
+  overflow: auto
+}
+.orderInformation{
+  font-size:16;
+  border:medium;
+  width:700px;
+  float:left;
+  border-color: black;
+  height : 77px;
+  overflow: auto;
+ }
+ .registeredBy{
+   width:250px;
+   float:left;
+   }
+ .totalCost{
+ width:200px;
+ float:left;
+ }
+ .registrationIdNum{
+ width:200px;
+ float:left;
+ font-weight: bold
+ }
+ .camperInformation{
+  font-size:12;
+  border:medium;
+  height:199px;
+  width:250px;
+  float:left;
+  border-color: black;
+  overflow: auto
+ }
+ .camperHeader{
+   float:left;
+   width:250px;
+   font-weight: bold;
+   font-size:16;
+ }
+.ParentInformation{
+	 float:left;
+	 font-size:12;
+	 border:medium;
+	 border-color: black;
+	 height : 199px;
+	  width : 250px;
+	  overflow: auto
+}
+.parentHeader{
+	 text-align:center;
+	 width:200px;
+	 font-weight: bold;
+	 font-size:16;
+ }
+ .EmergencyContactInformation{
+     float:left;
+     font-size:12;
+     width:257px;
+ }
+ .eci{
+     float:left;
+     font-size:12;
+     border:medium;
+     width:800px;
+     }
+.ecHeader{
+   text-align:center;
+   width:800px;
+   font-weight: bold;
+   font-size:16;
+   padding-top:5px;
+   padding-bottom:15px;
+   }
+ .ecInfo{
+   float:left;
+   font-size:12;
+   border:medium;
+   border-color: black;
+   width : 257px;
+ }
+ .puContactInfo{
+     float:left;
+     font-size:12;
+     width:257px;
+ }
+ .puci{
+    float:left;
+    font-size:12;
+    width:800px;
+    padding-bottom:30px;
+    padding-top:30px
+    }
+.puciHeader{
+  text-align:center;
+  width:800px;
+  font-weight: bold;
+  font-size:16
+}
+.pucInfo{
+    float:left;
+    font-size:12;
+    border:medium;
+    border-color: black;
+    width : 257px;
+    }
+.drPart{
+  width:250px;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-top: 20px;
+  padding-bottom: 5px;
+}
+.drHeader{
+    float:left;
+    text-align:center;
+    font-weight: bold;
+    font-size:16
+}
+.noDrInfo{
+    float:left;
+    font-size:12;
+    width:200px;
+    border:medium;
+    border-color: black
+    }
+ .drInfo{
+     float:left;
+     font-size:12
+ }
