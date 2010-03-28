@@ -10,44 +10,44 @@ class PortalTagLib {
 	def heading={attrs, body-> 
 		def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
 		def pc=ctx.getBean("portalviewService")
-    	out << pc.doHeader(attrs,body())
+		out << pc.doHeader(attrs,body())
 	}
-  /**
-   * tag for displaying the address on the page using the attributes defined.  The view
-   * is queried for a specific standard attributeComponentGroup, in this case the address
-   * componengGroup is used.
-   * There are three modes that are implemented, -> read, modify, add 
-   * These modes enable specific ways of dealing with information.  In the future the
-   * fields will have security privilidges associated with them as well so that field
-   * level permissioning can be accomplished.
-   * Two mandatory attributes are needed for this tag
-   *   - viewName
-   *   - eventId  
-   */
-  def addressAttributes={attrs->
-	def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
-	def pc=ctx.getBean("PortalviewService")
-	def attributeComponents=pc.getComponentGroupAttributesByViewAndGroup(attrs["viewName"], "address")
-	def mode="edit"
-	def attributeValues=pc.getRegistrationValuesForComponent(attrs["viewname"],"address",attrs["eventId"])
-	out << pc.renderComponentGroup(mode,attrs["viewName"],"address",attributeComponents, attributeValues)
+	/**
+	 * tag for displaying the address on the page using the attributes defined.  The view
+	 * is queried for a specific standard attributeComponentGroup, in this case the address
+	 * componengGroup is used.
+	 * There are three modes that are implemented, -> read, modify, add 
+	 * These modes enable specific ways of dealing with information.  In the future the
+	 * fields will have security privilidges associated with them as well so that field
+	 * level permissioning can be accomplished.
+	 * Two mandatory attributes are needed for this tag
+	 *   - viewName
+	 *   - eventId  
+	 */
+	def addressAttributes={attrs->
+		def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+		def pc=ctx.getBean("PortalviewService")
+		def attributeComponents=pc.getComponentGroupAttributesByViewAndGroup(attrs["viewName"], "address")
+		def mode="edit"
+		def attributeValues=pc.getRegistrationValuesForComponent(attrs["viewname"],"address",attrs["eventId"])
+		out << pc.renderComponentGroup(mode,attrs["viewName"],"address",attributeComponents, attributeValues)
 	}
-
+	
 	def phone={attrs->
-	  def partyId=attrs.id
-	  def party=Party.get(partyId)
-
-      def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
-      def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
-      def emailContactTypes=contactUtilService.getProfileEmailContactTypes(party)
-
-def t="""
+		def partyId=attrs.id
+		def party=Party.get(partyId)
+		
+		def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
+		def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
+		def emailContactTypes=contactUtilService.getProfileEmailContactTypes(party)
+		
+		def t="""
 	          <TABLE> 
 	           """
-	if (party!=null){
-	  party.phoneList.each{
-	  def phn=it
-	t+="""
+		if (party!=null){
+			party.phoneList.each{
+				def phn=it
+				t+="""
     <tr class="prop">
       <td valign="top" class="name"><label for="phoneNumber">Phone Number:</label></td>
       <td valign="top" class="value">(${phn.phone.areaCode})${phn.phone.phoneNumber}</td>
@@ -55,27 +55,29 @@ def t="""
     <tr class="prop">
       <td valign="top" class="name"><label for="contactType">Type of Phone Number:</label></td>
       <td>${phn.contactType}</td>"""
-	t+="""
+				t+="""
   </tr>   
   <tr><td colspan="2">
   <div id="editTheContactPhone${phn.contactType}">"""
-	t+="""
-	${g.remoteLink([controller:"portalContact" ,action:"editContactPhone",id:"${phn.phone.id}",update:"editContactPhone${phn.contactType}"],"Edit Phone Number")}
+				t+="""
+	${g.remoteLink([controller:"portalContact" ,action:"editContactPhone",id:"${phn.phone.id}",update:"editContactPhone${phn.contactType}"],"Edit Phone Number")
+			}
 	</div>
   </td></tr>
   <tr><td colspan="2"><div style="border-style:solid;border-width:2px;"></div></td></tr>"""
-   }
-}
-  t+="""
+		}
+	}
+	t+="""
 	  <tr><td>Add</td>
   <td>
   <div id="createTheContactPhone">"""
-  contactTypes.each{
-	def ct=it
-	t+="""
-      ${g.remoteLink([controller:"portalContact",action:"createContact${ct.name}Phone",id:"${partyId}",update:"createContactPhone"],"${ct.name}Phone")}"""
-    }
-  t+="""
+	contactTypes.each{
+		def ct=it
+		t+="""
+      ${g.remoteLink([controller:"portalContact",action:"createContact${ct.name}Phone",id:"${partyId}",update:"createContactPhone"],"${ct.name}Phone")
+	}"""
+}
+t+="""
     </div>
     </td>
     </tr>
@@ -95,23 +97,23 @@ def t="""
  	             form:"false",
                  fixedCenter:"true"])}
 	"""
-	out << t
-	}
+out << t
+}
 
 
-	
-	def address={attrs->
-	  def partyId=attrs.id
-	  def party=Party.get(partyId)
-	if (party==null){
-		return
-	}
-    def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
-    def t="""
+
+def address={attrs->
+def partyId=attrs.id
+def party=Party.get(partyId)
+if (party==null){
+	return
+}
+def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
+def t="""
     <TABLE> 
      """
-	party.addressList.each{
-	  def addr=it
+party.addressList.each{
+	def addr=it
 	t+="""
     <tr class="prop">
        <td valign="top" class="name"><label for="Address1">Address*:</label></td>
@@ -140,7 +142,8 @@ def t="""
    <tr>
 	 <td colspan="2">
 		<div id="editTheContactAddress${addr.contactType}">
-		  ${g.remoteLink([controller:"portalContact",action:"editContactAddress",id:"${addr.address.id}",update:"editContactAddress${addr.contactType}"],"Edit Address")}
+		  ${g.remoteLink([controller:"portalContact",action:"editContactAddress",id:"${addr.address.id}",update:"editContactAddress${addr.contactType}"],"Edit Address")
+}
 	    </div>
      </td>
    </tr>                            
@@ -150,15 +153,16 @@ def t="""
 	</td>
    </tr>
 </tr>"""
- }
+}
 t+="""
 	  <tr><td>Add</td>
 <td>
 <div id="createTheContactAddress">"""
 addressContactTypes.each{
-	def ct=it
-	t+="""
-    ${g.remoteLink([controller:"portalContact",action:"createContact${ct.name}Address",id:"${partyId}",update:"createContactAddress"],"${ct.name} Address")}"""
+def ct=it
+t+="""
+    ${g.remoteLink([controller:"portalContact",action:"createContact${ct.name}Address",id:"${partyId}",update:"createContactAddress"],"${ct.name} Address")
+}"""
 }
 t+="""
 </div>
@@ -180,13 +184,13 @@ ${portal.dialog([title:"Edit an Address",
 	             form:"false",
                  fixedCenter:"true"])}
 	"""
-	out << t
-	}
+out << t
+}
 def email={attrs,body->
 def partyId=attrs.id
 def party=Party.get(partyId)
 if (party==null){
-	return
+return
 }
 def contactTypes=contactUtilService.getProfileEmailContactTypes(party)
 def t="""
@@ -206,7 +210,8 @@ t+="""
 <tr>
   <td colspan="2">
     <div id="editTheContactEmail${eml.contactType}">
-         ${g.remoteLink([controller:"portalContact",action:"editContactEmail",id:"${eml.email.id}",update:"editContactEmail${eml.contactType}"],"Edit Email")}
+         ${g.remoteLink([controller:"portalContact",action:"editContactEmail",id:"${eml.email.id}",update:"editContactEmail${eml.contactType}"],"Edit Email")
+}
     </div>
   </td>
 </tr>
@@ -222,7 +227,8 @@ t+="""
 contactTypes.each{
 def ct=it
 t+="""
-${g.remoteLink([controller:"portalContact",action:"createContact${ct.name}Email",id:"${partyId}",update:"createContactEmail"],"${ct.name}Email")}"""
+${g.remoteLink([controller:"portalContact",action:"createContact${ct.name}Email",id:"${partyId}",update:"createContactEmail"],"${ct.name}Email")
+}"""
 }
 t+="""
 </div>
@@ -247,23 +253,24 @@ ${portal.dialog([title:"Edit an Email Address",
 out << t
 }
 
-	def dialog={attrs,body->
-        def cts= ContactType.list()
- if (attrs.triggers=="" || attrs.triggers==null){
-			cts.each{
-				def name=it.name
-				def triggers=[show:[id:"editTheContact"+attrs.contact+name, on:'click']]
-				if (attrs.contactTypes=="true"){
-					attrs.triggers=triggers
-				}
-				if (attrs.dialogId!=null){
-					body={"<div class=\"dialog\" id=\""+attrs.dialogId+name+"\" style=\"width:600px;height:400px;overflow:scroll\"></div>"}
-				}
-			out<<gui.dialog(attrs,body)
-			}
-		}
-		else {
-			out<<gui.dialog(attrs,body)
-		}
-	}
+def dialog={attrs,body->
+def cts= ContactType.list()
+if (attrs.triggers=="" || attrs.triggers==null){
+cts.each{
+def name=it.name
+def triggers=[show:[id:"editTheContact"+attrs.contact+name, on:'click']]
+if (attrs.contactTypes=="true"){
+attrs.triggers=triggers
+}
+if (attrs.dialogId!=null){
+body={"<div class=\"dialog\" id=\""+attrs.dialogId+name+"\" style=\"width:600px;height:400px;overflow:scroll\"></div>"
+}
+}
+out<<gui.dialog(attrs,body)
+}
+}
+else {
+out<<gui.dialog(attrs,body)
+}
+}
 }	
