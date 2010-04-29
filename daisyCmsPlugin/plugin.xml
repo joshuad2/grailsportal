@@ -1,0 +1,26 @@
+<plugin name='daisy-cms' version='0.1' grailsVersion='1.2.0 &gt; *'>
+  <author>Joshua Davis</author>
+  <authorEmail>webtech20@gmail.com</authorEmail>
+  <title>Plugin summary/headline</title>
+  <description>\
+Daisy Grails Plugin
+</description>
+  <documentation>http://grails.org/plugin/daisy-cms</documentation>
+  <resources>
+    <resource>BuildConfig</resource>
+    <resource>DataSource</resource>
+    <resource>UrlMappings</resource>
+    <resource>com.daisyPlugin.daisyIntegration.domain.Content</resource>
+    <resource>com.daisyPlugin.daisyIntegration.domain.ContentField</resource>
+    <resource>com.daisyPlugin.daisyIntegration.domain.ContentHtml</resource>
+    <resource>com.daisyPlugin.daisyIntegration.domain.ContentImage</resource>
+    <resource>com.daisyPlugin.daisyIntegration.service.DaisyDataService</resource>
+    <resource>com.daisyPlugin.daisyIntegration.service.DaisyService</resource>
+  </resources>
+  <dependencies>
+    <resolvers>
+      <resolver type='grailsPlugins' name='grailsPlugins' />
+    </resolvers>
+  </dependencies>
+  <behavior />
+</plugin>
