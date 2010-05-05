@@ -10,12 +10,14 @@ Daisy Grails Plugin
     <resource>BuildConfig</resource>
     <resource>DataSource</resource>
     <resource>UrlMappings</resource>
+    <resource>com.daisyPlugin.controller.DaisyController</resource>
     <resource>com.daisyPlugin.daisyIntegration.domain.Content</resource>
     <resource>com.daisyPlugin.daisyIntegration.domain.ContentField</resource>
     <resource>com.daisyPlugin.daisyIntegration.domain.ContentHtml</resource>
     <resource>com.daisyPlugin.daisyIntegration.domain.ContentImage</resource>
     <resource>com.daisyPlugin.daisyIntegration.service.DaisyDataService</resource>
     <resource>com.daisyPlugin.daisyIntegration.service.DaisyService</resource>
+    <resource>DaisyCmsTagLib</resource>
   </resources>
   <dependencies>
     <resolvers>
