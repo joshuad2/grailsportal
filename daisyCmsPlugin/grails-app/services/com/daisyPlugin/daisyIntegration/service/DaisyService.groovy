@@ -11,19 +11,41 @@ import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.util.Locale
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import com.daisyPlugin.utility.DaisyUtil
+
+import com.daisyPlugin.utility.*;
+
 class DaisyService implements DaisyUtil{
-    def daisyUtil
     def daisyDataService
-    
+    def daisyUtil
+	/**
+	 * Get the content type from a content Identifier
+	 * @param contentId
+	 * @return
+	 * @throws Exception
+	 */
+	public String getDocumentType(String contentId) throws Exception{
+		return daisyUtil.getDocumentType(contentId)
+	}
+	/**
+	 * get the ContentID from the content name
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public String getContentIdFromName(String name) throws Exception{
+	   return daisyUtil.getContentIdFromName(name)
+	}
+	
+	public void getImage(name,os){
+		doImageFromName(name,os)
+	}
     public ArrayList <Hashtable <String, Object>> getImages(String collectionName, String branch, String language) {
       return daisyUtil.getImages(collectionName, branch, language)
     }
-	public String getDaisyContentByName(String name){
+	public String getHtmlContentByName(String name){
 		return getHtmlContent(name)
 	}
     def String getHtmlContentFromId(String contentId){
-    	
     	return daisyUtil.getHtmlContentFromId(contentId)
     }
     def ArrayList <Hashtable> getDocuments(String collectionName, String branch, String language){
@@ -36,7 +58,10 @@ class DaisyService implements DaisyUtil{
     def void doImage(String contentId, OutputStream os){
     	daisyUtil.doImage(contentId, os)
     }
-    
+	
+	def void doImageFromName(String name, OutputStream os){
+		daisyUtil.doImageFromName(name,os)
+	}
     def ArrayList <String> getFields(String contentName, String fieldType){
     	return daisyUtil.getFields(contentName, fieldType)
     }
