@@ -7,12 +7,44 @@ import java.util.Hashtable;
 import org.outerj.daisy.repository.Repository;
 
 public interface DaisyUtil {
+	/**
+	 * Get the content type from a content Identifier
+	 * @param contentId
+	 * @return
+	 * @throws Exception
+	 */
+	public String getDocumentType(String contentId) throws Exception;
+	/**
+	 * get the ContentID from the content name
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public String getContentIdFromName(String name) throws Exception;
+	/**
+	 * get the hteml content from the ID
+	 * @param contentId
+	 * @return
+	 * @throws Exception
+	 */
 	public String getHtmlContentFromId(String contentId)throws Exception;
-	/**
-	 */
+/**
+ * Get the images
+ * @param collectionName
+ * @param branch
+ * @param language
+ * @return
+ * @throws Exception
+ */
 	public ArrayList <Hashtable <String, Object>> getImages(String collectionName, String branch, String language) throws Exception;
-	/**
-	 */
+/**
+ * get the documents
+ * @param collectionName
+ * @param branch
+ * @param language
+ * @return
+ * @throws Exception
+ */
 	public ArrayList <Hashtable <String, Object>> getDocuments(String collectionName, String branch, String language) throws Exception;
    
 	/**
@@ -31,6 +63,13 @@ public interface DaisyUtil {
 	public abstract void doImage(String contentId, OutputStream os)
 			throws Exception;
 
+	/**
+	 * Write the image to the outputstream
+	 * @param name
+	 * @param os
+	 * @throws Exception
+	 */
+	public abstract void doImageFromName(String name, OutputStream os) throws Exception;
 	/**
 	 * Gets the fields for a document name and the field Type
 	 * @param contentName

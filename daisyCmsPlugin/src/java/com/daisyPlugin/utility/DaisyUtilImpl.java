@@ -29,6 +29,34 @@ public class DaisyUtilImpl implements DaisyUtil {
 	private RepositoryManager repositoryManager;
 	private String namespace;
 
+	/**
+	 * Get the content type from a content Identifier
+	 * @param contentId
+	 * @return
+	 * @throws Exception
+	 */
+	public String getDocumentType(String contentId) throws Exception{
+	    String query="select documentType where id='"+contentId+"'";
+		List <SearchResultDocument.SearchResult.Rows.Row> rows=doDaisyQuery(query);
+		for (SearchResultDocument.SearchResult.Rows.Row row:rows){
+			return row.getValueArray(0);
+		}
+	    return null;
+	}
+	/**
+	 * get the ContentID from the content name
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public String getContentIdFromName(String name) throws Exception{
+	    String query="select id where name='"+name+"'";
+		List <SearchResultDocument.SearchResult.Rows.Row> rows=doDaisyQuery(query);
+		for (SearchResultDocument.SearchResult.Rows.Row row:rows){
+			return row.getValueArray(0);
+		}
+	    return null;
+	}
 	public ArrayList <Hashtable <String, Object>> getDocuments(String collectionName, String branch, String language) throws Exception{
       String query="select id, name, versionCreationTime,retired where InCollection('"+collectionName+"') and " +
       		"documentType = 'SimpleDocument' and branch = '"+branch+"' and language = '"+
@@ -113,13 +141,20 @@ public class DaisyUtilImpl implements DaisyUtil {
 		    Part pt= doc.getPart("ImageData");
 		    writeImage(os,pt.getDataStream());
 	  }
+	  /**
+	   * 
+	   */
+		public void doImageFromName(String name, OutputStream os) throws Exception{
+			List <SearchResultDocument.SearchResult.Rows.Row> rows=doDaisyQuery("select id where name='"+name+"'");
+			doImage(rows.get(0).getValueArray(0),os);
+		}
        /**
         * 
         * @param str
         * @return
         */
 	   private String handleDaisyUrl(String str){
-		  String str1= str.replaceAll("daisy:","../daisy/contentHandler?name=");
+		  String str1= str.replaceAll("daisy:","../daisy/contentHandler?id=");
 		  str1=str1.replaceAll("-"+this.getNamespace(),"");
 		  return str1;
 	   }
