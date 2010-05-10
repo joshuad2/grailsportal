@@ -11,17 +11,14 @@ Daisy Grails Plugin
     <resource>DataSource</resource>
     <resource>UrlMappings</resource>
     <resource>com.daisyPlugin.controller.DaisyController</resource>
-    <resource>com.daisyPlugin.daisyIntegration.domain.Content</resource>
-    <resource>com.daisyPlugin.daisyIntegration.domain.ContentField</resource>
-    <resource>com.daisyPlugin.daisyIntegration.domain.ContentHtml</resource>
-    <resource>com.daisyPlugin.daisyIntegration.domain.ContentImage</resource>
-    <resource>com.daisyPlugin.daisyIntegration.service.DaisyDataService</resource>
     <resource>com.daisyPlugin.daisyIntegration.service.DaisyService</resource>
     <resource>DaisyCmsTagLib</resource>
   </resources>
   <dependencies>
     <resolvers>
       <resolver type='grailsPlugins' name='grailsPlugins' />
+      <resolver type='mavenLocal' />
+      <resolver type='mavenCentral' />
     </resolvers>
   </dependencies>
   <behavior />
