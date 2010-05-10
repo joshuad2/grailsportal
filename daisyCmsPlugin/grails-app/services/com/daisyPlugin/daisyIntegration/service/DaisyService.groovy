@@ -12,18 +12,28 @@ import java.awt.image.BufferedImage
 import java.util.Locale
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 
-import com.daisyPlugin.utility.*;
+import org.springframework.context.ApplicationContext 
+import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
+import java.text.*
+import grails.plugin.springcache.annotations.Cacheable
+import com.daisyPlugin.utility.*
 
-class DaisyService implements DaisyUtil{
-    def daisyDataService
-    def daisyUtil
+class DaisyService{
+	def daisyUtil
+	static final String documentName="documentName"
+	static final String documentId="documentId"
+	static final String versionCreateTime="versionCreateTime"
+	static final String separator="/"
+	static final String imageExtension=".png"
+
 	/**
 	 * Get the content type from a content Identifier
 	 * @param contentId
 	 * @return
-	 * @throws Exception
 	 */
-	public String getDocumentType(String contentId) throws Exception{
+	@Cacheable("daisyDocumentTypeCache")
+	def getDocumentType(contentId){
 		return daisyUtil.getDocumentType(contentId)
 	}
 	/**
@@ -32,88 +42,80 @@ class DaisyService implements DaisyUtil{
 	 * @return
 	 * @throws Exception
 	 */
-	public String getContentIdFromName(String name) throws Exception{
-	   return daisyUtil.getContentIdFromName(name)
+	@Cacheable("daisyContentCache")
+	def getContentIdFromName(name){
+		return daisyUtil.getContentIdFromName(name)
 	}
-	
-	public void getImage(name,os){
-		doImageFromName(name,os)
+	/**
+	 * Gets the image from the name of the content
+	 * @param id
+	 * @param os
+	 */
+	@Cacheable("daisyImageCache")
+	public void doImage(id,os){
+			daisyUtil.doImage(id, os)
 	}
-    public ArrayList <Hashtable <String, Object>> getImages(String collectionName, String branch, String language) {
-      return daisyUtil.getImages(collectionName, branch, language)
-    }
-	public String getHtmlContentByName(String name){
-		return getHtmlContent(name)
+	@Cacheable("daisyHtmlContentCache")
+	def getHtmlContent(contentId){
+		return daisyUtil.getHtmlContentFromId(contentId)
 	}
-    def String getHtmlContentFromId(String contentId){
-    	return daisyUtil.getHtmlContentFromId(contentId)
-    }
-    def ArrayList <Hashtable> getDocuments(String collectionName, String branch, String language){
-    	return daisyUtil.getDocuments(collectionName, branch, language )
-    }
-    def Repository getRepository(){
-    	return daisyUtil.getRepository()
-    }
-    
-    def void doImage(String contentId, OutputStream os){
-    	daisyUtil.doImage(contentId, os)
-    }
-	
-	def void doImageFromName(String name, OutputStream os){
-		daisyUtil.doImageFromName(name,os)
+    @Cacheable("daisyRepositoryCache")
+	def Repository getRepository(){
+		return daisyUtil.getRepository()
 	}
-    def ArrayList <String> getFields(String contentName, String fieldType){
-    	return daisyUtil.getFields(contentName, fieldType)
-    }
-    
-    def String getHtmlContent(String contentName){
-    	return daisyUtil.getHtmlContent(contentName)
-    }
-    
-    def void getSpecificHtmlContent(String contentId, OutputStream os){
-    	daisyUtil.getSpecificHtmlContent(contentId, os)
-    }
-	def String getCmsUser(){
+	@Cacheable("daisyFieldsCache")
+	def getFields(contentName, fieldType){
+		return daisyUtil.getFields(contentName, fieldType)
+	}
+	@Cacheable("daisyHtmlContentCache")
+	def getHtmlContent(String contentName){
+		return daisyUtil.getHtmlContent(contentName)
+	}
+	@Cacheable("daisyHtmlContentCache")
+	def getSpecificHtmlContent(contentId, os){
+		daisyUtil.getSpecificHtmlContent(contentId, os)
+	}
+	def getCmsUser(){
 		return daisyUtil.getCmsUser()
 	}
-
-	def void setCmsUser(String cmsUser){
+	
+	def setCmsUser(cmsUser){
 		daisyUtil.setCmsUser(cmsUser)
 	}
-
-	def String getCmsPassword(){
+	
+	def getCmsPassword(){
 		return daisyUtil.getCmsPassword()
 	}
-
-    def void setCmsPassword(String cmsPassword){
+	
+	def setCmsPassword(cmsPassword){
 		daisyUtil.setCmsPassword(cmsPassword)
 	}
-
-	def String getCmsDirectory(){
+	
+	def getCmsDirectory(){
 		return daisyUtil.getCmsDirectory()
 	}
-
-	def void setCmsDirectory(String cmsDirectory){
-	    daisyUtil.setCmsDirectory(cmsDirectory)
+	
+	def setCmsDirectory(cmsDirectory){
+		daisyUtil.setCmsDirectory(cmsDirectory)
 	}
-
-	def  String getCmsLanguage(){
+	
+	def getCmsLanguage(){
 		return daisyUtil.getCmsLanguage()
 	}
-
-	def void setCmsLanguage(String cmsLanguage){
+	
+	def setCmsLanguage(cmsLanguage){
 		daisyUtil.setCmsLanguage(cmsLanguage)
 	}
-
-	def  String getCmsAddress(){
+	
+	def getCmsAddress(){
 		return daisyUtil.getCmsAddress()
 	}
-
-	def void setCmsAddress(String cmsAddress){
+	
+	def setCmsAddress(cmsAddress){
 		daisyUtil.setCmsAddress(cmsAddress)
 	}
-
-	def void setRepository(Repository repository){
+	
+	def setRepository(repository){
 		daisyUtil.setRepositry(repository)
 	}
 }
