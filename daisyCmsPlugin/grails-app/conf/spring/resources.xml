@@ -3,21 +3,27 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 <bean class="org.outerj.daisy.repository.Credentials" id="daisyCreds">
-  <constructor-arg index="0" value="${wellEssent.cmsUser}" type="java.lang.String"/>
-  <constructor-arg index="1" value="${wellEssent.cmsPassword}" type="java.lang.String"/>
+  <constructor-arg index="0" value="${daisyPlugin.cmsUser}" type="java.lang.String"/>
+  <constructor-arg index="1" value="${daisyPlugin.cmsPassword}" type="java.lang.String"/>
 </bean>
 <bean class="org.outerj.daisy.repository.clientimpl.RemoteRepositoryManager" id="repositoryManager">
-  <constructor-arg index="0" value="${wellEssent.cmsAddress}" type="java.lang.String"/>
+  <constructor-arg index="0" value="${daisyPlugin.cmsAddress}" type="java.lang.String"/>
   <constructor-arg index="1" ref="daisyCreds" type="org.outerj.daisy.repository.Credentials" />
 </bean>
 <bean class="com.daisyPlugin.utility.DaisyUtilImpl" id="daisyUtil">
-  <property name="cmsUser" value="${wellEssent.cmsUser}"/>
-  <property name="cmsPassword" value="${wellEssent.cmsPassword}"/>
-  <property name="cmsDirectory" value="${wellEssent.cmsDirectory}"/>
-  <property name="cmsLanguage" value="${wellEssent.cmsLanguage}"/>
-  <property name="cmsAddress" value="${wellEssent.cmsAddress}"/>
-  <property name="namespace" value="wellnessEssentials"/>
+  <property name="cmsUser" value="${daisyPlugin.cmsUser}"/>
+  <property name="cmsPassword" value="${daisyPlugin.cmsPassword}"/>
+  <property name="cmsDirectory" value="${daisyPlugin.cmsDirectory}"/>
+  <property name="cmsLanguage" value="${daisyPlugin.cmsLanguage}"/>
+  <property name="cmsAddress" value="${daisyPlugin.cmsAddress}"/>
+  <property name="namespace" value="${application.namespace}"/>
   <property name="repositoryManager" ref="repositoryManager"/>
 </bean>
-
+<bean class="org.springframework.cache.ehcache.EhCacheFactory" id="daisyPluginCache">
+  <property name="cacheManager" ref="springcacheCacheManager"/>
+  <property name="cacheName" value="daisyCache"/>
+  <property name="eternal"   value="false"/>
+  <property name="diskPersistent" value = "false"/>
+  <property name="memoryStoreEvictionPolicy" value = "LRU"/>
+</bean>
 </beans>
