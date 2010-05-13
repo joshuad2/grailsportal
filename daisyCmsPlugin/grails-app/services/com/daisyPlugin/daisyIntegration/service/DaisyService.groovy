@@ -7,33 +7,47 @@ import org.outerj.daisy.repository.Repository
 import org.outerj.daisy.repository.query.QueryManager
 import org.outerj.daisy.repository.clientimpl.RemoteRepositoryManager
 import org.outerx.daisy.x10.SearchResultDocument
+import org.springframework.beans.factory.InitializingBean;
+
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
-import java.util.Locale
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-
-import org.springframework.context.ApplicationContext 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
+import java.util.Locale 
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 import java.text.*
-import grails.plugin.springcache.annotations.Cacheable
-import com.daisyPlugin.utility.*
+import com.daisyPlugin.utility.DaisyUtil
+import com.daisyPlugin.utility.DaisyUtilImpl
+import org.codehaus.groovy.grails.commons.ConfigurationHolder as ch
 
-class DaisyService{
-	def daisyUtil
-	static final String documentName="documentName"
-	static final String documentId="documentId"
-	static final String versionCreateTime="versionCreateTime"
-	static final String separator="/"
-	static final String imageExtension=".png"
+class DaisyService  implements InitializingBean{
+	boolean transactional = false
+	RemoteRepositoryManager repositoryManager
+	DaisyUtil daisyUtil
+	void afterPropertiesSet() {
+		def config=ch.config
+		def cmsUser=config["daisyPluginCmsUser"]
+		def cmsPass=config["daisyPluginCmsPassword"]
+		def cmsAddress=config["daisyPluginCmsAddress"]
+		def cmsDirectory=config["daisyPluginCmsDirectory"]
+		def cmsLanguage=config["daisyPluginCmsLanguage"]
+		def namespace=config["applicationNamespace"]
+		def daisyCreds= new Credentials(cmsUser,cmsPass)
+		repositoryManager=new RemoteRepositoryManager(cmsAddress,daisyCreds)
+		daisyUtil=new DaisyUtilImpl();
+		daisyUtil.cmsUser=cmsUser
+		daisyUtil.cmsPassword=cmsPass
+		daisyUtil.cmsDirectory=cmsDirectory
+		daisyUtil.cmsLanguage=cmsLanguage
+		daisyUtil.namespace=namespace
+		daisyUtil.repositoryManager=repositoryManager
+	}
 
 	/**
 	 * Get the content type from a content Identifier
 	 * @param contentId
 	 * @return
 	 */
-	@Cacheable("daisyDocumentTypeCache")
 	def getDocumentType(contentId){
+		
 		return daisyUtil.getDocumentType(contentId)
 	}
 	/**
@@ -42,7 +56,6 @@ class DaisyService{
 	 * @return
 	 * @throws Exception
 	 */
-	@Cacheable("daisyContentCache")
 	def getContentIdFromName(name){
 		return daisyUtil.getContentIdFromName(name)
 	}
@@ -51,31 +64,26 @@ class DaisyService{
 	 * @param id
 	 * @param os
 	 */
-	@Cacheable("daisyImageCache")
 	public void doImage(id,os){
-			daisyUtil.doImage(id, os)
+		daisyUtil.doImage(id, os)
 	}
-	@Cacheable("daisyHtmlContentCache")
 	def getHtmlContent(contentId){
 		return daisyUtil.getHtmlContentFromId(contentId)
 	}
-    @Cacheable("daisyRepositoryCache")
+	
 	def Repository getRepository(){
 		return daisyUtil.getRepository()
 	}
-	@Cacheable("daisyFieldsCache")
 	def getFields(contentName, fieldType){
 		return daisyUtil.getFields(contentName, fieldType)
 	}
-	@Cacheable("daisyHtmlContentCache")
-	def getHtmlContent(String contentName){
+	def String getHtmlContent(String contentName){
 		return daisyUtil.getHtmlContent(contentName)
 	}
-	@Cacheable("daisyHtmlContentCache")
 	def getSpecificHtmlContent(contentId, os){
 		daisyUtil.getSpecificHtmlContent(contentId, os)
 	}
-	def getCmsUser(){
+	def String getCmsUser(){
 		return daisyUtil.getCmsUser()
 	}
 	
@@ -83,7 +91,7 @@ class DaisyService{
 		daisyUtil.setCmsUser(cmsUser)
 	}
 	
-	def getCmsPassword(){
+	def String getCmsPassword(){
 		return daisyUtil.getCmsPassword()
 	}
 	
@@ -91,7 +99,7 @@ class DaisyService{
 		daisyUtil.setCmsPassword(cmsPassword)
 	}
 	
-	def getCmsDirectory(){
+	def String getCmsDirectory(){
 		return daisyUtil.getCmsDirectory()
 	}
 	
@@ -99,7 +107,7 @@ class DaisyService{
 		daisyUtil.setCmsDirectory(cmsDirectory)
 	}
 	
-	def getCmsLanguage(){
+	def String getCmsLanguage(){
 		return daisyUtil.getCmsLanguage()
 	}
 	
@@ -107,7 +115,7 @@ class DaisyService{
 		daisyUtil.setCmsLanguage(cmsLanguage)
 	}
 	
-	def getCmsAddress(){
+	def String getCmsAddress(){
 		return daisyUtil.getCmsAddress()
 	}
 	
