@@ -15,7 +15,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Hashtable;
 import java.util.Locale;
 import java.io.*;
 public class DaisyUtilImpl implements DaisyUtil {
@@ -57,42 +56,6 @@ public class DaisyUtilImpl implements DaisyUtil {
 		}
 	    return null;
 	}
-	public ArrayList <Hashtable <String, Object>> getDocuments(String collectionName, String branch, String language) throws Exception{
-      String query="select id, name, versionCreationTime,retired where InCollection('"+collectionName+"') and " +
-      		"documentType = 'SimpleDocument' and branch = '"+branch+"' and language = '"+
-      		language+
-      		"' and versionState='publish' option include_retired = 'true'";
-    
-	  List <SearchResultDocument.SearchResult.Rows.Row> rows=doDaisyQuery(query);
-	  ArrayList <Hashtable <String, Object>> arr=new ArrayList<Hashtable<String, Object>>();
-	  for (SearchResultDocument.SearchResult.Rows.Row row: rows){
-		Hashtable <String, Object> vs=new Hashtable<String, Object>();
-		vs.put("documentId",row.getValueArray(0));
-		vs.put("documentName",row.getValueArray(1));
-		vs.put("versionCreateTime",row.getValueArray(2));
-		vs.put("retired",row.getValueArray(3));
-		arr.add(vs);
-	  }
-     return arr;
-	 }
-	public ArrayList <Hashtable <String, Object>> getImages(String collectionName, String branch, String language) throws Exception{
-	      String query="select id, name, versionCreationTime,retired where InCollection('"+collectionName+"') and " +
-    		"documentType = 'Image' and branch = '"+branch+"' and language = '"+
-    		language+
-    		"' and versionState='publish' option include_retired = 'true'";
-		  List <SearchResultDocument.SearchResult.Rows.Row> rows=doDaisyQuery(query);
-		  ArrayList <Hashtable <String, Object>> arr=new ArrayList<Hashtable<String, Object>>();
-		  for (SearchResultDocument.SearchResult.Rows.Row row: rows){
-			Hashtable <String, Object> vs=new Hashtable<String, Object>();
-			
-			vs.put("documentId",row.getValueArray(0));
-			vs.put("documentName",row.getValueArray(1));
-			vs.put("versionCreateTime",row.getValueArray(2));
-			vs.put("retired",row.getValueArray(3));
-			arr.add(vs);
-		  }
-	     return arr;
-}
 	/* (non-Javadoc)
 	 * @see com.cas.daisy.DaisyUtil#convertStreamToString(java.io.InputStream)
 	 */

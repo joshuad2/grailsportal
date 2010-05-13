@@ -2,7 +2,6 @@ package com.daisyPlugin.utility;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import org.outerj.daisy.repository.Repository;
 
@@ -28,25 +27,6 @@ public interface DaisyUtil {
 	 * @throws Exception
 	 */
 	public String getHtmlContentFromId(String contentId)throws Exception;
-/**
- * Get the images
- * @param collectionName
- * @param branch
- * @param language
- * @return
- * @throws Exception
- */
-	public ArrayList <Hashtable <String, Object>> getImages(String collectionName, String branch, String language) throws Exception;
-/**
- * get the documents
- * @param collectionName
- * @param branch
- * @param language
- * @return
- * @throws Exception
- */
-	public ArrayList <Hashtable <String, Object>> getDocuments(String collectionName, String branch, String language) throws Exception;
-   
 	/**
 	 * Get the repository
 	 * @return
