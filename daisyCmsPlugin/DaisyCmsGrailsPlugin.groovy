@@ -25,8 +25,7 @@ Daisy Grails Plugin
         // TODO Implement additions to web.xml (optional), this event occurs before 
     }
 
-    def doWithSpring = {
-        // TODO Implement runtime spring config (optional)
+	def doWithSpring = {
     }
 
     def doWithDynamicMethods = { ctx ->
@@ -34,7 +33,6 @@ Daisy Grails Plugin
     }
 
     def doWithApplicationContext = { applicationContext ->
-        // TODO Implement post initialization spring config (optional)
     }
 
     def onChange = { event ->
