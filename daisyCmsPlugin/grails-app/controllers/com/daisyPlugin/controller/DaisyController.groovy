@@ -1,7 +1,6 @@
 package com.daisyPlugin.controller
 class DaisyController {
 def daisyService
-def dataService
     def index = { }
    def contentHandler={
 	    def theId=params.id
