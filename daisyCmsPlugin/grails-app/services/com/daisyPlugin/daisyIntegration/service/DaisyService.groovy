@@ -47,7 +47,6 @@ class DaisyService  implements InitializingBean{
 	 * @return
 	 */
 	def getDocumentType(contentId){
-		
 		return daisyUtil.getDocumentType(contentId)
 	}
 	/**
@@ -77,7 +76,7 @@ class DaisyService  implements InitializingBean{
 	def getFields(contentName, fieldType){
 		return daisyUtil.getFields(contentName, fieldType)
 	}
-	def String getHtmlContent(String contentName){
+	def String getHtmlContentFromName(contentName){
 		return daisyUtil.getHtmlContent(contentName)
 	}
 	def getSpecificHtmlContent(contentId, os){
