@@ -1,0 +1,260 @@
+=Grails Portal Part II=
+==Implementation of Grails Web-Flow==
+*Joshua Davis*
+*Joshua.davis@cognizant.com*
+
+This article is the second in a series of three that describes a simple way to build a working framework for a user portal. This framework is built upon some very popular features in Grails and provides many examples of grails plug-in integration and use of some of the more complex features of Grails such as Grails Web-Flow.  This article describes concepts that a novice Grails developer may find challenging. 
+In the second article, a step-by-step approach will show how to construct a simple Grails based workflow and integrate it with the Grails Portal code created in the last article.  There are two parts to this article, one that specifies the creation of the workflow, and another that shows how to use the results of the workflows in a business case.  
+By the end of this article the reader will be familiar with the issues around creating Grails Web-Flows and will implement an approach that can be used to implement the workflow features of a Grails Portal application.  I have not included all of the classes referenced in the code examples in the text of this article.  
+Why use a workflow engine such as Grails Web-Flow?
+I have spent many years creating web applications that collect information in a stepwise fashion, and make business rule decisions based upon the data collected to accomplish some business functionality.  This is a common requirement in any computer based application that is built, from a simple contact page to a commercial order management system.  These types of requirements have been fulfilled in the past in many different ways.
+When these applications were written in a green-screen or mainframe environment it was easy to handle the interactions between the user and the application.  In those days the user could not switch or close the application window (if there was a window) without indicating what to do with the data that was recorded.  The Web User Interface paradigm for applications makes it more of a challenge to manage these kinds of applications because of these factors:
+•	When to terminate the workflow - At any time a user can do any number of things to exit the workflow.
+•	Workflow state - The state of the workflow needs to be saved, but not committed until the user selects to save the information.
+•	Unique web browser based issues - The “back” button and “refresh” button in the browser can cause duplication and workflow state issues.
+•	Implementation Complexity – Typically, using workflow frameworks is tedious and not intuitive.
+Grails Web-Flow is a workflow based feature that gives the developer the tools to mitigate these issues:
+•	Uses the well known Spring Web-Flow framework to manage the workflow.
+Handles the persistence of the workflow state and manages the issues when the refresh and back buttons are hit by the user in the process of a workflow.  Combined with the Grails Portal it can deliver targeted work flows based upon the user’s session.
+•	 The convention based paradigm of Groovy simplifies the development process to implement the flows in a concise, understandable manner.
+Flows are created in a manner consistent with other Grails development.  No special tags are needed in the GSP’s.  Convention based development is used to connect the navigation on the workflow page to the workflow controller.
+•	Grails domain classes make it simple to save the result of the workflow.
+As in all other Grails development that accomplishes persistence of data, creating the code that saves and validates data is a chore but not as complex as in other Java based frameworks. 
+What does the Workflow do for the Grails Portal?
+Workflow for the Grails portal is one the fundamental user-based set of features that are used to write interactive web applications (apps that require users to log in and then provide individualized functionality.) Workflow in a Grails portal is part of the launching pad for implementing functionality in a Grails Portal.  In Part I of this article, the setup of the project, domain objects, and security classes were created. In this article, the example will be further explained by demonstrating how to use Grails to manage appointments and create wizard pages to schedule appointments for the fictional wellness company “Wellness Unlimited.”  
+Grails Web-Flow definition
+Successful planning is essential for success when defining a flow within a Grails application.  This is because there are different types of processes that can be written and some business flows do not lend themselves to being defined using Grails Web Flow.  This feature of Grails can handle every type of flow imaginable; it is just that some will take more effort to implement than is appropriate for the problem at hand.
+All business processes can be distilled down to a basic set of steps. Whether you use a napkin or a formal diagram to document it, it is essential that you understand the steps that are necessary to in order to fulfill the business process you are trying to implement in your Grails Application.  I have created a diagram which shows the process flow in Figure 1Activity Diagram that shows the Work Flow in this article.
+In Grails Web-Flow you take each of the steps and create a Groovy closure to capture the functionality.  If you follow the normal process of GSP and Spring MVC web application development you will find there are some slight adjustments to enable Web-Flows to work.  Also, you will see that in this example I have not enabled any dynamic run-time functionality; perhaps in a future article I will show how to accomplish this.  In the example of the Registration controller each of the steps for the business process of registration is implemented by using standard procedures described in the Grails documentation for this product.
+  
+Figure 1Activity Diagram that shows the Work Flow
+ 
+These procedures can be thought of as a roadmap for success.  To start with here is a shortcut to understanding Grails Web-Flow development:
+1.	The name of the flow is described by adding the “Flow” word to the end of a closure in your controller.
+2.	When you create the views you must use the same name as the web flow as a directory that contains the views for the Web Flow.
+3.	The views are contained in the named directory from the previous item.
+4.	Navigating between web-flows is pretty simple:
+a.	The “name” property of the submit button for the pages in the flow indicate which closure to execute when the page is submitted.
+b.	If the user navigates away from the flow it is possible to re-establish the flow
+c.	Once the user ends the flow by hitting cancel you have the ability to manage the data within the flow.
+5.	Use the “flow” variable to store information for the span of a flow.  This is a very important detail, without the flow variable you don’t have the ability to define the activity within a flow.  I would recommend that you always use the flow variable when moving state within the flow.
+6.	The default context in a view used for a Web-Flow uses the “flow” variable.  Unless you have worked extensively with Grails you might not understand the concept of a set of domain objects that are put into the context, but the flow variable is a default variable put into the session context.
+7.	In your controller you should always have explicit entry points and exit points from the Web-Flow.  This can be implemented by creating a default closure that will be used by the Web-Flow.
+8.	When designing your flow account for the ability to cancel the flow at any time.  When I designed my pages I placed a “cancel” button at each point in the process.
+Implementing the Flow in the Grails Controller
+Saving the results of the flow at each step is important, at least in my example.  The domain object validation utility methods and GORM methods within Grails is used to accomplish saving the data for each step in the flow.  When writing the code in the main controller for the flow these are the steps that are always followed:
+1.	Always use a service class when handling GORM objects.  Either create a Grails service class or identify one that you will use to handle the saving of the data from the flow.  For the example there are two service classes ContactUtilService and RegistrationService that are used explicitly for this purpose. 
+2.	Create a method to move the data from the posted web parameters to the domain objects.  This process can vary widely in complexity.  One of the easiest ways to do this is to have the names of the items on the view the same as the ones in your domain class.  If you do this you can just instantiate the class using the parms variable, it can be that simple!
+3.	You will use a custom exception similar to ValidationException make sure that you have a try, catch block around the call to catch a validation error.
+4.	Write a method in service class to validate the domain object, if there is an error, throw a custom validation error that will show to the user the field that needs to be changed.
+5.	Handle the exception.  If there is an exception make sure the appropriate values are set in the view, and return the model.
+6.	If there is no exception, create the model objects needed and move the flow to the next page.
+An Example of a Flow in the Grails Portal
+In the example for this article we save the result of each stage of the Web-Flow using calls to Service classes using as much of the default functionality provided by Grails and Java.   In the example below from the RegistrationController the Flow definition for collecting the data for the Wellness Unlimited Registration is shown.  
+class RegistrationController{
+…
+…
+registrationFlow{
+def registrationService
+…
+…      
+enterRegistrantInfo{
+    	 on(GOTOPARENTINFO){
+           try{
+    	        flow.regEvent = this.registrationService.doRegistrationEvent(flow.regEvent,params)
+    	        if (flow.regEvent.parent1==null){
+    	          flow.regEvent.parent1=new RegistrationParent()
+    	        }
+               return success()
+    	        }catch(ValidationException e){
+                flash.message = "Please re-enter your information"
+                flow.registerInstance = e.getExceptionVal()
+    		 return error()
+    		}
+    	     }.to ENTERPARENTINFO
+            on(GOTOCANCEL){
+              session.regEventId=null;
+    	      flash.message="Cancelled" 
+    	 }.to CANCEL
+      }
+…
+} 
+Listing 1 – The enterRegistrantInfo flow step
+In this code snippet from the RegistrationController you see the call to the method registrationService.doRegistrationEvent() .  There are some subtle, but highly significant implementation details in this snippet of Groovy code:
+a.	 Note that the reference to the service always uses a “this” reference.  The instance variables at the class level must be referenced this way since the flow is part of a closure.
+b.	 The custom exception ValidationException implements validation using the same patterns established by generated Grails scaffolding controllers and gsp files:
+i.	Setting the flash.message which shows this message at the top of the page.  
+ii.	Setting the flash.registerInstance variable from exception which is then used to generically show the specific fields that need to be changed by marking them red.
+Of course the visual representations of the error handling and validation can be replaced as they are accomplished using style sheets and images.
+c.	 Both successful and unsuccessful calls to doRegistrationEvent enable a model necessary to render a view.
+i.	Make sure that when you return a view that you have the submitted values present in your flash scoped variable.  This is important because there is nothing more unsettling for a user to have an error where the page comes back without all of the values they originally submitted.
+ii.	The approach that I recommend is to have the same flow variable used in each of the flow steps.  This will lower the complexity, and allow you to carry the data from previous steps forward without having to re-query that database at each step.
+Validation and persistence using Grails Service Classes
+As you see in Listing 2, which is a code snippet from the RegistrationService class, throwing and catching exceptions as part of a flow is one of the many ways to use the default functionality of Grails and Java.  When the exception is thrown this is most likely because of a validation error on the data that is entered.  As you can see in the code below the validate()method is executed which tests against the constraints specified in the domain class.  For example, if a field does not have a value when it should (null) it will put the value into an errors() method on the domain object (RegistrationEvent) which is processed by the default functionality present in a GSP page that has been generated.
+Grails Service classes are somewhat unique in that they are the defined place within Grails development where database transactions through GORM are handled without much special work.   Other methods in controller classes can do the same work, but in these classes much of the configuration for persistence is already done for you.  In the doRegistrationEvent method you see am implementation of the instructions earlier in this article by:
+1.	Using GORM Validation for the domain objects
+2.	Keeping one singe domain object (RegistrationEvent) that is used to return to the controller.  
+  Class RegistrationService{
+….
+… 
+  def RegistrationEvent doRegistrationEvent(RegistrationEvent regEvent,
+    		                                  params)throws ValidationException{
+    	if (regEvent==null){
+    		regEvent=new RegistrationEvent()
+    	}
+	try{
+	    regEvent.registrationAge=new Integer(params.registrantAge)
+           }catch(Exception e){
+	      regEvent.registrationAge = 0
+	   }
+	regEvent.registrationGrade=params.registrationGrade
+	regEvent.registrationDate=new Date()
+	def pt=PartyType.findByCd(CHILD)
+	regEvent.registrationFor=doParty(pt,"",regEvent.registrationFor,params)
+	SimpleDateFormat format=new SimpleDateFormat(DATEFORMAT)
+	regEvent.registrationFor.birthDate = format.parse(params.birthDate_year+
+	    		                             "-"+params.birthDate_month+
+                                                   "-"+params.birthDate_day)
+        if (!regEvent.registrationFor.validate()){
+          throw new ValidationException(regEvent.registrationFor)
+        }
+	regEvent.registrationFor.save()
+	regEvent.registrationUser=this.securityService.getRegisteredUser()
+	if(!regEvent.validate()){
+          throw new ValidationException(regEvent)
+        }
+	regEvent.save()
+	return regEvent
+       }
+…
+…
+}
+Listing 2 – doRegistrationEvent method in the Registration Service
+Grails Portal and Web Browser Navigation
+Another detail in this code snippet is controlling null objects with browser navigation.  Using a domain object to pass between the view, controller, and service layers creates situations where the flow will move back a step.  If this happens the user should see the data that they entered previously, and when they submit an update the service classes should handle new objects as well as updates seamlessly.    
+The Grails Service part of the solution is partially apparent in Listing 2, which employs a simple solution to the problem.  In the Grails Portal example the domain object regEvent of type RegistrationEvent is the object stored in the flow scope for the life of the flow.  To process a change in this domain object, the regEvent object is passed in, regardless of whether the object has been instantiated or not.  If it is null then it comes from a situation where the user has never created a registration in that flow yet.  If the object is not null then it implies that the object already exists and we use the existing object.  This is crucial because in each of these cases the returned object is the one that is used in the controller and then passed back to the view as the model.
+Use of Domain Class Configuration
+In the example of Listing 3 which shows the RegistrationEvent domain class configuration heavily influences the behavior of the Grails Portal.  This is because the way that the domain objects are configured implies the way that the objects are validated.  Since this is how all objects in the Grails Portal are validated from each step in the flow, it is essential to understand the issues around Grails domain model constraints, relationships, and mappings.  
+For the sake of conciseness, and the fact that all of the explanations for these options are available on the Grails wiki, only the significant behaviors that affect the Grails Portal and may be useful for anyone modifying the code is included for this article.
+•	Grails Constraints
+o	nullable : A simple concept but can really be a problem if it’s not set correctly assigned.  This indicates to the validation routine and the database creation scripts that this column should have a value (false), or it is ok for it to be false (true).  Validation will fail if the constraint is set to “false” and the instance variable of the domain object does not have a value.  
+o	inList: A restriction constraint that when validation is run against this domain object it will check for these values.
+•	Grails Mappings
+o	lazy: This is set to false for this domain class for the main reason that this is the root object for the Wellness Unlimited Registrations and when a RegistrationEvent is retrieved out of the database it should get all of the objects that it has a reference to.  By default Grails sets this value to “true” for all GORM relationships.  
+
+import java.sql.Timestamp
+class RegistrationEvent implements Serializable{
+    Party              registrationFor
+    Date               registrationDate
+    String             registrationGrade
+    Integer            registrationAge
+    EmergencyContact   emergencyContact1
+    EmergencyContact   emergencyContact2
+    EmergencyContact   emergencyContact3
+    RegistrationParent parent1
+    RegistrationParent parent2
+    PickupContact      pickupContact1
+    PickupContact      pickupContact2
+    PickupContact      pickupContact3
+    OrderRecord        orderRecord
+    JsecUser           registrationUser
+    RegistrationDoctor registrationDoctor
+    static constraints = {
+        registrationFor(nullable:false)
+        registrationUser(nullable:false)
+        registrationDate(nullable:true)
+        registrationGrade(inList:["Kindergarten",
+                                  "First",
+                                  "Second","Third",
+                                  "Fourth",
+                                  "Fifth","Sixth",
+                                  "Seventh",
+                                  "Eighth","Freshman",
+                                  "Sophomore",
+                                  "Junior","Senior"])
+        registrationAge(range:5..19)
+        emergencyContact1(nullable:true)
+        emergencyContact2(nullable:true)
+        emergencyContact3(nullable:true)
+        parent1(nullable:true)
+        parent2(nullable:true)
+        pickupContact1(nullable:true)
+        pickupContact2(nullable:true)
+        pickupContact3(nullable:true)
+        orderRecord(nullable:true)
+        registrationDoctor(nullable:true)
+    }
+	static mapping={
+		parent1 lazy:false
+		parent2 lazy:false
+		emergencyContact1 lazy:false
+		emergencyContect2 lazy:false
+		emergencyContact3 lazy:false
+		pickupContact1 lazy:false
+		pickupContact2 lazy:false
+		pickupContact3 lazy:false
+		orderRecord    lazy:false
+	}
+    String toString() {
+        return  registrationFor.firstName+" "+registrationFor.lastName
+    }
+}
+Listing 3 – The RegistrationEvent domain class
+Use of Views in the Grails Portal
+Views have four main facets that combined together create what the user sees when they go to the page that the gsp represents:
+1.	HTML notation
+2.	Grails tags
+3.	References to data available in different contexts
+4.	The gsp page template (not shown in this example)
+The Grails Portal employs a domain based framework that takes advantage of the default scaffolding behavior of Grails.  In Listing 6 you should notice that the <g:if> and <g:else> tags are used to handle when the regEvent domain object of type RegistrationEvent is null.  This set of code will show the errors at the top and outline the field with red when the first name field is not filled in. 
+…
+…
+    <body>
+        <div class="body">
+…
+            <g:hasErrors bean="${parentInstance}">
+            <div class="errors">
+                <g:renderErrors bean="${parentInstance.errors}" as="list" />
+            </div>
+            </g:hasErrors>
+…
+            <g:hasErrors bean="${parentInstance}">
+            <div class="errors">
+                <g:renderErrors bean="${parentInstance.errors}" as="list" />
+            </div>
+…
+           <g:form action="register" method="post" >
+            <div class="dialog">
+             <table>
+              <tbody> 
+               <tr class="prop">
+                <td valign="top" class="name">
+                 <label for="firstName">First Name*:</label>
+                </td>
+                <g:if test="${regEvent.parent1!=null && regEvent.parent1.parent!=null}">
+                 <td valign="top" class="value${hasErrors(
+                                  bean:regEvent.parent1.parent,field: 'firstName','errors')}">
+                 <g:textField size="60" maxLength="100" name="firstName" value=" ${fieldValue(               
+                          bean:regEvent.parent1.parent, field:'firstName')}" />
+                </g:if>
+                <g:else>
+                 <td valign="top">
+                  <g:textField size="60" maxLength="100" name="firstName" />
+                 </g:else> 
+                </td>
+               </tr> 
+…
+…
+Listing 4 – Select code snippets from enterParentInfo.gsp
+In this article, each of the application layers of the Grails Portal in respect to Flow development has been detailed.  From the view, controller, service layer and the domain each contain a part of the puzzle to create an effective Flow for a Grails Portal.  You should note that the files contain a full working and coded example of this functionality with these concepts fully employed. 
+The next and last installation of the Grails Portal series will take the working application and apply management and user interface features such as Ajax to the foundation that has already been built.  In addition, the process of deploying the Grails Portal application into an existing Tomcat server environment will be covered.
+Learn More
+The files for this article are contained on my website at http://www.webtech20.com/article2.zip.  
+JSecurity plugin - http://grails.org/JSecurity+Plugin
+Grails Framework Reference Guide - http://grails.org/doc/1.1.x/ 
+Java Serialization - http://java.sun.com/developer/technicalArticles/Programming/serialization/ 
+JSecurity web site - http://www.jsecurity.org/
+The Definitive Guide to Grails (second edition) by Graeme Rocher and Jeff Brown ISBN:9781590599952
+Enterprise Patterns and MDA: Building Better Software with Achetype Patterns and UML by Jim Arlow, Ila Neustadt Addison Wesley Press ISBN-13: 978-0321112309
+
+ Born in Brooklyn, NY, Joshua Davis graduated from Blackburn College in Carlinville, IL (1989) with a degree in Computer Science.  Joshua has been programming in Java for 11 years and has a blog at http://javaarchramble.blogspot.com/.  He now works for Cognizant Technology Solutions as a Senior Architect and resides in Gotha, FL.
