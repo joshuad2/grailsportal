@@ -1,7 +1,7 @@
 package com.grailsPortal.controller
 
 
-
+import com.grailsPortal.domain.*
 class CampOpsController {
     def registrationService    
     def index = { redirect(action:list,params:params) }
