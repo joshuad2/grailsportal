@@ -1,4 +1,4 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.attribute
 /**
  * The Attribute Component domain class is the actualized class
  * that combines the description of the generic attribute with the
@@ -15,7 +15,7 @@ class AttributeComponent implements Serializable{
 	String    cssStyle
 	String    cssClass
 	String    cssId
-	AttributeComponentGroup attributeComponentGroup
+	com.grailsPortal.domain.attribute.AtributeComponentGroup attributeComponentGroup
 	Boolean active 
 	static fetchMode = [attribute:"eager",
 	                    component:"eager",

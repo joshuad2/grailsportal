@@ -1,4 +1,7 @@
 package com.grailsPortal.domain 
+
+import com.grailsPortal.domain.attribute.Attribute;
+
 class PartyAttrValue implements Serializable{
     static mapping = {
          table 'party_attr_value'

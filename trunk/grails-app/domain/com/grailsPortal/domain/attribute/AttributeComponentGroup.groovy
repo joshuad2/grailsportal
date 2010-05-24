@@ -1,11 +1,11 @@
-package com.grailsPortal.domain
-class AttributeComponentGroup implements Serializable{
+package com.grailsPortal.domain.attribute;
+
+class AtributeComponentGroup implements Serializable{
     String name
     String dsc
     String cd
 	Boolean active
 	Boolean mandatory
-    static hasMany=[attributeComponents:AttributeComponent]
     static constraints = {
     	name(size:1..100,nullable:false,blank:false)
     	dsc(size:1..200,nullable:true,blank:true)
@@ -15,6 +15,6 @@ class AttributeComponentGroup implements Serializable{
 		mandatory(nullable:false,blank:false)
     }
     String toString() {
-        return name
+        return name+":"+cd
     }
 }

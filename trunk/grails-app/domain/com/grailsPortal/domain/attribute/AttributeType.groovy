@@ -1,4 +1,6 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.attribute
+
+
 class AttributeType implements Serializable{
     static mapping = {
          table 'attribute_type'

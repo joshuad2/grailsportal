@@ -1,4 +1,7 @@
 package com.grailsPortal.domain
+
+import com.grailsPortal.domain.portalConfig.State;
+
 /**
  * class ContactAddress is the domain class that holds the information for the 
  * address.

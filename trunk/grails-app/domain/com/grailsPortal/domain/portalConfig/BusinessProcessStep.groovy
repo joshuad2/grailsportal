@@ -1,4 +1,5 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.portalConfig
+
 /**
  * @author Joshua Davis
  * This domain class defines the steps that are

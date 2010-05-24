@@ -1,4 +1,5 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.portalConfig
+
 class PortalConfigBusinessProcess {
 
 	String name

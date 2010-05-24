@@ -1,4 +1,7 @@
 package com.grailsPortal.domain 
+
+import com.grailsPortal.domain.attribute.Attribute;
+
 class OrderRecordAttrValue implements Serializable{
     static mapping = {
          table 'order_record_attr_value'

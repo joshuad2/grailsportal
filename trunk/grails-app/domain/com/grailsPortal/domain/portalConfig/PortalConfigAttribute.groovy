@@ -1,4 +1,6 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.portalConfig
+
+import com.grailsPortal.domain.attribute.*
 class PortalConfigAttribute {
 
 	Attribute attribute
