@@ -1,4 +1,5 @@
-package com.grailsPortal.domain 
+package com.grailsPortal.domain.portalConfig
+import com.grailsPortal.domain.attribute.*
 class PortalConfigAttrValue {
     static belongsTo = PortalConfig
     static mapping = {

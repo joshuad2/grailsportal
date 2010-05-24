@@ -1,4 +1,5 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.attribute
+
 /**
  * Attribute Domain class holds the description
  * of the attributes that have the potential to 

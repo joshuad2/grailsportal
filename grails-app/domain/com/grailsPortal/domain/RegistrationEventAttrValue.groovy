@@ -1,5 +1,7 @@
 package com.grailsPortal.domain
 
+import com.grailsPortal.domain.attribute.Attribute;
+
 class RegistrationEventAttrValue {
     RegistrationEvent registrationEvent
 	String    value

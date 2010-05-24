@@ -1,4 +1,5 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.attribute
+
 class AttributeLookupValue implements Serializable{
 
 	Attribute attribute

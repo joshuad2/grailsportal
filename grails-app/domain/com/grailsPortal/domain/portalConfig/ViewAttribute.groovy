@@ -1,4 +1,5 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.portalConfig
+import com.grailsPortal.domain.attribute.*
 class ViewAttribute implements Serializable, Comparable{
 	View               view
 	AttributeComponent attributeComponent

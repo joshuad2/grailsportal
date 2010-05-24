@@ -1,4 +1,5 @@
-package com.grailsPortal.domain
+package com.grailsPortal.domain.attribute
+
 /**
  * This domain class holds the default components
  * that can be displayed by the portal.
