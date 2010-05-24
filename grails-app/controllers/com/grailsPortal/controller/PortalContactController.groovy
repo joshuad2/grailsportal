@@ -13,7 +13,6 @@ class PortalContactController {
 	def editContactEmail={		
 		render (model:[contactEmailInstance:ContactEmail.get(params.id)],
 		view:'editEmail')
-		
 	}
 	def editContactPhone={		
 		render (model:[contactPhoneInstance:ContactPhone.get(params.id)],
