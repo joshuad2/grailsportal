@@ -15,7 +15,7 @@ class AttributeComponent implements Serializable{
 	String    cssStyle
 	String    cssClass
 	String    cssId
-	com.grailsPortal.domain.attribute.AtributeComponentGroup attributeComponentGroup
+	com.grailsPortal.domain.attribute.AttributeComponentGroup attributeComponentGroup
 	Boolean active 
 	static fetchMode = [attribute:"eager",
 	                    component:"eager",
