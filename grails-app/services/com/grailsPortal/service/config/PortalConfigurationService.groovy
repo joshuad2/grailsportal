@@ -1,4 +1,7 @@
 package com.grailsPortal.service.config
+import com.grailsPortal.domain.portalConfig.PortalConfig;
+import com.grailsPortal.domain.portalConfig.PortalConfigAttrValue;
+
 import java.util.HashMap;
 
 import com.grailsPortal.domain.*

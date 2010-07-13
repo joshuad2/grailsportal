@@ -1,4 +1,10 @@
 package com.grailsPortal.service.config
+import com.grailsPortal.domain.attribute.Attribute;
+import com.grailsPortal.domain.attribute.AttributeComponent;
+import com.grailsPortal.domain.attribute.AttributeComponentGroup;
+import com.grailsPortal.domain.portalConfig.PortalConfigAttrValue;
+import com.grailsPortal.domain.portalConfig.View;
+import com.grailsPortal.domain.portalConfig.ViewAttribute;
 
 import com.grailsPortal.domain.*;
 import com.grailsPortal.ui.portalView.PortalViewHandler;

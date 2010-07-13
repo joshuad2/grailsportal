@@ -1,4 +1,17 @@
 package com.grailsPortal.service.data
+import com.grailsPortal.domain.attribute.Attribute;
+import com.grailsPortal.domain.attribute.AttributeComponentGroup;
+import com.grailsPortal.domain.attribute.AttributeComponent;
+import com.grailsPortal.domain.attribute.AttributeDataType;
+import com.grailsPortal.domain.attribute.Component;
+import com.grailsPortal.domain.attribute.AttributeLookupValue;
+import com.grailsPortal.domain.attribute.AttributeType;
+import com.grailsPortal.domain.portalConfig.PortalConfig;
+import com.grailsPortal.domain.portalConfig.PortalConfigAttrValue;
+import com.grailsPortal.domain.portalConfig.PortalConfigBusinessProcess;
+import com.grailsPortal.domain.portalConfig.State;
+import com.grailsPortal.domain.portalConfig.View;
+import com.grailsPortal.domain.portalConfig.ViewAttributeComponentGroup;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 
 import org.apache.shiro.crypto.hash.Sha1Hash
@@ -461,7 +474,7 @@ class PortalDataService implements PortalData{
    }
    def initializeAttributeComponentGroups(acg){
 	acg.each{
-		AttributeComponentGroup atrCg= new AttributeComponentGroup()
+		def atrCg= new AttributeComponentGroup()
 		atrCg.name=it.key
 		atrCg.dsc=it.key
 		atrCg.cd=it.key
