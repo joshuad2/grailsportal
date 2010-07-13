@@ -1,6 +1,6 @@
 package com.grailsPortal.domain.attribute;
 
-class AtributeComponentGroup implements Serializable{
+class AttributeComponentGroup implements Serializable{
     String name
     String dsc
     String cd
