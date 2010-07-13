@@ -1,12 +1,12 @@
 package com.grailsPortal.domain.portalConfig
-import com.grailsPortal.domain.attribute.AtributeComponentGroup;
+import com.grailsPortal.domain.attribute.AttributeComponentGroup;
 
 class ViewAttributeComponentGroup implements Serializable{
 
 	String                  name
 	View                    view
 	Long                    displayOrder
-	com.grailsPortal.domain.attribute.AtributeComponentGroup attributeComponentGroup
+	com.grailsPortal.domain.attribute.AttributeComponentGroup attributeComponentGroup
 	Boolean                 active
 	Boolean                 mandatory
     static constraints = {
