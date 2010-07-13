@@ -1,4 +1,6 @@
 package com.grailsPortal.ui.portalView;
+import com.grailsPortal.domain.attribute.AttributeComponent;
+
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 
 import com.grailsPortal.domain.*
