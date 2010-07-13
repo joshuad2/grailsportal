@@ -1,4 +1,6 @@
 package com.grailsPortal.controller
+import com.grailsPortal.domain.portalConfig.State;
+
 import org.apache.shiro.authc.AuthenticationException
 import org.apache.shiro.authc.UsernamePasswordToken
 import org.apache.shiro.SecurityUtils
