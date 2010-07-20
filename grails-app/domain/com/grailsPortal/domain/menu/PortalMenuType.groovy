@@ -11,18 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.grailsPortal.domain.menu
+package com.grailsPortal.domain.menu;
 
-class PortalMenu {
-	
-	String itemLabel
-	String itemText
-	PortalMenuType portalMenuType
-	PortalMenuConfiguration configuration
-	static hasMany=[subMenus:PortalSubMenu]
-    static constraints = {
-		itemLabel(size:1..40,blank:false,nullable:false)
-		itemText(size:1..100,blank:false,nullable:false)
-		portalMenuType(blank:false,nullable:false)
-    }
+class PortalMenuType {
+ String menuTypeName
+ String menuTypeDesc
+
+ static constraints = {
+		menuTypeName(size:1..40,blank:false,nullable:false)
+		menuTypeDesc(size:1..100,blank:false,nullable:false)
+ }
+
 }
