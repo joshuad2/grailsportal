@@ -14,15 +14,16 @@
 package com.grailsPortal.domain.menu
 
 class PortalMenu {
-	
 	String itemLabel
 	String itemText
 	PortalMenuType portalMenuType
 	PortalMenuConfiguration configuration
+	String isActive
 	static hasMany=[subMenus:PortalSubMenu]
     static constraints = {
 		itemLabel(size:1..40,blank:false,nullable:false)
 		itemText(size:1..100,blank:false,nullable:false)
 		portalMenuType(blank:false,nullable:false)
+		isActive(size:1..2,blank:false,nullable:false,inList:['Y','N'])
     }
 }

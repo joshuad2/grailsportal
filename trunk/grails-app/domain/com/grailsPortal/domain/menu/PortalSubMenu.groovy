@@ -22,12 +22,12 @@ class PortalSubMenu {
   PortalMenu mainMenu
   String showAdmin
   String showAnonymous
+  PortalMenuType menuType
 static constraints={
 		controller(display:true,size:1..40,nullable:false,blank:false)
 	    action(display:true,size:1..40,nullable:true,blank:true)
 	    text(display:true,size:1..100,nullable:false,blank:false)
 	    isAjax(display:true,size:1..2,nullable:false,blank:false,inList:['Y','N'])
-		showAdmin(size:1..2,blank:false,nullable:false,inList:['Y','N'])
-		showAnonymous(size:1..2,blank:false,nullable:false,inList:['Y','N'])
+        menuType(display:true,nullable:false,blank:false)
 	}
 }

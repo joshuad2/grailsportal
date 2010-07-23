@@ -12,18 +12,21 @@
  * limitations under the License.
  */
 package com.grailsPortal.domain.menu;
-
+import com.grailsPortal.domain.portalConfig.PortalConfig
 class PortalMenuConfiguration {
- String menuName
+ String  menuName
  Integer position
  Integer hideDelay
- String lazyLoad
+ String  lazyLoad
+ PortalConfig portalConfig
+ String isActive
  static hasMany=[portalMenus:PortalMenu]
  static constraints={
 		menuName(size:1..100,blank:false,nullable:false)
-	    position(blank:false,nullable:false)
-	    hideDelay(blank:false,nullable:false)
-	    lazyLoad(size:1..2,inList['Y','N'])
-	    
+	    position(range:1..1000,blank:false,nullable:false)
+	    hideDelay(range:1..500,blank:false,nullable:false)
+	    lazyLoad(size:1..2,inList['Y','N'],blank:false,nullable:false)
+	    isActive(size:1..2,inList['Y','N'],blank:false,nullable:false)
+	    portalConfig(blank:false,nullable:false)
 	}
 }
