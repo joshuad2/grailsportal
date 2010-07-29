@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.grailsPortal.service.data
 import com.grailsPortal.domain.attribute.Attribute;
 import com.grailsPortal.domain.attribute.AttributeComponentGroup;
@@ -19,6 +32,7 @@ import grails.util.Environment
 import org.woaf.portal.PortalData;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 import com.grailsPortal.domain.*;
+import com.grailsPortal.domain.menu.*
 /**
  * PortalDataService handles the creation of the intial data into 
  * the database.  Most of the data is defined in String arrays and Hashtables
@@ -98,14 +112,102 @@ class PortalDataService implements PortalData{
 			                        ]
 	def states=["FL":"Florida","AL":"Alabama","GA":"Georgia","SC":"South Carolina","NC":"North Carolina","TX":"Texas","TN":"Tennessee","LA":"Louisiana","KY":"Kentucky"]
     def orderStatuses=["IA":"Inactive","IP":"In Process","PIF":"Paid In Full","PP":"Partial Payment","WT":"Waitlisted","LT":"Late Payment Due"]
-    JsecUser userResults
+	def menus=["Admin":["registrationEvent":"Manage Registrations",
+	                    "user":"Manage",
+						"campOps":"Camp Operations"],
+						"setup":["product":"Products",
+	                             "contactType":"Contact Types",
+								 "partyType":"Party Types"],
+	           "Setup":["product":"Products",
+			            "contactType":"Contact Types",
+			            "paymentType":"Payment Types",
+			            "relationshipType":"Relationship Types",
+			            "responsibility":"Responsibilities",
+			            "role":"Roles",
+			            "salesChannel":"Sales Channels",
+			            "salesChannelType":"Sales Channel Type",
+			            "attributeAjax":"attributeTypeLink"
+			            ]
+	          ]
+	JsecUser userResults
     JsecRole roleResults
     JsecRole userRoleResults
     Party partyResults
     Party adminParty
     JsecRole adminRole
     JsecRole results 
-    
+	
+	
+	def initializeMenu(portalConfig,menus){
+		intializePortalMenuTypes()
+	   def config=initializeMenuConfig(portalConfig)
+	   def adminMenu=initializePortalMenu(config,menus)
+	}
+	def intializePortalMenuTypes(){
+		def pmt=new PortalMenuType()
+		pmt.menuTypeDesc="Admin Menu"
+		pmt.menuTypeName="admin"
+		pmt.save(flush:true)
+		def pmt1=new PortalMenuType()
+        pmt1.menuTypeDesc="User Menu"
+        pmt1.menuTypeName="user"
+        pmt1.save(flush:true)
+	}
+	/**
+	 * Initialize the menu
+	 * @return
+	 */
+	def initializeMenuConfig(portalConfig){
+	   def menuConfig= new PortalMenuConfiguration()
+	   menuConfig.hideDelay=750
+	   menuConfig.position="static"
+	   menuConfig.isActive="Y"
+	   menuConfig.lazyLoad="N"
+	   menuConfig.menuName="Main Menu"
+	   menuConfig.portalConfig=portalConfig
+       menuConfig.save(flush:true)
+	   return menuConfig
+	}
+	def initializePortalMenu(menuConfig,menus){
+	   menus.each{
+		def pm1=new PortalMenu();
+		pm1.configuration=menuConfig
+		pm1.isActive="Y"
+		pm1.itemLabel=it.key
+		pm1.itemText=it.key
+		if (it.key.startsWith("Admin")){
+		  pm1.portalMenuType=PortalMenuType.findByMenuTypeName("admin")
+		}else{
+		  pm1.portalMenuType=PortalMenuType.findByMenuTypeName("user")
+ 	    }
+		pm1.save(flush:true)
+		def subMenus=it.value
+		subMenus.each{
+			def action=it.key
+			def psm=new PortalSubMenu()
+			if (it.key.endsWith("Ajax")){
+				action=it.key.substring(1,it.key.length()-4)
+				psm.isAjax="Y"
+			}else{
+			  psm.isAjax="N"
+		    }
+			psm.menuType=PortalMenuType.findByMenuTypeName("user")
+			psm.action=action
+			psm.mainMenu=pm1
+			psm.text=it.value
+			psm.controller=it.key
+			psm.showSpinner="N"
+			psm.showAdmin="N"
+			psm.showAnonymous="N"
+			psm.validate()
+			if (psm.hasErrors()){
+				log.error("Couldn't add subMenu "+it.key+" "+it.value)
+				log.error(psm.errors.allErrors)
+			}
+			psm.save(flush:true)
+		}
+	   }
+	}
     def Party initializeAdmin(partyResults){
         if (partyResults==null){
           	 try{
@@ -517,7 +619,7 @@ class PortalDataService implements PortalData{
         }
     }
     def void initializePortal() {
-/*    	results =     JsecRole.findByName("Administrator")
+    	results =     JsecRole.findByName("Administrator")
         userResults=  JsecUser.findByUsername("admin")
         roleResults=  JsecRole.findByName("Administrator")
         userRoleResults=JsecRole.findByName("User")
@@ -558,6 +660,6 @@ class PortalDataService implements PortalData{
         initializeViewAttributeComponentGroups(viewAttributeComponentGroups)
 		initializeOrderStatuses(orderStatuses)
 		initializeStates(states)
-*/
+        initializeMenu(pc,menus)
     }
 }
