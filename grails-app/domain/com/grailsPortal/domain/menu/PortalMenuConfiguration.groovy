@@ -15,18 +15,32 @@ package com.grailsPortal.domain.menu;
 import com.grailsPortal.domain.portalConfig.PortalConfig
 class PortalMenuConfiguration {
  String  menuName
- Integer position
- Integer hideDelay
+ String  position
+ String  hideDelay
  String  lazyLoad
+ String  style
+ String  width
+ String  height
+ String  borderStyle
+ String  borderWidth
+ String  borderHeight
+ String  margin
  PortalConfig portalConfig
  String isActive
  static hasMany=[portalMenus:PortalMenu]
  static constraints={
 		menuName(size:1..100,blank:false,nullable:false)
-	    position(range:1..1000,blank:false,nullable:false)
-	    hideDelay(range:1..500,blank:false,nullable:false)
-	    lazyLoad(size:1..2,inList['Y','N'],blank:false,nullable:false)
-	    isActive(size:1..2,inList['Y','N'],blank:false,nullable:false)
+	    position(size:1..20,blank:false,nullable:false,inList:["static","dynamic"])
+	    hideDelay(size:1..20,blank:false,nullable:false)
+	    lazyLoad(size:1..2,inList:["Y","N"],blank:false,nullable:false)
+		style(size:1..200,blank:true,nullable:true)
+		width(size:1..30,blank:true,nullable:true)
+		height(size:1..30,blank:true,nullable:true)
+		borderStyle(size:1..300,blank:true,nullable:true)
+		borderWidth(size:1..30,blank:true,nullable:true)
+		borderHeight(size:1..30,blank:true,nullable:true)
+		margin(size:1..30,blank:true,nullable:true)
+	    isActive(size:1..2,inList:["Y","N"],blank:false,nullable:false)
 	    portalConfig(blank:false,nullable:false)
 	}
 }

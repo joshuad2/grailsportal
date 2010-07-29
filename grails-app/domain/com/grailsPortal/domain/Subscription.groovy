@@ -16,7 +16,7 @@ package com.grailsPortal.domain
 class Subscription implements Serializable{
     static mapping = {
          table 'subscription'
-         active column:'active' 
+         isActive column:'active' 
          endDate column:'end_date' 
          paidInFull column:'paid_in_full' 
          renewDate column:'renew_date' 
@@ -25,7 +25,7 @@ class Subscription implements Serializable{
          totalPaid column:'total_paid' 
          orderRecord column:'order_record_id'
     }
-    String active
+    String isActive
     Date endDate
     String paidInFull
     Date renewDate
@@ -34,11 +34,11 @@ class Subscription implements Serializable{
     Double totalPaid
     OrderRecord orderRecord
     static constraints = {
-        active(size: 1..255, blank: false,nullable:false)
-        endDate(nullable: false)
+        isActive(inList:['Y','N'],size: 1..2, blank: false,nullable:false)
+        endDate(nullable: false,blank:false)
         paidInFull(size: 1..255, blank: false,nullable:false)
-        renewDate(nullable: false)
-        startDate(nullable: false)
+        renewDate(nullable: false,blank:false)
+        startDate(nullable: false,blank:false)
         totalAmount(nullable: false)
         totalPaid(nullable: false)
         orderRecord(nullable:false)
