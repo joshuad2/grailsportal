@@ -19,6 +19,7 @@ class AttributeComponentGroup implements Serializable{
     String cd
 	Boolean active
 	Boolean mandatory
+	static hasMany=[attributeComponents:AttributeComponent]
     static constraints = {
     	name(size:1..100,nullable:false,blank:false)
     	dsc(size:1..200,nullable:true,blank:true)

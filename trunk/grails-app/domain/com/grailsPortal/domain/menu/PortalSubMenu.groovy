@@ -17,8 +17,8 @@ class PortalSubMenu {
   String controller
   String action
   String text
-  Boolean isAjax
-  Boolean showSpinner
+  String isAjax
+  String showSpinner
   PortalMenu mainMenu
   String showAdmin
   String showAnonymous
@@ -27,7 +27,11 @@ static constraints={
 		controller(display:true,size:1..40,nullable:false,blank:false)
 	    action(display:true,size:1..40,nullable:true,blank:true)
 	    text(display:true,size:1..100,nullable:false,blank:false)
-	    isAjax(display:true,size:1..2,nullable:false,blank:false,inList:['Y','N'])
+	    isAjax(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
+		showSpinner(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
+		mainMenu(display:false,nullable:false,blank:false)
+		showAdmin(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
+		showAnonymous(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
         menuType(display:true,nullable:false,blank:false)
 	}
 }

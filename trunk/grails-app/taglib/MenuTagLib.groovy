@@ -52,19 +52,7 @@ class MenuTagLib {
 						</menu:simpleSubItem>
 					</menu:mainItem>
 				</shiro:hasAllRoles>	
-	    */
-		def menuMap=["mainItem":
-		              [
-					   ["itemLabel":"administration"],
-					   ["text","admin"],
-		               ["subItem":
-					     [
-					        ["controller":"registrationEvent"]
-					     ]
-		            ]
-				 ]
-		      ]
-		            
+	    */		            
 	}
 	def menuSetup={attrs->
 	 def menuName=attrs["name"]
