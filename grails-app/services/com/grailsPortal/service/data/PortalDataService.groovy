@@ -460,7 +460,7 @@ class PortalDataService implements PortalData{
    def PortalConfig initializePortalConfig(){
 	   PortalConfig pc=new PortalConfig()
 	   pc.name=portalConfigName
-	   pc.description="Wellness Unlimited Portal"
+	   pc.description="West Orlando Arts Foundation"
 	   pc.validate()
 	   if (!pc.hasErrors()){
 	     pc.save(flush:true)

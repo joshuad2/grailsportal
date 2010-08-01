@@ -12,8 +12,11 @@
  * limitations under the License.
  */
 package com.grailsPortal.service.config;
-
+import com.grailsPortal.domain.menu.PortalMenuConfiguration
+import com.grailsPortal.domain.portalConfig.PortalConfig
 class PortalMenuService {
-	
-	
+	def getPortalMenu(portalConfigId){
+		def portalConfig=PortalConfig.get(portalConfigId)
+		return PortalMenuConfiguration.findByPortalConfig(portalConfig)
+	}
 }
