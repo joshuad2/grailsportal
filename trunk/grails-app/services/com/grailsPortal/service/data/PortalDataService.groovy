@@ -188,7 +188,7 @@ class PortalDataService implements PortalData{
 		pm1.save(flush:true)
 		def subMenus=it.value
 		subMenus.each{
-			def action=it.key
+			def action="index"
 			def psm=new PortalSubMenu()
 			if (it.key.endsWith("Ajax")){
 				action=it.key.substring(1,it.key.length()-4)
