@@ -7,5 +7,5 @@ class JsecUserController {
  *  JsecUserController
  *  @author Joshua Davis    
  */
-	def scaffold = true
+	def scaffold = "true"
 }

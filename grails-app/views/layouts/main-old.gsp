@@ -60,7 +60,40 @@ body {
 					<menu:subItem controller="auth" action="edit" text="Edit Profile" />
 				</menu:mainItem>
 				<shiro:hasAllRoles in="['Administrator']">
-                   <menu:adminMenu portalConfigId="1"/>
+					<menu:mainItem itemLabel="administration" text="Admin">
+						<menu:subItem controller="registrationEvent" action="index"
+							text="Manage Registrations" />
+						<menu:subItem controller="user" action="index" action="index"
+							text="Manage Users" />
+						<menu:subItem controller="campOps" action="index"
+							text="Camp Operations" />
+					</menu:mainItem>
+					<menu:mainItem itemLabel="setup" text="Setup">
+						<menu:subItem controller="product" action="index" text="Products" />
+						<menu:subItem controller="contactType" action="index"
+							text="Contact Types" />
+						<menu:subItem controller="partyType" action="index"
+							text="Party Types" />
+						<menu:subItem controller="contactType" action="index"
+							text="Contact Types" />
+						<menu:subItem controller="paymentType" action="index"
+							text="Payment Types" />
+						<menu:subItem controller="relationshipType" action="index"
+							text="Relationship Types" />
+						<menu:subItem controller="responsibility" action="index"
+							text="Responsibilities" />
+						<menu:subItem controller="role" action="index" text="Roles" />
+						<menu:subItem controller="salesChannel" action="index"
+							text="Sales Channels" />
+						<menu:subItem controller="salesChannelType" action="index"
+							text="Sales Channel Type" />
+						<menu:simpleSubItem id="attributeTypeLink">
+							<g:remoteLink controller="attributeType" action="remoteList"
+								update="attributeTypes"
+								onLoading="showSpinner('attributeTypes');"
+								onLoaded="showRegular('attributeTypes');">Attribute Types</g:remoteLink>
+						</menu:simpleSubItem>
+					</menu:mainItem>
 				</shiro:hasAllRoles>
 				<shiro:hasAllRoles in="['User']">
 				<menu:mainItem itemLabel="setup" text="Setup">

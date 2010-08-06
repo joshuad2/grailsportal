@@ -159,7 +159,12 @@ class PortalDataService implements PortalData{
 	 */
 	def initializeMenuConfig(portalConfig){
 	   def menuConfig= new PortalMenuConfiguration()
-	   menuConfig.hideDelay=750
+	   menuConfig.hideDelay="750"
+	   menuConfig.borderHeight="800px"
+	   menuConfig.borderWidth="100px"
+	   menuConfig.height="400px"
+	   menuConfig.margin="10px"
+	   menuConfig.width="100px"
 	   menuConfig.position="static"
 	   menuConfig.isActive="Y"
 	   menuConfig.lazyLoad="N"
@@ -191,7 +196,7 @@ class PortalDataService implements PortalData{
 			}else{
 			  psm.isAjax="N"
 		    }
-			psm.menuType=PortalMenuType.findByMenuTypeName("user")
+			psm.portalMenuType=PortalMenuType.findByMenuTypeName("user")
 			psm.action=action
 			psm.mainMenu=pm1
 			psm.text=it.value

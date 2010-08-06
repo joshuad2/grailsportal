@@ -22,7 +22,12 @@ class PortalSubMenu {
   PortalMenu mainMenu
   String showAdmin
   String showAnonymous
-  PortalMenuType menuType
+  PortalMenuType portalMenuType
+  static fetchMode = [mainMenu:"eager",portalMenuType:"eager"]
+  static mapping = {
+	  mainMenu lazy:false
+	  portalMenuType lazy:false
+  }
 static constraints={
 		controller(display:true,size:1..40,nullable:false,blank:false)
 	    action(display:true,size:1..40,nullable:true,blank:true)
@@ -32,6 +37,6 @@ static constraints={
 		mainMenu(display:false,nullable:false,blank:false)
 		showAdmin(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
 		showAnonymous(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
-        menuType(display:true,nullable:false,blank:false)
+        portalMenuType(display:true,nullable:false,blank:false)
 	}
 }

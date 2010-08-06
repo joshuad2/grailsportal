@@ -19,5 +19,5 @@ class AttributeComponentGroupController {
  *  AttributeComponentGroupController
  *  @author Joshua Davis    
  */
-	def scaffold = true
+	def scaffold = "true"
 }
