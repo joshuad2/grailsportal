@@ -14,64 +14,81 @@ package com.grailsPortal.taglib
  * limitations under the License.
  */
 import org.codehaus.groovy.grails.plugins.web.taglib.*;
-
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 class MenuTagLib {
 	static namespace = 'menu'
-    def adminMenu={attrs->
-	   /*
-	    * 					<menu:mainItem itemLabel="administration" text="Admin">
-						<menu:subItem controller="registrationEvent" action="index"
-							text="Manage Registrations" />
-						<menu:subItem controller="user" action="index" action="index"
-							text="Manage Users" />
-						<menu:subItem controller="campOps" action="index"
-							text="Camp Operations" />
-					</menu:mainItem>
-					<menu:mainItem itemLabel="setup" text="Setup">
-						<menu:subItem controller="product" action="index" text="Products" />
-						<menu:subItem controller="contactType" action="index"
-							text="Contact Types" />
-						<menu:subItem controller="partyType" action="index"
-							text="Party Types" />
-						<menu:subItem controller="contactType" action="index"
-							text="Contact Types" />
-						<menu:subItem controller="paymentType" action="index"
-							text="Payment Types" />
-						<menu:subItem controller="relationshipType" action="index"
-							text="Relationship Types" />
-						<menu:subItem controller="responsibility" action="index"
-							text="Responsibilities" />
-						<menu:subItem controller="role" action="index" text="Roles" />
-						<menu:subItem controller="salesChannel" action="index"
-							text="Sales Channels" />
-						<menu:subItem controller="salesChannelType" action="index"
-							text="Sales Channel Type" />
-						<menu:simpleSubItem id="attributeTypeLink">
-							<g:remoteLink controller="attributeType" action="remoteList"
-								update="attributeTypes"
-								onLoading="showSpinner('attributeTypes');"
-								onLoaded="showRegular('attributeTypes');">Attribute Types</g:remoteLink>
-						</menu:simpleSubItem>
-					</menu:mainItem>
-				</shiro:hasAllRoles>	
-	    */		            
+    static final String SVC_NAME="portalMenuService"
+   def getPortalMenuService(){
+		def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+		def pms=ctx.getBean(SVC_NAME)
+		return pms
 	}
+	
+    def adminMenu={attrs->
+		def portalMenuService=getPortalMenuService()
+		def pmConfig=portalMenuService.getPortalMenu(attrs.portalConfigId)
+		String preMenu=""
+		String postMenu=""
+		def t=""
+		pmConfig.portalMenus.each{
+		  def pm=it
+			//check to see if it is an admin menu and then apply the security
+		  if (pm.portalMenuType.menuTypeName=="admin"){
+				
+			}
+		  if (pm.portalMenuType.menuTypeName=="anonymous"){
+				
+			}
+		  if (pm.portalMenuType.menuTypeName=="user"){
+				
+			}
+		  def body=""
+		  pm.subMenus.each{
+		  def sm=it
+		  if (sm.isAjax=="Y"){
+			body+=menu.simpleSubItem(["id":sm.controller+"Link"],
+			                         g.remoteLink(["controller":sm.controller,
+					                               "action":sm.action,
+					                               "update":sm.controller+"s"],
+					                                      sm.text))
+				}
+				else{
+				  body+=
+				  menu.subItem(["text":sm.text,"controller":sm.controller,"action":sm.action])
+				}
+		    }
+			t+=
+			menu.mainItem(["itemLabel":pm.itemLabel,"text":pm.itemText],body)
+		}		            
+	 out << t
+	}
+	
 	def menuSetup={attrs->
+	 def portalMenuService=getPortalMenuService()
+	 def pcId=attrs["portalConfigId"]
+	 if (pcId==null){
+      pcId="1"		
+	}
+	 def pmConfig=portalMenuService.getPortalMenu(pcId)
 	 def menuName=attrs["name"]
 	 def position=attrs["position"]
 	 def hideDelay=attrs["hideDelay"]
 	 def lazyLoad=attrs["lazyload"]
 	 if (hideDelay==null || hideDelay==""){
-		 hideDelay="750"
+		 hideDelay=pmConfig.hideDelay
 	 }
 	 if (position==null || position==""){
-		 position="static"
+		 position=pmConfig.position
 	 }
 	 if (menuName==null || menuName==""){
-		 menuName=new Date().fastTime
+		 menuName=pmConfig.menuName
 	 }
 	 if (lazyLoad==null || lazyLoad==""){
+		if (pmConfig.lazyLoad=="Y"){
 		 lazyLoad="true"
+		}else{
+			lazyLoad="false"
+		}
 	 }
      def t='<script type="text/javascript">'+
            'YAHOO.util.Event.onContentReady("basicmenu",function ()'+
@@ -85,6 +102,7 @@ class MenuTagLib {
             '</script>'
      out << t
 	} 
+	
 	def menuBody={attrs, body ->
 	  	def style=attrs["style"]
 		def id=attrs["id"]
@@ -98,33 +116,39 @@ class MenuTagLib {
 		out << t+">"+body()+"</body>"
 	}
 	def menuContainer={attrs, body ->
+		def portalMenuService=getPortalMenuService()
+		def portalConfigId=attrs["portalConfigId"]
+		if (portalConfigId==null){
+			portalConfigId="1"
+		}
+		def pmConfig=portalMenuService.getPortalMenu(portalConfigId)
 		def style=attrs["style"]
 		if (style==null){
-			style=""
+			style=pmConfig["style"]
 		}
 		def width=attrs["width"]
 		if (width==null){
-			width="140px"
+			width=pmConfig["width"]
 		}
 		def height=attrs["height"]
 		if (height==null){
-			height="400px"
+			height=pmConfig["height"]
 		}
 		def margin=attrs["margin"]
 		if (margin==null){
-			margin="17px"
+			margin=pmConfig["margin"]
 		}
 		def borderStyle=attrs["borderStyle"]
 		if (borderStyle==null){
-			borderStyle=""
+			borderStyle=pmConfig["borderStyle"]
 		}
 		def borderWidth=attrs["borderWidth"]
 		if (borderWidth==null){
-			borderWidth="135px"
+			borderWidth=pmConfig["borderWidth"]
 		}
 		def borderHeight=["borderHeight"]
 		if (borderHeight==null){
-			borderHeight="400px"
+			borderHeight=pmConfig["borderHeight"]
 		}
 		def t="<div id=\"menuContainer\" style=\"width: "+width+";height: "+height+"; margin:"+margin+";"+style+"\">\n"+
 		      "<div id=\"basicmenu\" class=\"yuimenu\">\n"+
@@ -152,7 +176,7 @@ class MenuTagLib {
 		def text=attrs["text"]
 		def id=attrs["id"]
 		if (id=="" || id==null){
-			id=java.util.UUID.toString();
+			id=java.util.UUID.randomUUID().toString();
 		}
 		def t="<li class=\"yuimenuitem\" id=\""+id+"\">\n"+
 		      "<a href=\""+lib.createLink(attrs)+"\">"+text+"</a>\n"+
@@ -162,7 +186,7 @@ class MenuTagLib {
 	def simpleSubItem={attrs,body->
 		def id=attrs["id"]
 		if (id=="" || id==null){
-			id=java.util.UUID.toString();
+			id=java.util.UUID.randomUUID().toString();
 		}
 		def t="<li class=\"yuimenuitem\" id=\""+id+"\">\n"
 		def u="</li>"

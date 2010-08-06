@@ -28,6 +28,10 @@ class PortalMenuConfiguration {
  PortalConfig portalConfig
  String isActive
  static hasMany=[portalMenus:PortalMenu]
+ static mapping={
+	 portalMenus lazy:false
+ }
+
  static constraints={
 		menuName(size:1..100,blank:false,nullable:false)
 	    position(size:1..20,blank:false,nullable:false,inList:["static","dynamic"])

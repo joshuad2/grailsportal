@@ -7,5 +7,5 @@ class JsecRolePermissionRelController {
  *  JsecRolePermissionRelController
  *  @author Joshua Davis    
  */
-	def scaffold = true
+	def scaffold = "true"
 }

@@ -20,6 +20,10 @@ class PortalMenu {
 	PortalMenuConfiguration configuration
 	String isActive
 	static hasMany=[subMenus:PortalSubMenu]
+    static mapping = {
+		subMenus lazy:false
+		portalMenuType lazy:false
+	}
     static constraints = {
 		itemLabel(size:1..40,blank:false,nullable:false)
 		itemText(size:1..100,blank:false,nullable:false)

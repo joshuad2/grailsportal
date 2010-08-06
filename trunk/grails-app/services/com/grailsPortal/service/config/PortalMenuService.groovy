@@ -16,7 +16,14 @@ import com.grailsPortal.domain.menu.PortalMenuConfiguration
 import com.grailsPortal.domain.portalConfig.PortalConfig
 class PortalMenuService {
 	def getPortalMenu(portalConfigId){
-		def portalConfig=PortalConfig.get(portalConfigId)
+		def pcId=portalConfigId
+		if (portalConfigId==null){
+		  pcId="1"
+		}
+		def portalConfig=PortalConfig.get(pcId)
+		if (portalConfig==null){
+			throw new Exception()
+		}
 		return PortalMenuConfiguration.findByPortalConfig(portalConfig)
 	}
 }
