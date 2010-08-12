@@ -127,7 +127,11 @@ class PortalDataService implements PortalData{
 			            "salesChannel":"Sales Channels",
 			            "salesChannelType":"Sales Channel Type",
 			            "attributeAjax":"attributeTypeLink"
-			            ]
+			            ],
+	"Menu":["portalMenuType":"Menu Types",
+	"portalMenuConfiguration":"Portal Menu Configuration",
+	"portalMenu":"Portal Menus"
+	]
 	          ]
 	JsecUser userResults
     JsecRole roleResults
