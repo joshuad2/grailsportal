@@ -114,11 +114,9 @@ class PortalDataService implements PortalData{
     def orderStatuses=["IA":"Inactive","IP":"In Process","PIF":"Paid In Full","PP":"Partial Payment","WT":"Waitlisted","LT":"Late Payment Due"]
 	def menus=["Admin":["registrationEvent":"Manage Registrations",
 	                    "user":"Manage",
-						"campOps":"Camp Operations"],
-						"setup":["product":"Products",
-	                             "contactType":"Contact Types",
-								 "partyType":"Party Types"],
+						"campOps":"Operations"],
 	           "Setup":["product":"Products",
+			            "partyType":"Party Types",
 			            "contactType":"Contact Types",
 			            "paymentType":"Payment Types",
 			            "relationshipType":"Relationship Types",
