@@ -47,4 +47,7 @@ class PortalMenuConfiguration {
 	    isActive(size:1..2,inList:["Y","N"],blank:false,nullable:false)
 	    portalConfig(blank:false,nullable:false)
 	}
+  String toString(){
+		return menuName
+	}
 }
