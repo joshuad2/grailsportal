@@ -21,5 +21,7 @@ class PortalMenuType {
 		menuTypeName(size:1..40,blank:false,nullable:false)
 		menuTypeDesc(size:1..100,blank:false,nullable:false)
  }
-
+  String toString(){
+		return menuTypeName
+	}
 }

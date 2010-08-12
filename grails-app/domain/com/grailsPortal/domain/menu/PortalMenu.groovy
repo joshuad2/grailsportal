@@ -30,4 +30,8 @@ class PortalMenu {
 		portalMenuType(blank:false,nullable:false)
 		isActive(size:1..2,blank:false,nullable:false,inList:['Y','N'])
     }
+	
+	String toString(){
+	 return itemLabel+":"+itemText	
+	}
 }

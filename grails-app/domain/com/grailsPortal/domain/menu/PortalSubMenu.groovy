@@ -39,4 +39,8 @@ static constraints={
 		showAnonymous(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
         portalMenuType(display:true,nullable:false,blank:false)
 	}
+String toString(){
+		return text
+	}
 }
+
