@@ -36,14 +36,159 @@
 	</natures>
 	<linkedResources>
 		<link>
+			<name>bubbling-2.1.1-grails-app-i18n</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/bubbling-2.1.1/grails-app/i18n</location>
+		</link>
+		<link>
+			<name>bubbling-2.1.1-grails-app-taglib</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/bubbling-2.1.1/grails-app/taglib</location>
+		</link>
+		<link>
+			<name>bubbling-2.1.1-src-groovy</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/bubbling-2.1.1/src/groovy</location>
+		</link>
+		<link>
+			<name>console-0.2.2-grails-app-controllers</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/console-0.2.2/grails-app/controllers</location>
+		</link>
+		<link>
+			<name>console-0.2.2-grails-app-i18n</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/console-0.2.2/grails-app/i18n</location>
+		</link>
+		<link>
+			<name>console-0.2.2-grails-app-services</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/console-0.2.2/grails-app/services</location>
+		</link>
+		<link>
+			<name>console-0.2.2-grails-app-utils</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/console-0.2.2/grails-app/utils</location>
+		</link>
+		<link>
+			<name>console-0.2.2-grails-app-views</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/console-0.2.2/grails-app/views</location>
+		</link>
+		<link>
+			<name>daisy-cms-0.1-grails-app-controllers</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/daisy-cms-0.1/grails-app/controllers</location>
+		</link>
+		<link>
+			<name>daisy-cms-0.1-grails-app-i18n</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/daisy-cms-0.1/grails-app/i18n</location>
+		</link>
+		<link>
+			<name>daisy-cms-0.1-grails-app-services</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/daisy-cms-0.1/grails-app/services</location>
+		</link>
+		<link>
+			<name>daisy-cms-0.1-grails-app-taglib</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/daisy-cms-0.1/grails-app/taglib</location>
+		</link>
+		<link>
+			<name>daisy-cms-0.1-src-java</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/daisy-cms-0.1/src/java</location>
+		</link>
+		<link>
+			<name>db-util-0.4-grails-app-controllers</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/db-util-0.4/grails-app/controllers</location>
+		</link>
+		<link>
+			<name>db-util-0.4-grails-app-views</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/db-util-0.4/grails-app/views</location>
+		</link>
+		<link>
+			<name>grails-ui-1.1.1-grails-app-conf</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/grails-app/conf</location>
+		</link>
+		<link>
+			<name>grails-ui-1.1.1-grails-app-i18n</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/grails-app/i18n</location>
+		</link>
+		<link>
+			<name>grails-ui-1.1.1-grails-app-services</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/grails-app/services</location>
+		</link>
+		<link>
+			<name>grails-ui-1.1.1-grails-app-taglib</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/grails-app/taglib</location>
+		</link>
+		<link>
+			<name>grails-ui-1.1.1-src-groovy</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/src/groovy</location>
+		</link>
+		<link>
 			<name>groovy</name>
 			<type>2</type>
 			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/src/groovy</location>
 		</link>
 		<link>
+			<name>shiro-1.0.1-grails-app-conf</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/shiro-1.0.1/grails-app/conf</location>
+		</link>
+		<link>
+			<name>shiro-1.0.1-grails-app-i18n</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/shiro-1.0.1/grails-app/i18n</location>
+		</link>
+		<link>
+			<name>shiro-1.0.1-grails-app-taglib</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/shiro-1.0.1/grails-app/taglib</location>
+		</link>
+		<link>
+			<name>shiro-1.0.1-src-groovy</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/shiro-1.0.1/src/groovy</location>
+		</link>
+		<link>
+			<name>shiro-1.0.1-src-java</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/shiro-1.0.1/src/java</location>
+		</link>
+		<link>
 			<name>taglib</name>
 			<type>2</type>
 			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/grails-app/taglib</location>
+		</link>
+		<link>
+			<name>tomcat-1.3.1-src-groovy</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/tomcat-1.3.1/src/groovy</location>
+		</link>
+		<link>
+			<name>yui-2.7.0.1-grails-app-i18n</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/yui-2.7.0.1/grails-app/i18n</location>
+		</link>
+		<link>
+			<name>yui-2.7.0.1-grails-app-taglib</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/yui-2.7.0.1/grails-app/taglib</location>
+		</link>
+		<link>
+			<name>yui-2.7.0.1-src-groovy</name>
+			<type>2</type>
+			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/yui-2.7.0.1/src/groovy</location>
 		</link>
 	</linkedResources>
 </projectDescription>
