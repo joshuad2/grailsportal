@@ -3,20 +3,34 @@ package com.grailsPortal.generator
 class PortalScaffoldingGenerator {
 	private renderEnumEditor(domainClass,property) {
 		if(property.isEnum()) {
-			return "<g:select  from=\"\${${property.type.name}?.values()}\""+
-			" value=\"\${${domainInstance}?.${property.name}}\" "+
-			"name=\"${property.name}\" ${renderNoSelection(property)}></g:select>"
+			return """"\
+			 <g:select from="\${${property.type.name}?.values()}" 
+			           value="\${${domainInstance}?.${property.name}}"
+			           name="${property.name}" 
+			          ${renderNoSelection(property)}>
+			</g:select>
+			"""
 		}
 	}
-	private renderStringEditor(domainClass, property) {
+	private renderStringEditor(domainClass, property,cp) {
 		if(!cp) {
-			return "<input type=\"text\" name=\"${property.name}\" id=\"${property.name}\""+
-			" value=\"\${fieldValue(bean:${domainInstance},field:'${property.name}')}\" />"
+			return """\
+			<input type="text" 
+			       name="${property.name}"
+			       id="${property.name}"
+			       value="\${fieldValue(bean:${domainInstance},field:'${property.name}')}" 
+			 />
+			"""
 		}
 		else {
-			if("textarea" == cp.widget || (cp.maxSize > 250 && !cp.password && !cp.inList)) {
-				return "<textarea rows=\"5\" cols=\"40\" name=\"${property.name}\">"+
-				"\${fieldValue(bean:${domainInstance}, field:'${property.name}')}</textarea>"
+			if("textarea" == cp.widget 
+			             || (cp.maxSize > 250 && !cp.password && !cp.inList)) {
+				return """\
+			     <textarea rows="5" cols="40"
+			               name="${property.name}">
+				\${fieldValue(bean:${domainInstance}, field:'${property.name}')}
+			</textarea>
+			"""
 			}
 			else {
 				if(cp.inList) {
