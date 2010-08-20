@@ -279,8 +279,8 @@ class PortalDataService implements PortalData{
              }
     }
 
-    def initializeValue= {cls, className, name, cd, dsc,results->
-    	if (results==null){
+    def initializeValue= {cls, className, name, cd, dsc,valResults->
+    	if (valResults!=null){
     		if (name!=null){
     			cls.name=name
     		}
@@ -404,8 +404,9 @@ class PortalDataService implements PortalData{
    
    def void initializeSalesChannels(SalesChannels,channelType){
      salesChannels.each{
-	   	 def sc= initializeValue(new SalesChannel(),"Sales Channel",it,it,it,SalesChannel.findByName(it))
-	   	 sc.salesChannelType=channelType
+	   	 def salesChannel = initializeValue(new SalesChannel(),"Sales Channel",it,it,it,SalesChannel.findByName(it))
+	   	 SalesChannel sc = salesChannel
+		 sc.salesChannelType=channelType
 	   	 sc.save(flush:true)
      }
    }
