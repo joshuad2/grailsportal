@@ -116,7 +116,6 @@
     </g:if>
   </div>
   </g:else>
-  </g:else>
   <div id="drPart" class="drPart">
   <div id="drHeader" class="drHeader">Doctor Information</div>
   <g:if test="${regEvent.registrationDoctor!=null}">

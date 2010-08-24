@@ -23,7 +23,7 @@
 		value="${OrderRecordLineItem.findAllByOrderRecord(regEvent.orderRecord)}" />
 </g:if>
 <g:else>
-	<g:set var="regEvent" value="${new RegistrationEvent()}" />
+	<g:set var="regEvent" value="${new com.grailsPortal.domain.RegistrationEvent()}" />
 </g:else>
 <g:form action="register" method="post">
 <div id="mainParent" class="dialog">

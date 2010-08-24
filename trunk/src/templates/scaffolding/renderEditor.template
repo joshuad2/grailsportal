@@ -31,12 +31,12 @@
 
 	private renderEnumEditor(domainClass,property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderEnumEditor(domainClass,property)
+        return gen.renderEnumEditor(domainClass,property,domainInstance)
 	}
 
 	private renderStringEditor(domainClass, property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderStringEditor(domainClass,property)
+        return gen.renderStringEditor(domainClass,property,cp,domainInstance)
 	}
 	
 	private renderByteArrayEditor(domainClass,property) {
@@ -46,34 +46,34 @@
 	
 	private renderManyToOne(domainClass,property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderManyToOne(domainClass,property)
+        return gen.renderManyToOne(domainClass,property,cp,domainInstance)
 	}
 
 private renderManyToMany(domainClass,property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderManyToMany(domainClass,property)
+        return gen.renderManyToMany(domainClass,property,cp,domainInstance)
   }
 private renderOneToMany(domainClass,property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-		return gen.renderOneToMany(domainClass,property)
+		return gen.renderOneToMany(domainClass,property,domainInstance)
 	}
 	
 	private renderNumberEditor(domainClass,property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderNumberEditor(domainClass,property)
+        return gen.renderNumberEditor(domainClass,property,cp,domainInstance)
 	}
 	
-	private renderBooleanEditor(domainClass,property) {
+	private renderBooleanEditor(domainClass,property,domainInstance) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderBooleanEditor(domainClass,property)
+        return gen.renderBooleanEditor(domainClass,property,cp,domainInstance)
 	}
 	
-	private renderDateEditor(domainClass,property) {
+	private renderDateEditor(domainClass,property,cp,domainInstance) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderDateEditor(domainClass,property)
+        return gen.renderDateEditor(domainClass,property,cp)
 	}
 	
-	private renderSelectTypeEditor(type,domainClass,property) {
+	private renderSelectTypeEditor(type,domainClass,property,cp,domainInstance) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
         return gen.renderSelectTypeEditor(domainClass,property)
 	}
