@@ -25,7 +25,6 @@ package com.grailsPortal.domain.attribute
  *
  */
 class Attribute implements Serializable{
-
     String cd
     String dsc
     String name
@@ -37,8 +36,8 @@ class Attribute implements Serializable{
         cd(size: 1..20, blank: false,nullable:false)
         dsc(size: 1..200, blank: false,nullable:false)
         name(size: 1..100, blank: false,nullable:false)
-        attributeDataType(nullable:true)
-        attributeType(nullable:false)
+        attributeDataType(blank:false,nullable:true)
+        attributeType(blank:false,nullable:false)
 		maximumWidth(nullable:true,blank:true)
         pathToAttribute(size:1..100, blank:true,nullable:true)
     }

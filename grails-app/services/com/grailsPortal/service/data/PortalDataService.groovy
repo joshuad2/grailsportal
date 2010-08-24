@@ -27,7 +27,7 @@ import com.grailsPortal.domain.portalConfig.View;
 import com.grailsPortal.domain.portalConfig.ViewAttributeComponentGroup;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 
-import org.apache.shiro.crypto.hash.Sha1Hash
+import org.apache.shiro.crypto.hash.Sha256Hash
 import grails.util.Environment
 import org.woaf.portal.PortalData;
 import org.codehaus.groovy.grails.commons.GrailsClass;
@@ -53,7 +53,7 @@ class PortalDataService implements PortalData{
     def partyTypes=["Organization","User","Employee","Volunteer","Child","Parent","Contact"]
     def partyRoles=["Primary Parent","Secondary Parent","Emergency","Pickup","Registrant","Doctor","Other"]
     def paymentMethodTypes=["VISA","MC","AMEX","Discover","PayPal","Cash","Check"]
-    def salesChannels=["WLNU"]
+    def salesChannels=["On-Line"]
     def paymentTypes=["One-Time","Recurring","Monthly","Weekly","Deposit"]
     def productTypes=["Inventory","Classes"]
     def relationshipTypes=["Father","Mother","Sister","Brother","Grandmother","Grandfather","Guardian","Cousin","Friend Of Family"]     
@@ -254,7 +254,7 @@ class PortalDataService implements PortalData{
     def void initializeUsers(userResults){
         if (userResults!=null){
           	 if(Environment.current==Environment.DEVELOPMENT) {
-          	   userResults.passwordHash=new Sha1Hash("admin").toHex();
+          	   userResults.passwordHash=new Sha256Hash("admin").toHex();
           	   userResults.save(flush:true)
                  if (userResults!=null){
               	 log.error("updated admin user for DEVELOPMENT ENVIRONMENT")
@@ -265,7 +265,7 @@ class PortalDataService implements PortalData{
           	 }
            }else{
                def adminUser = new JsecUser(username: "admin", 
-			                                passwordHash: new Sha1Hash("admin").toHex(),
+			                                passwordHash: new Sha256Hash("admin").toHex(),
 			                                party:adminParty,
 					                        active:true
 					                        ).save(flush:true)
@@ -280,7 +280,7 @@ class PortalDataService implements PortalData{
     }
 
     def initializeValue= {cls, className, name, cd, dsc,valResults->
-    	if (valResults!=null){
+    	if (valResults==null){
     		if (name!=null){
     			cls.name=name
     		}
@@ -648,9 +648,8 @@ class PortalDataService implements PortalData{
         initializeSalesChannelTypes(salesChannelTypes)
         def onLine=SalesChannelType.findByName("On-Line")
         initializeSalesChannels(salesChannels, onLine)
-        def woafSc=SalesChannel.findByName("WLNU")
         def classesProductType=ProductType.findByName("Classes")
-        initializeProducts(products,classesProductType,woafSc)
+        initializeProducts(products,classesProductType,onLine)
         initializeResponsibilities(responsibilities)
         initializePartyTypes(partyTypes)
         initializePartyRoles(partyRoles)
@@ -661,7 +660,8 @@ class PortalDataService implements PortalData{
         initializeView(views,PortalConfigBusinessProcess.findByName("Registration"))
         initializeComponents(components)
         initializeAttributeDataTypes(attributeDataTypes)
-        initializeAttributes(attributes,AttributeType.findByName("PortalFieldValue"),AttributeDataType.findByName("String"))
+        initializeAttributes(attributes,AttributeType.findByName("PortalFieldValue"),
+			                 AttributeDataType.findByName("String"))
         initializePortalConfigValues(pc)
         initializeAttributeComponentGroups(attributeComponentGroups)
 		initializeAttributeValues(attributeValues)

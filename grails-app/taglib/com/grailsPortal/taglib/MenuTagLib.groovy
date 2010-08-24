@@ -94,8 +94,8 @@ class MenuTagLib {
            'YAHOO.util.Event.onContentReady("basicmenu",function ()'+
     	   ' {var oMenu = new YAHOO.widget.Menu("basicmenu",{'+  
                                          ' position: "'+position+'",'+  
-                                         ' hidedelay: '+ hideDelay+','+  
-                                         ' lazyload: '+lazyLoad+' });'+
+                                         ' hidedelay: \"'+ hideDelay+'\",'+  
+                                         ' lazyload: \"'+lazyLoad+'\" });'+
                                          ' oMenu.render();'+
                                          ' oMenu.show();'+
                                          '});'+
@@ -125,6 +125,9 @@ class MenuTagLib {
 		def style=attrs["style"]
 		if (style==null){
 			style=pmConfig["style"]
+			if (style==null){
+				style=""
+			}
 		}
 		def width=attrs["width"]
 		if (width==null){
@@ -141,6 +144,9 @@ class MenuTagLib {
 		def borderStyle=attrs["borderStyle"]
 		if (borderStyle==null){
 			borderStyle=pmConfig["borderStyle"]
+			if (borderStyle==null){
+				borderStyle=""
+			}
 		}
 		def borderWidth=attrs["borderWidth"]
 		if (borderWidth==null){
@@ -152,7 +158,7 @@ class MenuTagLib {
 		}
 		def t="<div id=\"menuContainer\" style=\"width: "+width+";height: "+height+"; margin:"+margin+";"+style+"\">\n"+
 		      "<div id=\"basicmenu\" class=\"yuimenu\">\n"+
-		      "<div class=\"bd\" style=\"width: "+borderWidth+"; height: "+height+";"+borderStyle+"\">\n"
+		      "<div class=\"bd\" style=\"width: "+borderWidth+"; height: "+height+";"+"\">\n"
 		def u="</div>\n</div>\n</div>\n"
 		out << t+body()+u
 	}
@@ -163,7 +169,7 @@ class MenuTagLib {
 	   def t="<li class=\"yuimenuitem\">\n"+
 	         "<a class=\"yuimenuitemlabel\" href=\"#"+itemLabel+"\">"+text+"</a>\n"+
 			"<div id=\""+itemLabel+"\" class=\"yuimenu\">\n"+
-		     "<div class=\"bd\" style=\"width: 150px\">\n"+
+		     "<div class=\"bd\" style=\"width: 200px\">\n"+
 		     "<ul>\n"
 		def u="</ul>\n"+
 		      "</div>\n"+

@@ -1,7 +1,7 @@
 package com.grailsPortal.generator
 
 class PortalScaffoldingGenerator {
-	private renderEnumEditor(domainClass,property) {
+	private renderEnumEditor(domainClass,property,domainInstance) {
 		if(property.isEnum()) {
 			return """"\
 			 <g:select from="\${${property.type.name}?.values()}" 
@@ -12,7 +12,7 @@ class PortalScaffoldingGenerator {
 			"""
 		}
 	}
-	private renderStringEditor(domainClass, property,cp) {
+	private renderStringEditor(domainClass, property, cp, domainInstance) {
 		if(!cp) {
 			return """\
 			<input type="text" 
@@ -58,7 +58,7 @@ class PortalScaffoldingGenerator {
 		return "<input type=\"file\" id=\"${property.name}\" name=\"${property.name}\" />"
 	}
 	
-	private renderManyToOne(domainClass,property) {
+	private renderManyToOne(domainClass,property,cp,domainInstance) {
 		def valueRoles=cp.getMetaConstraintValue("valueRoles")
 		def selectQuery=cp.getMetaConstraintValue("selectQuery")
 		def selectValues=cp.getMetaConstraintValue("selectValues")
@@ -126,7 +126,7 @@ class PortalScaffoldingGenerator {
 		return buf.toString() 
 	}
 	
-	private renderManyToMany(domainClass,property) {
+	private renderManyToMany(domainClass,property,cp,domainInstance) {
 		def sw = new StringWriter()
 		def pw = new PrintWriter(sw)
 		def shiroRole=cp.getMetaConstraintValue("shiroRole")
@@ -156,36 +156,35 @@ class PortalScaffoldingGenerator {
 		}
 	}
 	
-	private renderOneToMany(domainClass,property) {
+	private renderOneToMany(domainClass,property,domainInstance) {
 		def sw = new StringWriter()
 		def pw = new PrintWriter(sw)
 		pw.println()
 		def t="""\
 		<ul> 
-		  <g:each var="${property.name[0]}" in="\${\${domainInstance}?.${property.name}?}">
+		  <g:each var="${property.name[0]}" in="\${${domainInstance}.${property.name}}">
 		  <li>
 		    <div id="editThe${property.referencedDomainClass.shortName}"> 
 		      <g:remoteLink update="edit${property.referencedDomainClass.shortName}" 
 		                    controller="${property.referencedDomainClass.shortName}" 
 						    action="show" 
-							id="\${${property.name[0]}.id}>"
+							id="\${${property.name[0]}.id}"\
+							>
 									\${${property.name[0]}?.encodeAsHTML()}
 		      </g:remoteLink>
 		   </li>
 		 </g:each>
 		</ul>
 		<g:link controller="${property.referencedDomainClass.propertyName}" 
-		        params="['${domainClass.propertyName}.id':\${domainInstance}?.id]" 
+		        params="['${domainClass.propertyName}.id':${domainInstance}?.id]" 
 		        action="create">
 		           Add
 	    </g:link>
 		"""
-		pw.println(t)
-		System.out.println(t)
 		return sw.toString()
 	}
 	
-	private renderNumberEditor(domainClass,property) {
+	private renderNumberEditor(domainClass,property,cp,domainInstance) {
 		if(!cp) {
 			if(property.type == Byte.class) {
 				return "<g:select from=\"\${-128..127}\" name=\"${property.name}\" "+
@@ -219,7 +218,7 @@ class PortalScaffoldingGenerator {
 		}
 	}
 	
-	private renderBooleanEditor(domainClass,property) {
+	private renderBooleanEditor(domainClass,property,cp,domainInstance) {
 		if(!cp) {
 			return "<g:checkBox name=\"${property.name}\" value=\"\${${domainInstance}?.${property.name}}\"></g:checkBox>"
 		}
@@ -236,7 +235,7 @@ class PortalScaffoldingGenerator {
 		}
 	}
 	
-	private renderDateEditor(domainClass,property) {
+	private renderDateEditor(domainClass,property,cp,domainInstance) {
 		def precision = property.type == java.sql.Date ? 'day' : 'minute';
 		if(!cp) {
 			return "<g:datePicker name=\"${property.name}\" value=\"\${${domainInstance}?.${property.name}}\" precision=\"${precision}\"></g:datePicker>"
@@ -259,7 +258,7 @@ class PortalScaffoldingGenerator {
 		}
 	}
 	
-	private renderSelectTypeEditor(type,domainClass,property) {
+	private renderSelectTypeEditor(type,domainClass,property,cp,domainInstance) {
 		if(!cp) {
 			def buf= new StringBuffer("<g:${type}Select name=\"${property.name}\" value=\"\${${domainInstance}?.${property.name}}\"></g:${type}Select>")
 			buf << "<g:link controller=\"${property.name}\" params=\"['${property.id}':${domainInstance}?.id]\" action=\"create\">Add ${property.name}</g:link>"
