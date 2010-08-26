@@ -22,11 +22,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>tomcat-1.2.2-src-groovy</name>
-			<type>2</type>
-			<location>C:/Documents and Settings/ctsuser/.grails/1.2.2/projects/DaisyCms/plugins/tomcat-1.2.2/src/groovy</location>
-		</link>
-	</linkedResources>
 </projectDescription>
