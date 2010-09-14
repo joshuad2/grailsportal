@@ -10,8 +10,7 @@
 <body>
 <div class="nav"><span class="menuButton"><a class="home"
 	href="\${resource(dir:'')}">Home</a></span> <span class="menuButton"
-	id="createThe${className}"> <g:remoteLink action="create"
-	update="create${className}">New</g:remoteLink> </span></div>
+	id="createThe${className}"> <g:link action="create" >New</g:link> </span></div>
 <div class="body">
 <h1 style="margin-left: 20px;">West Orlando Arts Foundation - ${className}
 </h1>
@@ -50,9 +49,9 @@
                                 if(i == 0) { %>
 				<td>
 				<div id="link${className}">
-				 <g:remoteLink action="show"
-					id="\${${propertyName}.id}" update="show${className}">
-					\${fieldValue(bean:${propertyName}, field:'id')}</g:remoteLink>
+				 <g:link action="show"
+					id="\${${propertyName}.id}">
+					\${fieldValue(bean:${propertyName}, field:'id')}</g:link>
 				</div>
 				</td>
 
@@ -67,17 +66,5 @@
 <div class="paginateButtons"><g:paginate
 	total="\${${propertyName}Total}" /></div>
 </div>
-<gui:dialog title="${className}" modal="true" form="false"
-	triggers="[show:[id:'showThe${className}', on:'click']]"
-	fixedCenter="true">
-	<div class="dialog" id="show${className}"
-		style="width: 600px; height: 400px; overflow: scroll"></div>
-</gui:dialog>
-<gui:dialog title="${className}" modal="true" form="false"
-	triggers="[show:[id:'createThe${className}', on:'click']]"
-	fixedCenter="true">
-	<div class="dialog" id="create${className}"
-		style="width: 600px; height: 400px; overflow: scroll"></div>
-</gui:dialog>
 </body>
 </html>

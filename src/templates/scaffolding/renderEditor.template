@@ -63,19 +63,19 @@ private renderOneToMany(domainClass,property) {
         return gen.renderNumberEditor(domainClass,property,cp,domainInstance)
 	}
 	
-	private renderBooleanEditor(domainClass,property,domainInstance) {
+	private renderBooleanEditor(domainClass,property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
         return gen.renderBooleanEditor(domainClass,property,cp,domainInstance)
 	}
 	
-	private renderDateEditor(domainClass,property,cp,domainInstance) {
+	private renderDateEditor(domainClass,property) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderDateEditor(domainClass,property,cp)
+        return gen.renderDateEditor(domainClass,property,cp,domainInstance)
 	}
 	
-	private renderSelectTypeEditor(type,domainClass,property,cp,domainInstance) {
+	private renderSelectTypeEditor(type,domainClass) {
         def gen= new com.grailsPortal.generator.PortalScaffoldingGenerator()
-        return gen.renderSelectTypeEditor(domainClass,property)
+        return gen.renderSelectTypeEditor(domainClass,property,cp,domainInstance)
 	}
 	
 	private renderNoSelection(property) {

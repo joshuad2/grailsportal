@@ -1,5 +1,15 @@
 <% import org.codehaus.groovy.grails.orm.hibernate.support.ClosureEventTriggeringInterceptor as Events %>
 <%=packageName%>
+<html>
+<head>
+<meta name="layout" content="main" />
+<gui:resources components="dialog" />
+<g:javascript library="prototype" />
+</head>
+<body>
+<div class="nav"><span class="menuButton"><a class="home"
+	href="\${resource(dir:'')}">Home</a></span>
+</div>
         <div class="body">
             <h1>Create ${className}</h1>
             <g:if test="\${flash.message}">

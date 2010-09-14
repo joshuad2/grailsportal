@@ -1,7 +1,9 @@
 <html>
 
 <head>
-<title><g:layoutTitle default="Portal" /></title>
+<title>
+  <g:layoutTitle default="Portal" />
+</title>
 <gui:resources components="dialog" />
 <g:javascript library="prototype" />
 <g:javascript>
@@ -56,18 +58,16 @@ body {
 				<menu:subItem controller="auth" action="register" text="Register for this site" />
 			</menu:mainItem>
 	 	</shiro:notUser>
-		 
 			<shiro:user>
 				<menu:mainItem itemLabel="manageProfile" text="Profile">
 					<menu:subItem controller="auth" action="edit" text="Edit Profile" />
 				</menu:mainItem>
   			<shiro:hasAllRoles in="['Administrator']">
-                   <menu:adminMenu portalConfigId="1"/>
+                   <menu:portalMenu portalConfigId="1" menuType="admin"/>
+                   <menu:portalMenu portalConfigId="1" menuType="user"/>
 				</shiro:hasAllRoles>
 				<shiro:hasAllRoles in="['User']">
-				<menu:mainItem itemLabel="setup" text="Setup">
-						<menu:subItem controller="registration" action="index" text="2010 Registration" />
-			    </menu:mainItem>
+                    <menu:portalMenu portalConfigId="1" menuType="user"/>
 				</shiro:hasAllRoles>
 			</shiro:user>
 	</menu:menuContainer>
