@@ -62,18 +62,18 @@ class PortalScaffoldingGenerator {
 		def valueRoles=cp.getMetaConstraintValue("valueRoles")
 		def selectQuery=cp.getMetaConstraintValue("selectQuery")
 		def selectValues=cp.getMetaConstraintValue("selectValues")
-		def startAllValueRoles = 
-		"\n       "+
-		"<shiro:hasAllRoles in=\"['${valueRoles}']\">"
-		def endHasAllRoles="\n     </shiro:hasAllRoles>"
-		def showValue=
-		"\n      <div>${domainInstance}?.${property.name}}"+
-		"</div>\n<g:hiddenField name=\"${property.name}\""+
-		" value=\"\${fieldValue(bean:${domainInstance},"+
-		"field:'${property.name}')}\" />"
-		def startLacksAllValueRoles=
-		"\n     <shiro:lacksAllRoles in=\"['${valueRoles}']\">"
-		def endLacksAllRoles="\n     </shiro:lacksAllRoles>"
+		def startAllValueRoles = "<shiro:hasAllRoles in=\"['${valueRoles}']\">"
+		def endHasAllRoles="</shiro:hasAllRoles>"
+		def showValue="""\
+		    <div>
+		    \${domainInstance}?.${property.name}}
+		    </div>
+		    <g:hiddenField name="${property.name}" 
+		                   value="\${fieldValue(bean:\${domainInstance},field:'${property.name}')}" />
+		    """
+		def startLacksAllValueRoles="""<shiro:lacksAllRoles in="['${valueRoles}']">"""
+		def startLacksAllRoles="""<shiro:lacksAllRoles>"""
+		def endLacksAllRoles="""</shiro:lacksAllRoles>"""
 		def showSelect=""
 		if (selectQuery==null){
 			showSelect=
@@ -104,21 +104,10 @@ class PortalScaffoldingGenerator {
 				buf <<"<shiro:hasAllRoles in=\"['${shiroRole}']\">"
 			}
 			buf << "\n<div id=\"createThe${property.referencedDomainClass.name}\">"+
-			"\n<g:remoteLink controller=\"${property.referencedDomainClass.propertyName}\""+
-			" id=\"\" action=\"create\" update=\"create"+
-			"${property.referencedDomainClass.name}\">Add</g:remoteLink>"
+			"\n<g:link controller=\"${property.referencedDomainClass.propertyName}\""+
+			" id=\"\" action=\"create\"\">Add</g:link>"
 			buf << "\n           </div>"
-			buf << "\n           "+
-			"<gui:dialog title=\"Add a "+
-			"${property.referencedDomainClass.name}\" "+
-			"modal=\"true\" form=\"false\" triggers=\""+
-			"[show:[id:'createThe${property.referencedDomainClass.name}', on:'click']]\" "+
-			"fixedCenter=\"true\"]>"
-			buf << "\n             "+
-			"<div class=\"dialog\" id="+
-			"\"create${property.referencedDomainClass.name}\" style=\"width:600px;"+
-			"height:400px;overflow:scroll\"></div>"
-			buf << "\n           </gui:dialog>"
+			buf << "\n           "
 			if (doAdd!=null && shiroRole!=null ){
 				buf << "     </shiro:hasAllRoles>"
 			}
@@ -165,13 +154,12 @@ class PortalScaffoldingGenerator {
 		  <g:each var="${property.name[0]}" in="\${${domainInstance}.${property.name}}">
 		  <li>
 		    <div id="editThe${property.referencedDomainClass.shortName}"> 
-		      <g:remoteLink update="edit${property.referencedDomainClass.shortName}" 
-		                    controller="${property.referencedDomainClass.shortName}" 
+		      <g:link controller="${property.referencedDomainClass.shortName}" 
 						    action="show" 
 							id="\${${property.name[0]}.id}"\
 							>
 									\${${property.name[0]}?.encodeAsHTML()}
-		      </g:remoteLink>
+		      </g:link>
 		   </li>
 		 </g:each>
 		</ul>

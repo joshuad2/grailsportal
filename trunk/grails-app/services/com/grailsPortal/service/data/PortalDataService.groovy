@@ -129,6 +129,10 @@ class PortalDataService implements PortalData{
 	"Menu":["portalMenuType":"Menu Types",
 	"portalMenuConfiguration":"Portal Menu Configuration",
 	"portalMenu":"Portal Menus"
+	],
+"Config":["portalConfig":"Portal",
+	"view":"Portal Views",
+	"state":"States"
 	]
 	          ]
 	JsecUser userResults

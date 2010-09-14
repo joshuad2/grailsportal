@@ -17,94 +17,88 @@ import org.codehaus.groovy.grails.plugins.web.taglib.*;
 import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes
 class MenuTagLib {
 	static namespace = 'menu'
-    static final String SVC_NAME="portalMenuService"
-   def getPortalMenuService(){
+	static final String SVC_NAME="portalMenuService"
+	def getPortalMenuService(){
 		def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
 		def pms=ctx.getBean(SVC_NAME)
 		return pms
 	}
 	
-    def adminMenu={attrs->
+	def portalMenu={attrs->
+		def menuType=attrs["menuType"]
 		def portalMenuService=getPortalMenuService()
 		def pmConfig=portalMenuService.getPortalMenu(attrs.portalConfigId)
 		String preMenu=""
 		String postMenu=""
 		def t=""
 		pmConfig.portalMenus.each{
-		  def pm=it
+			def pm=it
 			//check to see if it is an admin menu and then apply the security
-		  if (pm.portalMenuType.menuTypeName=="admin"){
-				
-			}
-		  if (pm.portalMenuType.menuTypeName=="anonymous"){
-				
-			}
-		  if (pm.portalMenuType.menuTypeName=="user"){
-				
-			}
-		  def body=""
-		  pm.subMenus.each{
-		  def sm=it
-		  if (sm.isAjax=="Y"){
-			body+=menu.simpleSubItem(["id":sm.controller+"Link"],
-			                         g.remoteLink(["controller":sm.controller,
-					                               "action":sm.action,
-					                               "update":sm.controller+"s"],
-					                                      sm.text))
+			if (pm.portalMenuType.menuTypeName==menuType){				
+				def body=""
+				pm.subMenus.each{
+					def sm=it
+					if (sm.isAjax=="Y"){
+						body+=menu.simpleSubItem(["id":sm.controller+"Link"],
+						g.remoteLink(["controller":sm.controller,
+							"action":sm.action,
+							"update":sm.controller+"s"],
+						sm.text))
+					}
+					else{
+						body+=
+						menu.subItem(["text":sm.text,"controller":sm.controller,"action":sm.action])
+					}
 				}
-				else{
-				  body+=
-				  menu.subItem(["text":sm.text,"controller":sm.controller,"action":sm.action])
-				}
-		    }
-			t+=
-			menu.mainItem(["itemLabel":pm.itemLabel,"text":pm.itemText],body)
+				t+=
+				menu.mainItem(["itemLabel":pm.itemLabel,"text":pm.itemText],body)
+			}
 		}		            
-	 out << t
+		out << t
 	}
 	
 	def menuSetup={attrs->
-	 def portalMenuService=getPortalMenuService()
-	 def pcId=attrs["portalConfigId"]
-	 if (pcId==null){
-      pcId="1"		
-	}
-	 def pmConfig=portalMenuService.getPortalMenu(pcId)
-	 def menuName=attrs["name"]
-	 def position=attrs["position"]
-	 def hideDelay=attrs["hideDelay"]
-	 def lazyLoad=attrs["lazyload"]
-	 if (hideDelay==null || hideDelay==""){
-		 hideDelay=pmConfig.hideDelay
-	 }
-	 if (position==null || position==""){
-		 position=pmConfig.position
-	 }
-	 if (menuName==null || menuName==""){
-		 menuName=pmConfig.menuName
-	 }
-	 if (lazyLoad==null || lazyLoad==""){
-		if (pmConfig.lazyLoad=="Y"){
-		 lazyLoad="true"
-		}else{
-			lazyLoad="false"
+		def portalMenuService=getPortalMenuService()
+		def pcId=attrs["portalConfigId"]
+		if (pcId==null){
+			pcId="1"
 		}
-	 }
-     def t='<script type="text/javascript">'+
-           'YAHOO.util.Event.onContentReady("basicmenu",function ()'+
-    	   ' {var oMenu = new YAHOO.widget.Menu("basicmenu",{'+  
-                                         ' position: "'+position+'",'+  
-                                         ' hidedelay: \"'+ hideDelay+'\",'+  
-                                         ' lazyload: \"'+lazyLoad+'\" });'+
-                                         ' oMenu.render();'+
-                                         ' oMenu.show();'+
-                                         '});'+
-            '</script>'
-     out << t
+		def pmConfig=portalMenuService.getPortalMenu(pcId)
+		def menuName=attrs["name"]
+		def position=attrs["position"]
+		def hideDelay=attrs["hideDelay"]
+		def lazyLoad=attrs["lazyload"]
+		if (hideDelay==null || hideDelay==""){
+			hideDelay=pmConfig.hideDelay
+		}
+		if (position==null || position==""){
+			position=pmConfig.position
+		}
+		if (menuName==null || menuName==""){
+			menuName=pmConfig.menuName
+		}
+		if (lazyLoad==null || lazyLoad==""){
+			if (pmConfig.lazyLoad=="Y"){
+				lazyLoad="true"
+			}else{
+				lazyLoad="false"
+			}
+		}
+		def t='<script type="text/javascript">'+
+		'YAHOO.util.Event.onContentReady("basicmenu",function ()'+
+		' {var oMenu = new YAHOO.widget.Menu("basicmenu",{'+  
+		' position: "'+position+'",'+  
+		' hidedelay: \"'+ hideDelay+'\",'+  
+		' lazyload: \"'+lazyLoad+'\" });'+
+		' oMenu.render();'+
+		' oMenu.show();'+
+		'});'+
+		'</script>'
+		out << t
 	} 
 	
 	def menuBody={attrs, body ->
-	  	def style=attrs["style"]
+		def style=attrs["style"]
 		def id=attrs["id"]
 		def t="<body class=\"yui-skin-sam\" "
 		if (style!=null){
@@ -157,25 +151,25 @@ class MenuTagLib {
 			borderHeight=pmConfig["borderHeight"]
 		}
 		def t="<div id=\"menuContainer\" style=\"width: "+width+";height: "+height+"; margin:"+margin+";"+style+"\">\n"+
-		      "<div id=\"basicmenu\" class=\"yuimenu\">\n"+
-		      "<div class=\"bd\" style=\"width: "+borderWidth+"; height: "+height+";"+"\">\n"
+		"<div id=\"basicmenu\" class=\"yuimenu\">\n"+
+		"<div class=\"bd\" style=\"width: "+borderWidth+"; height: "+height+";"+"\">\n"
 		def u="</div>\n</div>\n</div>\n"
 		out << t+body()+u
 	}
 	
 	def mainItem={attrs, body ->
-	   def itemLabel=attrs["itemLabel"]
-	   def text=attrs["text"]
-	   def t="<li class=\"yuimenuitem\">\n"+
-	         "<a class=\"yuimenuitemlabel\" href=\"#"+itemLabel+"\">"+text+"</a>\n"+
-			"<div id=\""+itemLabel+"\" class=\"yuimenu\">\n"+
-		     "<div class=\"bd\" style=\"width: 200px\">\n"+
-		     "<ul>\n"
+		def itemLabel=attrs["itemLabel"]
+		def text=attrs["text"]
+		def t="<li class=\"yuimenuitem\">\n"+
+		"<a class=\"yuimenuitemlabel\" href=\"#"+itemLabel+"\">"+text+"</a>\n"+
+		"<div id=\""+itemLabel+"\" class=\"yuimenu\">\n"+
+		"<div class=\"bd\" style=\"width: 200px\">\n"+
+		"<ul>\n"
 		def u="</ul>\n"+
-		      "</div>\n"+
-			"</div>\n"+
-		       "</li>\n"
-	    out << t+body()+u
+		"</div>\n"+
+		"</div>\n"+
+		"</li>\n"
+		out << t+body()+u
 	}
 	def subItem={attrs,body ->
 		ApplicationTagLib lib=new ApplicationTagLib()
@@ -185,7 +179,7 @@ class MenuTagLib {
 			id=java.util.UUID.randomUUID().toString();
 		}
 		def t="<li class=\"yuimenuitem\" id=\""+id+"\">\n"+
-		      "<a href=\""+lib.createLink(attrs)+"\">"+text+"</a>\n"+
+		"<a href=\""+lib.createLink(attrs)+"\">"+text+"</a>\n"+
 		"     </li>\n"
 		out << t
 	}

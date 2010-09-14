@@ -1,5 +1,13 @@
 <% import org.codehaus.groovy.grails.orm.hibernate.support.ClosureEventTriggeringInterceptor as Events %>
 <%=packageName%>
+<html>
+<head>
+<meta name="layout" content="main" />
+</head>
+<body>
+<div class="nav"><span class="menuButton"><a class="home"
+	href="\${resource(dir:'')}">Home</a></span> <span class="menuButton"
+	id="createThe${className}"> <g:link action="create" >New</g:link> </span></div>
         <div class="body">
             <h1>Show ${className}</h1>
             <g:if test="\${flash.message}">
@@ -26,12 +34,12 @@
                             <td  valign="top" style="text-align:left;" class="value">
                                 <ul>
                                 <g:each var="${p.name[0]}" in="\${${propertyName}.${p.name}}">
-                                    <li><div id="theShow"><g:remoteLink controller="${p.referencedDomainClass?.propertyName}" action="show" update="show" id="\${${p.name[0]}.id}">\${${p.name[0]}?.encodeAsHTML()}</g:remoteLink></div></li>
+                                    <li><div id="theShow"><g:link controller="${p.referencedDomainClass?.propertyName}" action="show" id="\${${p.name[0]}.id}">\${${p.name[0]}?.encodeAsHTML()}</g:link></div></li>
                                 </g:each>
                                 </ul>
                             </td>
                             <%  } else if(p.manyToOne || p.oneToOne) { %>
-                            <td valign="top" class="value"><div id="theShow"><g:remoteLink controller="${p.referencedDomainClass?.propertyName}" action="show" update="show" id="\${${propertyName}?.${p.name}?.id}">\${${propertyName}?.${p.name}?.encodeAsHTML()}</g:remoteLink></div></td>
+                            <td valign="top" class="value"><div id="theShow"><g:link controller="${p.referencedDomainClass?.propertyName}" action="show" id="\${${propertyName}?.${p.name}?.id}">\${${propertyName}?.${p.name}?.encodeAsHTML()}</g:link></div></td>
                             <%  } else  { %>
                             <td valign="top" class="value">\${fieldValue(bean:${propertyName}, field:'${p.name}')}</td>
                             <%  } %>
@@ -44,7 +52,7 @@
                 <g:form>
                     <input type="hidden" name="id" value="\${${propertyName}?.id}" />
                     <div id="theEdit" style="float:left;padding:.8em .8em .8em .8em;font-size:14px;">
-                             <g:remoteLink action="edit" id="\${${propertyName}.id}" update="edit">Edit</g:remoteLink>
+                             <g:link action="edit" id="\${${propertyName}.id}" update="edit">Edit</g:link>
                          </div>
                       </span>
                     <div style="float:left;padding:.8em .8em .8em .8em;font-size:14px;">
@@ -52,17 +60,6 @@
                     </div>
                 </g:form>
             </div>
-         <gui:dialog title="${className}" 
-           modal="true" form="false"
-           triggers="[show:[id:'theShow', on:'click']]" 
-           fixedCenter="true">
-            <div class="dialog" id="show" style="width:600px;height:400px;overflow:scroll">
-           </div>
-        </gui:dialog> 
-         <gui:dialog title="${className}" 
-           modal="true" form="false"
-           triggers="[show:[id:'theEdit', on:'click']]" 
-           fixedCenter="true">
-            <div class="dialog" id="edit" style="width:600px;height:400px;overflow:scroll">
-           </div>
-        </gui:dialog> 
+      </div>
+</body>
+</html>
