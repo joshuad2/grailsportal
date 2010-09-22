@@ -21,9 +21,15 @@ class ContactEmail implements Serializable{
               
     String      emailAddress
     String      verified
+	Party          party
+	Boolean        active
+	ContactType contactType
+
     static constraints = {
         emailAddress(size: 1..200, blank: false,nullable:false)
         verified(size: 1..255, blank: false,nullable:true)
+	    party(blank:false,nullable:false)
+		contactType(blank:false,nullable:false)
     }
     String toString() {
         return emailAddress 

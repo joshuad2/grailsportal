@@ -18,6 +18,7 @@ import com.grailsPortal.service.config.PortalviewService
 import com.grailsPortal.ui.portalView.PortalViewHandler
 import com.grailsPortal.domain.ContactType
 import com.grailsPortal.domain.Party
+import com.grailsPortal.domain.ContactPhone
 class PortalTagLib {
 	
 	def contactUtilService
@@ -51,16 +52,57 @@ class PortalTagLib {
 		out << pc.renderComponentGroup(mode,attrs["viewName"],"address",attributeComponents, attributeValues)
 	}
 	/**
+	 * tag for showing all of the party information which is last name and first name in a table form
+	 */
+	def showParty={attrs->
+		def instance=attrs.instance
+		def firstnameClass=""
+		def fnameValue=""
+		def lnameValue=""
+		if (instance.firstName.hasErrors()){
+			firstNameClass="errors"
+		}else{
+		  fnameValue=instance.firstName
+		}
+		def lastNameClass=""
+		if (instance.lastName.hasErrors()){
+			lastNameClass="errors"
+		}else{
+		 lnameValue=instance.lastName
+		}
+		def t="""
+		      <tr class="prop">
+                 <td valign="top" class="name">
+                   <label for="firstName">First Name*:</label>
+                 </td>
+                 <td valign="top" class="${firstnameClass}">
+                   ${g.textField(["maxlength":"100",
+                                 "id":"firstName",
+                                 "name":"firstName",
+                                 "value":"${fnameValue}"])}
+                 </td>
+               </tr>                         
+               <tr class="prop">
+                 <td valign="top" class="name">
+                   <label for="lastName">Last Name*:</label>
+                 </td>
+                 <td valign="top" class="${lastNameClass}">
+                   ${g.textField(["maxlength":"100",
+                                  "id":"lastName",
+                                  "name":"lastName",
+                                  "value":"${lnameValue}"])}
+                 </td>
+               </tr> 
+		"""
+		out <<t
+		}
+	/**
 	 * tag for displaying the phone on the page using the attributes defined.
 	 */
 	def phone={attrs->
 		def partyId=attrs.id
 		def party=Party.get(partyId)
-		
-		def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
-		def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
-		def emailContactTypes=contactUtilService.getProfileEmailContactTypes(party)
-		
+		def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)		
 		def t="""
 	          <TABLE> 
 	           """
@@ -68,36 +110,46 @@ class PortalTagLib {
 			party.phoneList.each{
 				def phn=it
 				t+="""
-    <tr class="prop">
-      <td valign="top" class="name"><label for="phoneNumber">Phone Number:</label></td>
-      <td valign="top" class="value">(${phn.phone.areaCode})${phn.phone.phoneNumber}</td>
-    </tr>
-    <tr class="prop">
-      <td valign="top" class="name"><label for="contactType">Type of Phone Number:</label></td>
-      <td>${phn.contactType}</td>"""
-				t+="""
-  </tr>   
-  <tr><td colspan="2">
-  <div id="editTheContactPhone${phn.contactType}">"""
-  t+="""
-	${g.link([controller:"partyContactPhone" ,
-	  action:"edit",
-	  id:"${phn.phone.id}"],
-	  "Edit Phone Number")
-	  }
-	</div>
-  </td></tr>
-  <tr><td colspan="2"><div style="border-style:solid;border-width:2px;"></div></td></tr>"""
+                  <tr class="prop">
+                    <td valign="top" class="name">
+                      <label for="phoneNumber">Phone Number:</label>
+                     </td>
+                     <td valign="top" class="value">
+                     (${phn.areaCode})${phn.phoneNumber}
+                     </td>
+                   </tr>
+                   <tr class="prop">
+                     <td valign="top" class="name">
+                       <label for="contactType">
+                       Type of Phone Number:
+                       </label>
+                     </td>
+                     <td>
+                     ${phn.contactType}
+                     </td>
+                   </tr>   
+                   <tr>
+                     <td colspan="2">
+	                   ${g.link([controller:"contactPhone",
+	                         action:"edit",
+	                         id:"${phn.id}"],
+	                        "Edit Phone Number")} 
+                     </td>
+                   </tr>
+                   <tr>
+                     <td colspan="2">
+                       <div style="border-style:solid;border-width:2px;"/>
+                     </td>
+                   </tr>"""
 		}
 	}
 	t+="""
 	  <tr><td>Add</td>
-  <td>
-  <div id="createTheContactPhone">"""
+  <td>"""
 	contactTypes.each{
 		def ct=it
 		t+="""
-      ${g.link([controller:"partyContactPhone",action:"create",id:"${partyId}"],"${ct.name}Phone")
+      ${g.link([controller:"contactPhone",action:"create",id:"${partyId}"],"${ct.name}Phone")
 	}"""
 }
 t+="""
@@ -108,7 +160,57 @@ t+="""
 	"""
 out << t
 }
-
+	/**
+	* tag for displaying the phone on the page using the attributes defined.
+	*/
+   def editPhone={attrs->
+	   def partyId=attrs.id
+	   def phoneId=attris.phoneId
+	   def party=Party.get(partyId)
+	   def phn=ContactPhone.get(phoneId)
+	   def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
+	   def t="""
+	           <TABLE>
+				 <tr class="prop">
+				   <td valign="top" class="name">
+					 <label for="phoneNumber">Phone Number:</label>
+					</td>
+					<td valign="top" class="value">
+					(${phn.areaCode})${phn.phoneNumber}
+					</td>
+				  </tr>
+				  <tr class="prop">
+					<td valign="top" class="name">
+					  <label for="contactType">
+					  Type of Phone Number:
+					  </label>
+					</td>
+					<td>
+					${phn.contactType}
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="2">
+					  ${g.link([controller:"contactPhone",
+							action:"edit",
+							id:"${phn.id}"],
+						   "Edit Phone Number")}
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="2">
+					  <div style="border-style:solid;border-width:2px;"/>
+					</td>
+				  </tr>
+	 <tr><td>Add</td>
+ <td>
+   </div>
+   </td>
+   </tr>
+  </TABLE>
+   """
+out << t
+}
 
 
 def address={attrs->
@@ -126,23 +228,23 @@ party.addressList.each{
 	t+="""
     <tr class="prop">
        <td valign="top" class="name"><label for="Address1">Address*:</label></td>
-       <td valign="top" class="value">${addr.address.address1}</td>
+       <td valign="top" class="value">${addr.address1}</td>
    </tr> 
    <tr class="prop">
        <td valign="top" class="name"><label for="Address Line 2">Address 2:</label></td>
-       <td>${addr.address.address2}</td>
+       <td>${addr.address2}</td>
    </tr>
    <tr class="prop">
        <td valign="top" class="name"><label for="City">City:</label></td>
-         <td valign="top" class="value">${addr.address.city}</td>
+         <td valign="top" class="value">${addr.city}</td>
    </tr>
    <tr class="prop">
        <td valign="top" class="name"><label for="state">State:</label></td>
-         <td valign="top" class="value">${addr.address.state}</td>
+         <td valign="top" class="value">${addr.state}</td>
    </tr>           
    <tr class="prop">
        <td valign="top" class="name"><label for="Zipcode">Zip Code:</label></td>
-       <td>${addr.address.zipcode}</td>
+       <td>${addr.zipcode}</td>
    </tr>
    <tr class="prop">
        <td valign="top" class="name"><label for="contactType">Type of Address:</label></td>
@@ -151,7 +253,7 @@ party.addressList.each{
    <tr>
 	 <td colspan="2">
 		<div id="editTheContactAddress${addr.contactType}">
-		  ${g.link([controller:"partyContactAddress",action:"edit",id:"${addr.address.id}"],"Edit Address")
+		  ${g.link([controller:"contactAddress",action:"edit",id:"${addr.id}"],"Edit Address")
 }
 	    </div>
      </td>
@@ -170,7 +272,7 @@ t+="""
 addressContactTypes.each{
 def ct=it
 t+="""
-    ${g.link([controller:"partyContactAddress",action:"createContact${ct.name}Address",id:"${partyId}"],"${ct.name} Address")
+    ${g.link([controller:"contactAddress",action:"createContact${ct.name}Address",id:"${partyId}"],"${ct.name} Address")
 }"""
 }
 t+="""
@@ -207,13 +309,10 @@ t+="""
 </tr>   
 <tr>
   <td colspan="2">
-    <div id="editTheContactEmail${eml.contactType}">
-         ${g.link([controller:"partyContactEmail",
+         ${g.link([controller:"contactEmail",
 			      action:"edit",
 				  id:"${eml.email.id}"],
-			      "Edit Email")
-          }
-    </div>
+			      "Edit Email")}
   </td>
 </tr>
 <tr>
@@ -228,7 +327,7 @@ t+="""
 contactTypes.each{
 def ct=it
 t+="""
-${g.link([controller:"partyContactEmail",action:"create",id:"${partyId}"],"${ct.name}Email")
+${g.link([controller:"contactEmail",action:"create",id:"${partyId}"],"${ct.name}Email")
 }"""
 }
 t+="""

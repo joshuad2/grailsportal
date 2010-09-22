@@ -20,10 +20,16 @@ class ContactPhone implements Serializable{
     String      phoneNumber
     String      areaCode
     String      internationalCode
+	Party          party
+	Boolean        active
+	ContactType contactType
     static constraints = {
     	areaCode(size:1..4,nullable:true, blank:true)
     	internationalCode(size:1..2,nullable:true,blank:true)
         phoneNumber(size: 1..20, blank: false,nullable:false)
+		party(nullable:false,blank:false)
+		contactType(nullable:false,blank:false)
+		active(nullable:false,blank:false)
     }
     String toString() {
         return phoneNumber 
