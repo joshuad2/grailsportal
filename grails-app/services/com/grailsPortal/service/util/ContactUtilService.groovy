@@ -140,7 +140,7 @@ class ContactUtilService {
 		def cts= ContactType.list()
 		cts.each{
 		  def ct=it
-          def pcp = PartyContactPhone.find("from PartyContactPhone where party=? and contactType=?",party,ct)
+          def pcp = ContactPhone.find("from ContactPhone where party=? and contactType=?",party,ct)
 		  if (pcp==null){
 			  retArr.add it
 			}
@@ -153,7 +153,7 @@ class ContactUtilService {
 		def cts= ContactType.list()
 		cts.each{
 			def ct=it
-			def pcp = PartyContactAddress.find("from PartyContactAddress where party=? and contactType=?",party,ct)
+			def pcp = ContactAddress.find("from ContactAddress where party=? and contactType=?",party,ct)
 			if (pcp==null){
 				retArr.add it
 			}
@@ -166,7 +166,7 @@ class ContactUtilService {
 		def cts= ContactType.list()
 		cts.each{
 			def ct=it
-			def pcp = PartyContactAddress.find("from PartyContactEmail where party=? and contactType=?",party,ct)
+			def pcp = ContactAddress.find("from ContactEmail where party=? and contactType=?",party,ct)
 			if (pcp==null){
 				retArr.add it
 			}

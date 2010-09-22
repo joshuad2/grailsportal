@@ -23,9 +23,9 @@ class Party implements Serializable{
     Date           birthDate
     PartyType      partyType
     static hasMany = [ orderRecordList : OrderRecord,
-                       addressList:      PartyContactAddress,
-                       phoneList:        PartyContactPhone,
-                       emailList:        PartyContactEmail,
+                       addressList:      ContactAddress,
+                       phoneList:        ContactPhone,
+                       emailList:        ContactEmail,
                        partyAttrValues:  PartyAttrValue
                      ]
                        
