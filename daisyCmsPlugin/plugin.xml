@@ -1,4 +1,4 @@
-<plugin name='daisy-cms' version='0.1' grailsVersion='1.2.0 &gt; *'>
+<plugin name='daisy-cms' version='0.2' grailsVersion='1.2.0 &gt; *'>
   <author>Joshua Davis</author>
   <authorEmail>webtech20@gmail.com</authorEmail>
   <title>Plugin summary/headline</title>
@@ -13,7 +13,7 @@ Daisy Grails Plugin
     <resource>UrlMappings</resource>
     <resource>com.daisyPlugin.controller.DaisyController</resource>
     <resource>com.daisyPlugin.daisyIntegration.service.DaisyService</resource>
-    <resource>DaisyCmsTagLib</resource>
+    <resource>com.daisyPlugin.daisy.tag.DaisyCmsTagLib</resource>
   </resources>
   <dependencies />
   <behavior />
