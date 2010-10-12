@@ -58,7 +58,8 @@ class RegistrationController {
   private static final String SECURITYSERVICE               ="securityService"
   private static final String PORTALVIEWSERVICE             ="portalviewService"
  def index = {
-    redirect(action:'register')
+	def prods= Product.list()
+    redirect(action:'register',model:["products":prods])
     }
 
  def showFinish={

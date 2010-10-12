@@ -39,15 +39,15 @@ class MenuTagLib {
 				pm.subMenus.each{
 					def sm=it
 					if (sm.isAjax=="Y"){
-						body+=menu.simpleSubItem(["id":sm.controller+"Link"],
-						g.remoteLink(["controller":sm.controller,
-							"action":sm.action,
-							"update":sm.controller+"s"],
+						body+=menu.simpleSubItem(["id":sm.theController+"Link"],
+						g.remoteLink(["controller":sm.theController,
+							"action":sm.theAction,
+							"update":sm.theController+"s"],
 						sm.text))
 					}
 					else{
 						body+=
-						menu.subItem(["text":sm.text,"controller":sm.controller,"action":sm.action])
+						menu.subItem(["text":sm.text,"controller":sm.theController,"action":sm.theAction])
 					}
 				}
 				t+=
