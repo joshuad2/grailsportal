@@ -160,6 +160,7 @@ class PortalScaffoldingGenerator {
 							>
 									\${${property.name[0]}?.encodeAsHTML()}
 		      </g:link>
+		     </div>
 		   </li>
 		 </g:each>
 		</ul>
@@ -169,6 +170,7 @@ class PortalScaffoldingGenerator {
 		           Add
 	    </g:link>
 		"""
+		pw.println(t)
 		return sw.toString()
 	}
 	

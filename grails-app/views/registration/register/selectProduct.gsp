@@ -36,7 +36,7 @@
 		</th>
 		<tbody>
 			<g:if test="${regEvent.id == null}">
-				<g:each in="${Product.list()}">
+				<g:each in="${products}">
 					<tr class="prop">
 						<td valign="top" class="name"><label for="${it.name}">Week
 						of ${it.name}

@@ -203,10 +203,10 @@ class PortalDataService implements PortalData{
 			  psm.isAjax="N"
 		    }
 			psm.portalMenuType=PortalMenuType.findByMenuTypeName("user")
-			psm.action=action
+			psm.theAction=action
 			psm.mainMenu=pm1
 			psm.text=it.value
-			psm.controller=it.key
+			psm.theController=it.key
 			psm.showSpinner="N"
 			psm.showAdmin="N"
 			psm.showAnonymous="N"

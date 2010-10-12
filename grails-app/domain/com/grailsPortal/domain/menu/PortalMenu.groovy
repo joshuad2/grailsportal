@@ -29,6 +29,7 @@ class PortalMenu {
 		itemText(size:1..100,blank:false,nullable:false)
 		portalMenuType(blank:false,nullable:false)
 		isActive(size:1..2,blank:false,nullable:false,inList:['Y','N'])
+		subMenus(blank:true,nullable:true)
     }
 	
 	String toString(){

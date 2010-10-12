@@ -14,8 +14,8 @@
 package com.grailsPortal.domain.menu;
 
 class PortalSubMenu {
-  String controller
-  String action
+  String theController
+  String theAction
   String text
   String isAjax
   String showSpinner
@@ -29,12 +29,12 @@ class PortalSubMenu {
 	  portalMenuType lazy:false
   }
 static constraints={
-		controller(display:true,size:1..40,nullable:false,blank:false)
-	    action(display:true,size:1..40,nullable:true,blank:true)
+		theController(display:true,size:1..40,nullable:false,blank:false)
+	    theAction(display:true,size:1..40,nullable:true,blank:true)
 	    text(display:true,size:1..100,nullable:false,blank:false)
 	    isAjax(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
 		showSpinner(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
-		mainMenu(display:false,nullable:false,blank:false)
+		mainMenu(display:true,nullable:false,blank:false)
 		showAdmin(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
 		showAnonymous(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
         portalMenuType(display:true,nullable:false,blank:false)
