@@ -24,9 +24,9 @@ class SalesChannelType implements Serializable{
     java.lang.String dsc
     java.lang.String name
     static constraints = {
-        cd(size: 1..20, blank: false)
-        dsc(size: 1..200, blank: false)
-        name(size: 1..100, blank: false)
+        cd(size: 1..20, blank: false,nullable:false)
+        dsc(size: 1..200, blank: false,nullable:true)
+        name(size: 1..100, blank: false,nullable:false)
     }
     String toString() {
         return name
