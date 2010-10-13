@@ -13,11 +13,10 @@
  */
 package com.grailsPortal.service.util
 import com.grailsPortal.exception.ValidationException
-import org.apache.shiro.crypto.hash.Sha1Hash
+import org.apache.shiro.crypto.hash.Sha256Hash
 import com.grailsPortal.ui.util.ContactUtilHandler
 import com.grailsPortal.domain.*
 import org.grails.grailsui.DialogTagLib
-import org.apache.shiro.crypto.hash.Sha1Hash
 class ContactUtilService {
 		private static final String DATEFORMAT="yyyy-MM-dd"
 		private static final String ADDRESS1="address1"
@@ -44,7 +43,7 @@ class ContactUtilService {
   		      ju.party.birthDate=attrs.birthDate
 		      ju.party.partyType=partyType
 			  ju.active=true
-			  ju.passwordHash=new Sha1Hash(attrs.password).toHex()
+			  ju.passwordHash=new Sha256Hash(attrs.password).toHex()
 			  ju.party.save()
   		      ju.save()
 			return ju
@@ -135,43 +134,28 @@ class ContactUtilService {
             }
     }
 	
-	def getProfilePhoneContactTypes(Party party){
+	def getContactTypes(Party party,String contactClassName){
 		def retArr=[]
 		def cts= ContactType.list()
 		cts.each{
 		  def ct=it
-          def pcp = ContactPhone.find("from ContactPhone where party=? and contactType=?",party,ct)
+		  def pcp = ContactPhone.find("from "+contactClassName+" where party=? and contactType=?",party,ct)
 		  if (pcp==null){
 			  retArr.add it
 			}
 		}
 		return retArr
 	}
+	def getProfilePhoneContactTypes(Party party){
+        return getContactTypes(party,"ContectPhone")
+	}
 	
 	def getProfileAddressContactTypes(Party party){
-		def retArr=[]
-		def cts= ContactType.list()
-		cts.each{
-			def ct=it
-			def pcp = ContactAddress.find("from ContactAddress where party=? and contactType=?",party,ct)
-			if (pcp==null){
-				retArr.add it
-			}
-		}
-		return retArr
+        return getContactTypes(party,"ContactAddress")
 	}
 	
 	def getProfileEmailContactTypes(Party party){
-		def retArr=[]
-		def cts= ContactType.list()
-		cts.each{
-			def ct=it
-			def pcp = ContactAddress.find("from ContactEmail where party=? and contactType=?",party,ct)
-			if (pcp==null){
-				retArr.add it
-			}
-		}
-		return retArr
+       return getContactTypes(party,"ContactEmail")
 	}
 	
 

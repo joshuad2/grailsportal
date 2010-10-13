@@ -60,7 +60,9 @@ class PortalDataService implements PortalData{
     def responsibilities=["Parent","Child","Guardian"]
     def roles=["Entered","NonEntered"]
     def salesChannelTypes=["On-Line","Off-Line"]
-    def products=["After School","2010 Week1","2010 Week2","2010 Week3","2010 Week3","2010 Week4","2010 Week 5"]
+    def products=["After School","2010 Week1",
+		          "2010 Week2","2010 Week3","2010 Week3",
+		          "2010 Week4","2010 Week 5"]
     def configAttrValues = ["headerWidth":"1000px",
                             "headerHeight":"150px",
 							"headerStyle":"",
@@ -406,12 +408,21 @@ class PortalDataService implements PortalData{
           }
    }
    
-   def void initializeSalesChannels(SalesChannels,channelType){
+   def void initializeSalesChannels(SalesChannels,SalesChannelType channelType){
      salesChannels.each{
-	   	 def salesChannel = initializeValue(new SalesChannel(),"Sales Channel",it,it,it,SalesChannel.findByName(it))
-	   	 SalesChannel sc = salesChannel
-		 sc.salesChannelType=channelType
-	   	 sc.save(flush:true)
+		 def qry=SalesChannel.findByName(it)
+	   	 SalesChannel salesChannel
+		 if (qry!=null){
+			 salesChannel=qry
+		 }else{
+		    salesChannel=new SalesChannel()
+		 }
+		 salesChannel.dsc=it
+		 salesChannel.name=it
+		 salesChannel.cd=it
+		 salesChannel.salesChannelType=channelType
+		 
+	   	 salesChannel.save(flush:true)
      }
    }
    def void initializeStates(states){
@@ -426,14 +437,24 @@ class PortalDataService implements PortalData{
 			os.save(flush:true)
 		}
 	}
-   def void initializeProducts(products,productType,salesChannel){
+   def void initializeProducts( products, productType,salesChannel){
        products.each{
           	def prod=Product.findByName(it)
           	if (prod==null){
-          		def p=new Product(cd:it,name:it,netCostAmount:175.00,netSalesAmount:175.00,ecommerceCode:it,salesChannel:salesChannel,productType:productType).save(flush:true)
-          		if (p==null){
-          			log.error("Unable to add Product -"+it)
-          		}else{
+          		def p=new Product()
+				p.cd=it
+				p.name=it
+				p.netCostAmount=175.00
+			    p.netSalesAmount=175.00
+				p.ecommerceCode=it
+				p.salesChannel=salesChannel
+		        p.productType=productType
+				p.save(flush:true)
+				 if (p.hasErrors()){
+									  log.error("Couldn't add Product "+it)
+									  log.error(p.errors.allErrors)
+								  }
+                  else{
           		  log.error("Added Product - "+it)
           		}
           	}
@@ -652,8 +673,9 @@ class PortalDataService implements PortalData{
         initializeSalesChannelTypes(salesChannelTypes)
         def onLine=SalesChannelType.findByName("On-Line")
         initializeSalesChannels(salesChannels, onLine)
+		def onLineSc=SalesChannel.findByName("On-Line")
         def classesProductType=ProductType.findByName("Classes")
-        initializeProducts(products,classesProductType,onLine)
+        initializeProducts(products,classesProductType,onLineSc)
         initializeResponsibilities(responsibilities)
         initializePartyTypes(partyTypes)
         initializePartyRoles(partyRoles)
