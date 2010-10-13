@@ -39,10 +39,10 @@ class Product implements Serializable{
 	                 productLineItems:ProductLineItem
 	                 ]
     static constraints = {
-        cd                 (size: 1..20, blank: false,nullable:false)
-        dsc                (size: 1..200, blank: true,nullable:true)
-        ecommerceCode      (size: 1..100, blank: false,nullable:false)
-        name               (size: 1..100, blank: false)
+        cd                 (size: 1..20, blank: false, nullable:false)
+        dsc                (size: 1..200, blank: true, nullable:true)
+        ecommerceCode      (size: 1..100, blank: false, nullable:false)
+        name               (size: 1..100, blank: false, nullable:false)
         netCostAmount      (nullable: false)
         netSalesAmount     (nullable: false)
         productImageuripath(size: 1..255, blank: true,nullable:true)
