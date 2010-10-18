@@ -12,8 +12,10 @@
  * limitations under the License.
  */
 package com.grailsPortal.domain.menu;
+import java.io.Serializable;
+
 import com.grailsPortal.domain.portalConfig.PortalConfig
-class PortalMenuConfiguration {
+class PortalMenuConfiguration  implements Serializable{
  String  menuName
  String  position
  String  hideDelay

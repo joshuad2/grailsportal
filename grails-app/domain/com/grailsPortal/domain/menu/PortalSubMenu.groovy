@@ -13,7 +13,9 @@
  */
 package com.grailsPortal.domain.menu;
 
-class PortalSubMenu {
+import java.io.Serializable;
+
+class PortalSubMenu  implements Serializable{
   String theController
   String theAction
   String text

@@ -13,7 +13,9 @@
  */
 package com.grailsPortal.domain.menu
 
-class PortalMenu {
+import java.io.Serializable;
+
+class PortalMenu  implements Serializable{
 	String itemLabel
 	String itemText
 	PortalMenuType portalMenuType

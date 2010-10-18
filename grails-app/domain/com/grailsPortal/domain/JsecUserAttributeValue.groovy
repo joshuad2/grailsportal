@@ -15,7 +15,7 @@ package com.grailsPortal.domain
 
 import com.grailsPortal.domain.attribute.Attribute;
 
-class JsecUserAttributeValue {
+class JsecUserAttributeValue implements Serializable{
 	
 	JsecUser user
 	String value

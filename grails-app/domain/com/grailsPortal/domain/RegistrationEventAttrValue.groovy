@@ -13,9 +13,11 @@
  */
 package com.grailsPortal.domain
 
+import java.io.Serializable;
+
 import com.grailsPortal.domain.attribute.Attribute;
 
-class RegistrationEventAttrValue {
+class RegistrationEventAttrValue  implements Serializable{
     RegistrationEvent registrationEvent
 	String    value
 	Attribute attribute
