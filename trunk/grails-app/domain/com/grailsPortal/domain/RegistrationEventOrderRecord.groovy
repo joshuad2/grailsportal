@@ -14,7 +14,9 @@
 
 package com.grailsPortal.domain
 
-class RegistrationEventOrderRecord {
+import java.io.Serializable;
+
+class RegistrationEventOrderRecord  implements Serializable {
     RegistrationEvent event
     OrderRecord       order
     Boolean           isActive

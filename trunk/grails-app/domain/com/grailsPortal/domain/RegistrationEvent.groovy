@@ -24,9 +24,10 @@ class RegistrationEvent implements Serializable{
                      orders: RegistrationEventOrderRecord,
 	                 attrValues: RegistrationEventAttrValue]
     static constraints = {
-        registrationFor(nullable:false,blank:false)
-        registrationUser(nullable:false,blank:false)
-        registrationDate(nullable:true,blank:true)
+        registrationUser(nullable:false,blank:false,display:true)
+        registrationFor(nullable:true,blank:true,display:true)
+		registrationGrade(nullable:true,blank:true,display:true)
+        registrationDate(nullable:true,blank:true,display:true)
         contacts(nullable:true,blank:true)
 		orders(nullable:true,blank:true)
 		attrValues(nullable:true,blank:true)

@@ -14,7 +14,9 @@
 
 package com.grailsPortal.domain
 
-class PartyRole {
+import java.io.Serializable;
+
+class PartyRole  implements Serializable {
     String name
     String dsc
     String cd

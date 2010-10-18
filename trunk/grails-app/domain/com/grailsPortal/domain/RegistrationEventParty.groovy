@@ -14,7 +14,9 @@
 
 package com.grailsPortal.domain
 
-class RegistrationEventParty {
+import java.io.Serializable;
+
+class RegistrationEventParty  implements Serializable {
 
 	Party             party
 	RegistrationEvent registrationEvent

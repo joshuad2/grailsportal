@@ -36,7 +36,8 @@ class OrderRecord implements Serializable{
     Party           party
 	static hasMany=[
 	               subscriptions:Subscription,
-	               registrationEventOrderRecords:RegistrationEventOrderRecord
+	               registrationEventOrderRecords:RegistrationEventOrderRecord,
+				   lineItems:OrderRecordLineItem
 	               ]
     static constraints = {
     	orderNumber(nullable: false,blank:false)
@@ -49,6 +50,7 @@ class OrderRecord implements Serializable{
         taxAmount(nullable: false,blank:false)
         totalAmount(nullable: false,blank:false)
 		subscriptions(nullable:true,blank:true)
+		lineItems(display:true,nullable:true,blank:true)
 		registrationEventOrderRecords(nullable:true,blank:true)
     }
     String toString() {

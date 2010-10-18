@@ -12,8 +12,10 @@
  * limitations under the License.
  */
 package com.grailsPortal.domain.portalConfig
+import java.io.Serializable;
+
 import com.grailsPortal.domain.menu.PortalMenuConfiguration
-class PortalConfig {
+class PortalConfig  implements Serializable{
     static mapping={
     	table 'portal_config'
     	name        column:'portal_name'

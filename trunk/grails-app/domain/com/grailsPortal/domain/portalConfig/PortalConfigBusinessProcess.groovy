@@ -13,7 +13,9 @@
  */
 package com.grailsPortal.domain.portalConfig
 
-class PortalConfigBusinessProcess {
+import java.io.Serializable;
+
+class PortalConfigBusinessProcess  implements Serializable{
 
 	String name
 	String purpose

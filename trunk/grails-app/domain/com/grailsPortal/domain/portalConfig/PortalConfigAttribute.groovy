@@ -1,3 +1,5 @@
+
+
 /*
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,9 +14,9 @@
  * limitations under the License.
  */
 package com.grailsPortal.domain.portalConfig
-
+import java.io.Serializable;
 import com.grailsPortal.domain.attribute.*
-class PortalConfigAttribute {
+class PortalConfigAttribute  implements Serializable{
 
 	Attribute attribute
 	Boolean   mandatory
