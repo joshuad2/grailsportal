@@ -32,11 +32,21 @@ class ContactUtilService {
 		private static final String HOMEPHONENUMBER="homePhoneNumber"
 	    private static final String CELLPHONENUMBER="cellPhoneNumber"
 	    private static final String WORKPHONENUMBER="workPhoneNumber"
+		private static final String EMAILADDRESS="emailAddress"
 			
     boolean transactional = true
     def cuh=new ContactUtilHandler()
-		
-    def JsecUser doUser(ju,partyType,attrs){
+
+	def validate={obj->
+		if(!obj.validate()){
+			throw new ValidationException(obj)
+		}
+		obj.save()
+		return obj
+	}
+	
+    def JsecUser doUser(jsecUser,partyType,attrs){
+		      JsecUser ju=jsecUser
   		      ju.username=attrs.userName
 			  ju.party.firstName=attrs.firstName
   		      ju.party.lastName=attrs.lastName
@@ -56,6 +66,11 @@ class ContactUtilService {
 		     cuh.isEmpty(params[ZIPCODE])){
 			return null
 		}
+		def address1=params[ADDRESS1]
+		def address2=params[ADDRESS2]
+		def city=params[CITY]
+		def state=params[STATE]
+		def zipcode=params[ZIPCODE]
     	if (adr==null){
 	      adr=new ContactAddress()
     	}
@@ -63,14 +78,7 @@ class ContactUtilService {
 		}
     
 	def ContactAddress validateAddress(ContactAddress adr)throws ValidationException{
-		if (adr==null){
-			return null
-		}
-  	    if(!adr.validate()){
-	    	 throw new ValidationException(adr)
-	     }
- 	    adr.save()
- 	    return adr
+        return validate(adr)
     }
 	
     def ContactAddress doHomeAddress(ContactAddress address,params){
@@ -87,14 +95,7 @@ class ContactUtilService {
     }
 
     def ContactEmail validateEmail(ContactEmail email)throws ValidationException{
-    	if (email==null){
-    		return null
-    	}
-    	   if (!email.validate()){
-    		   throw new ValidationException(email)
-    	   }
-    	   email.save()
-    	   return email
+       return validate(email)
     }
     def ContactPhone doPhone(String cd,String field,ContactPhone phone,suffix,params){
     	def p=params[field+suffix]
@@ -107,14 +108,7 @@ class ContactUtilService {
       	  return cuh.doPhone(phone,phone.params[field+suffix],ContactType.findByCd(cd)).save()
     }
     def validatePhone(ContactPhone phone) throws ValidationException{
-    	if (phone==null){
-    		return null
-    	}
-    	  if (!phone.validate()){
-      		  throw new ValidationException(email)
-      	  }
-      	  phone.save()
-      	  return phone
+        return validate(phone)
     }
     def ContactPhone doHomePhone(ContactPhone phone, String suffix,params){
     	return doPhone(HOME,HOMEPHONENUMBER,phone, suffix,params)
@@ -147,7 +141,7 @@ class ContactUtilService {
 		return retArr
 	}
 	def getProfilePhoneContactTypes(Party party){
-        return getContactTypes(party,"ContectPhone")
+        return getContactTypes(party,"ContactPhone")
 	}
 	
 	def getProfileAddressContactTypes(Party party){
@@ -158,5 +152,4 @@ class ContactUtilService {
        return getContactTypes(party,"ContactEmail")
 	}
 	
-
 }
