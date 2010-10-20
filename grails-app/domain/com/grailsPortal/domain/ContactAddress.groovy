@@ -35,11 +35,11 @@ class ContactAddress implements Serializable{
         address2(size:1..100, blank:true, nullable:true)
         address3(size:1..100, blank:true, nullable:true)
         city(size: 1..100, blank: false,nullable:false)
-        state( blank: false,nullable:false)
+        state(addOnlyIfShiroRole:true,shiroRole:'admin',blank: false,nullable:false)
         zipcode(size: 1..10, blank: false,nullable:false)
-		party(nullable:false,blank:false)
+		party(addOnlyIfShiroRole:true,shiroRole:'admin',valueRoles:'user',nullable:false,blank:false)
 		active(nullable:false,blank:false)
-		contactType(nullable:false,blank:false)		
+		contactType(addOnlyIfShiroRole:true,shiroRole:'admin',valueRoles:'user',nullable:false,blank:false)		
     }
     String toString() {
         return address1+" "+city+" "+state+" "+zipcode 
