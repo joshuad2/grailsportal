@@ -55,61 +55,72 @@ class PortalTagLib {
 	 * tag for showing all of the party information which is last name and first name in a table form
 	 */
 	def showParty={attrs->
-		def instance=attrs.instance
-		def firstnameClass=""
+		def id=attrs.id
+		Party instance
 		def fnameValue=""
 		def lnameValue=""
-		if (instance.firstName.hasErrors()){
-			firstNameClass="errors"
-		}else{
-		  fnameValue=instance.firstName
+		if (id!=null && id!=""){
+			instance=Party.get(id)
+			fnameValue=instance.firstName
+			lnameValue=instance.lastName
 		}
-		def lastNameClass=""
-		if (instance.lastName.hasErrors()){
-			lastNameClass="errors"
-		}else{
-		 lnameValue=instance.lastName
+		else{
+			instance=new Party()
 		}
 		def t="""
 		      <tr class="prop">
                  <td valign="top" class="name">
                    <label for="firstName">First Name*:</label>
                  </td>
-                 <td valign="top" class="${firstnameClass}">
+                 <td valign="top">
                    ${g.textField(["maxlength":"100",
                                  "id":"firstName",
                                  "name":"firstName",
-                                 "value":"${fnameValue}"])}
+                                 "value":"${fnameValue}"])
+}
                  </td>
                </tr>                         
                <tr class="prop">
                  <td valign="top" class="name">
                    <label for="lastName">Last Name*:</label>
                  </td>
-                 <td valign="top" class="${lastNameClass}">
+                 <td valign="top" >
                    ${g.textField(["maxlength":"100",
-                                  "id":"lastName",
-                                  "name":"lastName",
-                                  "value":"${lnameValue}"])}
+		"id":"lastName",
+		"name":"lastName",
+		"value":"${lnameValue}"])
+}
                  </td>
                </tr> 
 		"""
-		out <<t
-		}
-	/**
-	 * tag for displaying the phone on the page using the attributes defined.
-	 */
-	def phone={attrs->
-		def partyId=attrs.id
-		def party=Party.get(partyId)
-		def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)		
-		def t="""
+out <<t
+}
+/**
+ * tag for displaying the phone on the page using the attributes defined.
+ */
+def phone={attrs->
+def partyId=attrs.id
+def controller=attrs.controller
+def party=Party.get(partyId)
+def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)	
+def editAction=attrs.editAction
+def createAction=attrs.createAction	
+if (editAction==null || editAction==""){
+	editAction="edit"
+}
+if (createAction==null || createAction==""){
+	createAction="create"
+}
+if (controller==null || controller==""){
+	controller="contactPhone"
+}
+def t="""
 	          <TABLE> 
 	           """
-		if (party!=null){
-			party.phoneList.each{
-				def phn=it
-				t+="""
+if (party!=null){
+	party.phoneList.each{
+		def phn=it
+		t+="""
                   <tr class="prop">
                     <td valign="top" class="name">
                       <label for="phoneNumber">Phone Number:</label>
@@ -130,10 +141,11 @@ class PortalTagLib {
                    </tr>   
                    <tr>
                      <td colspan="2">
-	                   ${g.link([controller:"contactPhone",
-	                         action:"edit",
-	                         id:"${phn.id}"],
-	                        "Edit Phone Number")} 
+	                   ${g.link([controller:"${controller}",
+		action:"${editAction}",
+		id:"${phn.id}"],
+	"Edit Phone Number")
+} 
                      </td>
                    </tr>
                    <tr>
@@ -141,16 +153,16 @@ class PortalTagLib {
                        <div style="border-style:solid;border-width:2px;"/>
                      </td>
                    </tr>"""
-		}
-	}
-	t+="""
+}
+}
+t+="""
 	  <tr><td>Add</td>
   <td>"""
-	contactTypes.each{
-		def ct=it
-		t+="""
-      ${g.link([controller:"contactPhone",action:"create",id:"${partyId}"],"${ct.name}Phone")
-	}"""
+contactTypes.each{
+def ct=it
+t+="""
+      ${g.link([controller:"${controller}",action:"${createAction}",params:["contactType.id":"${ct.id}","party.id":"${party.id}"]],"${ct.name}Phone")
+}"""
 }
 t+="""
     </div>
@@ -160,16 +172,92 @@ t+="""
 	"""
 out << t
 }
-	/**
-	* tag for displaying the phone on the page using the attributes defined.
-	*/
-   def editPhone={attrs->
-	   def partyId=attrs.id
-	   def phoneId=attris.phoneId
-	   def party=Party.get(partyId)
-	   def phn=ContactPhone.get(phoneId)
-	   def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
-	   def t="""
+/**
+* tag for displaying the phone on the page using the attributes defined.
+*/
+def flowPhone={attrs->
+def partyId=attrs.id
+def controller=attrs.controller
+def party=Party.get(partyId)
+def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
+def editAction=attrs.editAction
+def createAction=attrs.createAction
+def t="""
+			 <TABLE>
+			  """
+if (party!=null){
+   party.phoneList.each{
+	   def phn=it
+	   t+="""
+				 <tr class="prop">
+				   <td valign="top" class="name">
+					 <label for="phoneNumber">Phone Number:</label>
+					</td>
+					<td valign="top" class="value">
+					(${phn.areaCode})${phn.phoneNumber}
+					</td>
+				  </tr>
+				  <tr class="prop">
+					<td valign="top" class="name">
+					  <label for="contactType">
+					  Type of Phone Number:
+					  </label>
+					</td>
+					<td>
+					${phn.contactType}
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="2">
+					  ${g.link([controller:"${controller}",
+	   action:"${editAction}",
+	   id:"${phn.id}"],
+   "Edit Phone Number")
+}
+					</td>
+				  </tr>
+				  <tr>
+					<td colspan="2">
+					  <div style="border-style:solid;border-width:2px;"/>
+					</td>
+				  </tr>"""
+}
+}
+t+="""
+	 <tr><td>Add</td>
+ <td>"""
+contactTypes.each{
+def ct=it
+t+="""
+	 ${g.link([controller:"${controller}",action:"${createAction}",params:["contactType.id":"${ct.id}","party.id":"${party.id}"]],"${ct.name}Phone")
+}"""
+}
+t+="""
+   </div>
+   </td>
+   </tr>
+  </TABLE>
+   """
+out << t
+}
+/**
+ * tag for displaying the phone on the page using the attributes defined.
+ */
+def editPhone={attrs->
+def partyId=attrs.id
+def phoneId=attrs.phoneId
+def controller=attrs.controller
+def party=Party.get(partyId)
+def phn=ContactPhone.get(phoneId)
+def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
+def editAction=attrs.editAction
+if (editAction==null || editAction==""){
+editAction="edit"
+}
+if (controller==null || controller==""){
+controller="contactPhone"
+}
+def t="""
 	           <TABLE>
 				 <tr class="prop">
 				   <td valign="top" class="name">
@@ -191,10 +279,11 @@ out << t
 				  </tr>
 				  <tr>
 					<td colspan="2">
-					  ${g.link([controller:"contactPhone",
-							action:"edit",
-							id:"${phn.id}"],
-						   "Edit Phone Number")}
+					  ${g.link([controller:"${controller}",
+action:"${editAction}",
+id:"${phn.id}"],
+"Edit Phone Number")
+}
 					</td>
 				  </tr>
 				  <tr>
@@ -215,23 +304,38 @@ out << t
 
 def address={attrs->
 def partyId=attrs.id
-def party=Party.get(partyId)
-if (party==null){
-	return
+def party
+if (partyId==null || partyId==""){
+party=new Party()
 }
+party=Party.get(partyId)
+def controller=attrs.controller
+def p=attrs.params
 def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
+def editAction=attrs.editAction
+def createAction=attrs.createAction	
+if (editAction==null || editAction==""){
+editAction="edit"
+}
+if (createAction==null || createAction==""){
+createAction="create"
+}
+if (controller==null || controller==""){
+controller="contactAddress"
+}
 def t="""
     <TABLE> 
      """
+if (party!=null){
 party.addressList.each{
-	def addr=it
-	t+="""
+def addr=it
+t+="""
     <tr class="prop">
-       <td valign="top" class="name"><label for="Address1">Address*:</label></td>
+       <td valign="top" class="name"><label for="Address 1">Address*:</label></td>
        <td valign="top" class="value">${addr.address1}</td>
    </tr> 
    <tr class="prop">
-       <td valign="top" class="name"><label for="Address Line 2">Address 2:</label></td>
+       <td valign="top" class="name"><label for="Address 2">Address 2:</label></td>
        <td>${addr.address2}</td>
    </tr>
    <tr class="prop">
@@ -253,7 +357,10 @@ party.addressList.each{
    <tr>
 	 <td colspan="2">
 		<div id="editTheContactAddress${addr.contactType}">
-		  ${g.link([controller:"contactAddress",action:"edit",id:"${addr.id}"],"Edit Address")
+		  ${g.link([controller:"${controller}",action:"${editAction}",id:"${addr.id}",
+params:["party":${party
+},"contactType":${addr.contactType
+}]],"Edit Address")
 }
 	    </div>
      </td>
@@ -265,14 +372,15 @@ party.addressList.each{
    </tr>
 </tr>"""
 }
+}
 t+="""
 	  <tr><td>Add</td>
 <td>
 <div id="createTheContactAddress">"""
 addressContactTypes.each{
-def ct=it
+ContactType ct=it
 t+="""
-    ${g.link([controller:"contactAddress",action:"createContact${ct.name}Address",id:"${partyId}"],"${ct.name} Address")
+    ${g.link([controller:"${controller}",action:"${createAction}",params:["contactType.id":"${ct.id}","party.id":"${party.id}"]],"${ct.name} Address")
 }"""
 }
 t+="""
@@ -287,47 +395,64 @@ out << t
  * Email tag
  */
 def email={attrs,body->
+def party
 def partyId=attrs.id
-def party=Party.get(partyId)
-if (party==null){
-return
+if (partyId!=null){
+party=Party.get(partyId)
+}else{
+party=new Party()
 }
+def controller=attrs.controller
 def contactTypes=contactUtilService.getProfileEmailContactTypes(party)
+def editAction=attrs.editAction
+def createAction=attrs.createAction	
+if (editAction==null || editAction==""){
+editAction="edit"
+}
+if (createAction==null || createAction==""){
+createAction="create"
+}
+if (controller==null || controller==""){
+controller="contactPhone"
+}
 def t="""
 <TABLE> 
  """
+if (party!=null){
 party.emailList.each{
 def eml=it
 t+="""
-<tr class="prop">
-  <td valign="top" class="name"><label for="emailAddress">Email Address:</label></td>
-  <td valign="top" class="value">${eml.email.emailAddress}</td>
-</tr>
-<tr class="prop">
-  <td valign="top" class="name"><label for="contactType">Type of Email:</label></td>
-  <td>${eml.contactType}</td>
-</tr>   
-<tr>
+    <tr class="prop">
+    <td valign="top" class="name"><label for="emailAddress">Email Address:</label></td>
+    <td valign="top" class="value">${eml.email.emailAddress}</td>
+  </tr>
+  <tr class="prop">
+    <td valign="top" class="name"><label for="contactType">Type of Email:</label></td>
+    <td>${eml.contactType}</td>
+  </tr>   
+ <tr>
   <td colspan="2">
          ${g.link([controller:"contactEmail",
-			      action:"edit",
+			      action:"${editAction}}",
 				  id:"${eml.email.id}"],
-			      "Edit Email")}
+"Edit Email")
+}
   </td>
-</tr>
-<tr>
-  <td colspan="2">
-	<div style="border-style:solid;border-width:2px;"></div>
-  </td></tr>"""
+ </tr>
+ <tr>
+    <td colspan="2">
+	  <div style="border-style:solid;border-width:2px;"></div>
+    </td></tr>"""
+}
 }
 t+="""
 <tr><td>Add</td>
 <td>
 <div id="createTheContactEmail">"""
 contactTypes.each{
-def ct=it
+ContactType ct=it
 t+="""
-${g.link([controller:"contactEmail",action:"create",id:"${partyId}"],"${ct.name}Email")
+${g.link([controller:"${controller}",action:"${createAction}",params:["contactType.id":"${ct.id}","party.id":"${party.id}"]],"${ct.name}Email")
 }"""
 }
 t+="""
