@@ -90,20 +90,17 @@ class PortalContactController {
 		}
 		contactPhoneInstance.areaCode=params.areaCode
 		contactPhoneInstance.phoneNumber=params.phoneNumber
+		def party=Party.get(params.partyId)
+		def ct=ContactType.findByName(params.contactType)
+		contactPhoneInstance.party=party;
+		contactPhoneInstance.contactType=ct
 		if(!contactPhoneInstance.hasErrors() && contactPhoneInstance.save()) {
 			if (!isCreate){
 				flash.message="Updated the Phone"
 			}
 			else{
 				flash.message = "Created the Phone Contact"
-				def party=Party.get(params.partyId)
-				def ct=ContactType.findByName(params.contactType)
-				def pcp=new PartyContactPhone()
-				pcp.party=party;
-				pcp.active=true
-				pcp.phone=contactPhoneInstance
-				pcp.contactType=ct
-				pcp.save(flush:true)
+				contactPhoneInstance.save(flush:true)
 			}
 		}
 		else{
@@ -126,18 +123,13 @@ class PortalContactController {
 			contactEmailInstance=ContactEmail.get(params.id)	
 		}
 		contactEmailInstance.emailAddress=params.emailAddress
+	    contactEmailInstance.party=Party.get(params.partyId)
+		contactEmailInstance.contactType=ContactType.findByName(params.contactType)
+		contactEmailInstance.active=true
 		if(!contactEmailInstance.hasErrors() && contactEmailInstance.save()) {
 			if (!isCreate){
 				flash.message="Updated the Address"
 			}else{
-				def party=Party.get(params.partyId)
-				def ct=ContactType.findByName(params.contactType)
-				def pce=new PartyContactEmail()
-				pce.party=party;
-				pce.active=true
-				pce.email=contactEmailInstance
-				pce.contactType=ct
-				pce.save(flush:true)
 				flash.message = "Created the Email Address"
 			}
 		}
@@ -168,6 +160,8 @@ class PortalContactController {
 		contactAddressInstance.city=params.city
 		contactAddressInstance.state=State.get(params.state.id)
 		contactAddressInstance.zipcode=params.zipcode
+		contactAddressInstance.party=Party.get(params.partyId)
+		contactAddressInstance.contactType=ContactType.findByName(params.contactType)
 		if(!contactAddressInstance.hasErrors() && contactAddressInstance.save()) {
 			if (!isCreate){
 				flash.message="Updated the Address"
@@ -175,15 +169,6 @@ class PortalContactController {
 				return
 			}else{
 				flash.message = "Created the Address"
-				def party=Party.get(params.partyId)
-				def ct=ContactType.findByName(params.contactType)
-				def pcp=new PartyContactAddress()
-				pcp.party=party;
-				pcp.active=true
-				pcp.address=contactAddressInstance
-				pcp.contactType=ct
-				pcp.save(flush:true)
-				pcp.validate()
 				if (pcp.hasErrors()){
 					flash.message="Could not create the Address"
 					log.error(pcp.errors.allErrors)

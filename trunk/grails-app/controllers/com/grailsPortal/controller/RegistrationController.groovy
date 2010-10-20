@@ -18,11 +18,14 @@ package com.grailsPortal.controller
 import org.apache.shiro.SecurityUtils
 import org.apache.shiro.subject.Subject
 import org.apache.shiro.session.Session
-
+import org.codehaus.groovy.grails.web.servlet.DefaultGrailsApplicationAttributes;
+import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes;
 import java.text.SimpleDateFormat
+import com.grailsPortal.service.util.*;
 import com.grailsPortal.exception.ValidationException
 import com.grailsPortal.service.util.*;
 import com.grailsPortal.domain.*
+import com.grailsPortal.service.config.*;
 
 class RegistrationController {
   private static final String GOTOEMERGENCYCONTACTINFO      ="gotoEmergencyContactInfo"
@@ -41,6 +44,8 @@ class RegistrationController {
   private static final String GOTOMEDICALINFO               ="gotoMedicalInfo"
   private static final String ENTERMEDICALINFO              ="enterMedicalInfo"
   private static final String DATEFORMAT                    ="yyyy-MM-dd"
+  private static final String FIRSTNAME                     ="firstName"
+  private static final String LASTNAME                      ="lastName"
   private static final String ADDRESS1                      ="address1"
   private static final String ADDRESS2                      ="address2"
   private static final String CITY                          ="city"
@@ -57,9 +62,10 @@ class RegistrationController {
   private static final String REGISTRATIONSERVICE           ="registrationService"
   private static final String SECURITYSERVICE               ="securityService"
   private static final String PORTALVIEWSERVICE             ="portalviewService"
+  private static final String PARENT                        ="Parent"
  def index = {
-	def prods= Product.list()
-    redirect(action:'register',model:["products":prods])
+	session.prods= Product.list()
+    redirect(action:'register')
     }
 
  def showFinish={
@@ -81,7 +87,13 @@ class RegistrationController {
  def edit={
     session.regEventId=params.regEventId
     }
+ def createAddress={
+	 def contactAddressInstance = new ContactAddress()
+	 contactAddressInstance.properties = params
+	 render(view:'createAddress',model:['contactAddressInstance':contactAddressInstance])
+ }
  def newRegistration={
+	        session.prods= Product.list()
     		request.regEventId=null
     		session.regEventId=null
     		redirect(action:'register')
@@ -90,33 +102,48 @@ class RegistrationController {
    * This is the start of the registration flow
    */
 
-def doContacts={partyTypeCd, partyRoleCd,params,flow,regEvent->
+def doContacts={String partyTypeCd,
+	            String partyRoleCd,
+				String firstName,
+				String lastName,
+				RegistrationEvent regEvent->
         def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
-        def rs=    ctx.getBean(REGISTRATIONSERVICE)
-        return rs.doRegistrationParty(regEvent,
+        RegistrationService rs=    ctx.getBean(REGISTRATIONSERVICE)
+		PortalviewService pvs = ctx.getBean(PORTALVIEWSERVICE)
+        return rs.doRegistrationParty(
+			     pvs,
+			     regEvent,
       		     PartyRole.findByCd(partyRoleCd),
       		     PartyType.findByCd(partyTypeCd),
-				     params[FIRSTNAME],
-				     params[LASTNAME],
-				     new java.util.Date(),
-                   pvs.buildEmailParams(params),
-                   pvs.buildPhoneParams(params),
-                   pvs.buildAddressParams(params),
-                   pvs.buildOtherParams(params)
-				   )
+                 firstName,lastName,
+				 new Date(),
+				 new ArrayList(),new ArrayList(),new ArrayList(),new ArrayList())
   }
 def registerFlow = {
       selectProduct{// this by default is the first step
     	on(GOTOREGISTRANTINFO){
           try{
         	def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
-        	def rs=ctx.getBean(REGISTRATIONSERVICE)
-            flow.regEvent=rs.handleInitialRegistrationEvent(session.regEventId, new java.util.Date())// this has to run with the first step
-    		flow.regEvent.orderRecord=rs.doOrderRecord(sc,flow.regEvent.orderRecord,
-    				                                   "online Order",0.0,0.0,0.0,
-													   new java.util.Date(),"initial",
-    				                                   OrderRecordType.findByCd("Registration"))
-    		flow.regEvent.orderRecord=rs.handleOrderRecordLineItems(flow.regEvent.orderRecord, params)
+        	RegistrationService rs=ctx.getBean(REGISTRATIONSERVICE)
+			SecurityService sc=ctx.getBean(SECURITYSERVICE)
+            RegistrationEvent spRegEvent=rs.handleInitialRegistrationEvent(session.regEventId, new java.util.Date(),sc.getRegisteredUser())// this has to run with the first step
+    		OrderRecord orderRecord=rs.doOrderRecord(new OrderRecord(),
+													 sc.getRegisteredUser().party,
+    				                                 "online Order",
+													  0.0,0.0,0.0,
+													   new java.util.Date(),
+													   "IA",
+    				                                   "Registration")
+            rs.handleOrderRecordLineItems(orderRecord,params)
+		    RegistrationEventOrderRecord roer=rs.handleRegistrationEventOrderRecord(orderRecord,spRegEvent)
+			if (spRegEvent.orders==null){
+				spRegEvent.orders=new ArrayList()
+			}
+			spRegEvent.orders.add(roer)
+			if (spRegEvent.registrationFor==null){
+				spRegEvent.registrationFor=new Party()
+			}
+			flow.regEvent=spRegEvent
     		}catch(ValidationException e){
         		  flash.message="Please select the product"
         		  flow.registerInstance=e.getExceptionVal()
@@ -132,7 +159,28 @@ def registerFlow = {
       enterRegistrantInfo{
     	 on(GOTOPARENTINFO){
     	try{	 
-          flow.regEvent.registrationFor=doContacts("Child","Registrant",params,flow,regEvent)
+	       def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+		   RegistrationService rs=    ctx.getBean(REGISTRATIONSERVICE)
+		   PortalviewService pvs=     ctx.getBean(PORTALVIEWSERVICE)
+		   RegistrationEvent event=flow.regEvent
+		   PartyType partyType=PartyType.findByName("Child")
+           flow.regEvent.registrationFor=rs.doParty(
+			                                       pvs,
+			                                       partyType,
+												   event.registrationFor,
+												   params[FIRSTNAME],
+												   params[LASTNAME],
+												   new Date(),new ArrayList(),new ArrayList(),new ArrayList(),new ArrayList())
+		   if (flow.parent==null){
+		     Party parent=new Party();
+		     parent.partyType=PartyType.findByName("Parent")
+		     flow.parent=parent
+		   }
+		   if (flow.parent2==null){
+			 Party parent2=new Party()
+			 parent2.partyType=PartyType.findByName("Parent")
+			 flow.parent2=parent2
+		   }
           return success()
  		}catch(ValidationException e){
 			flash.message="Please re-enter the information"
@@ -146,18 +194,32 @@ def registerFlow = {
     	 }.to CANCEL
       }      
       enterParentInfo{
-     	 on(GOTOPARENTINFO2){
+     	 on("saveParentInfo"){
      		try{
-     	      flow.regEvent.registrationFor=doContacts("Parent",
-			                                           "Primary Parent",
-													   params,flow,regEvent)
-     		  return success()
+			def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+			RegistrationService rs=    ctx.getBean(REGISTRATIONSERVICE)
+	        PortalviewService pvs=     ctx.getBean(PORTALVIEWSERVICE)
+			PartyType partyType=PartyType.findByName(PARENT)
+		    def parent=flow.parent
+		    def regEvent=flow.regEvent
+            parent=rs.doParty(
+			                  pvs,partyType,parent,params[FIRSTNAME], params[LASTNAME],
+			                  new Date(),new ArrayList(),new ArrayList(),new ArrayList(),new ArrayList())
+			flow.parent=parent
+			request.parent=parent
+			if (flow.parent2==null){
+		     Party parent2=new Party();
+		     parent2.partyType=PartyType.findByName(PARENT)
+		     flow.parent2=parent
+		   }
+     		return success()
      		}catch(ValidationException e){
      			flash.message="Please re-enter the information"
          		flow.parentInstance=e.exceptionVal
      		    return error()
      		}
-     	 }.to SECONDARYPARENTINFO    	 
+     	 }.to ENTERPARENTINFO
+	     on(GOTOPARENTINFO2).to SECONDARYPARENTINFO    	 
          on(GOTOCANCEL){
      		 flash.message=CANCEL_MESSAGE
              session.regEventId=null;
@@ -215,6 +277,9 @@ def registerFlow = {
       finish{
         redirect(controller:REGISTRATION, action:REGISTRATIONFINISH)
         }
+	  cancel{
+		  redirect(controller:REGISTRATION,action:CANCEL)
+	  }
       cancelRegistration{
         redirect(controller:REGISTRATION,action:CANCEL)
         }
