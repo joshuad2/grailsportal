@@ -66,20 +66,23 @@ class PortalScaffoldingGenerator {
 		def endHasAllRoles="</shiro:hasAllRoles>"
 		def showValue="""\
 		    <div>
-		    \${domainInstance}?.${property.name}}
+		    \${fieldValue(bean:${domainInstance},field:'${property.name}')}
 		    </div>
 		    <g:hiddenField name="${property.name}" 
-		                   value="\${fieldValue(bean:\${domainInstance},field:'${property.name}')}" />
+		                   value="\${fieldValue(bean:${domainInstance},field:'${property.name}')}" />
 		    """
 		def startLacksAllValueRoles="""<shiro:lacksAllRoles in="['${valueRoles}']">"""
-		def startLacksAllRoles="""<shiro:lacksAllRoles>"""
+		def startLacksAllRoles="""<shiro:lacksAllRoles in="['${valueRoles}']">"""
 		def endLacksAllRoles="""</shiro:lacksAllRoles>"""
 		def showSelect=""
 		if (selectQuery==null){
-			showSelect=
-			"\n      <g:select optionKey=\"id\" from=\"\${${property.type.name}.list()}\" name=\"${property.name}.id\""+
-			" value=\"\${${domainInstance}?.${property.name}?.id}\""+
-			" ${renderNoSelection(property)}></g:select>"
+			showSelect="""\
+			<g:select optionKey="id" 
+			          from="\${${property.type.name}.list()}" 
+			          name="${property.name}.id"
+			 value="\${${domainInstance}?.${property.name}?.id}"}>
+			</g:select>
+			"""
 		}else{
 			showSelect=
 			"\n      <g:select optionKey=\"id\" from=\"\${${property.type.name}.findAll(${selectQuery},(${selectValues})}\" name=\"${property.name}.id\""+
