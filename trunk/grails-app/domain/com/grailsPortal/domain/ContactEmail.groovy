@@ -28,8 +28,8 @@ class ContactEmail implements Serializable{
     static constraints = {
         emailAddress(size: 1..200, blank: false,nullable:false)
         verified(size: 1..255, blank: false,nullable:true)
-	    party(blank:false,nullable:false)
-		contactType(blank:false,nullable:false)
+	    party(addOnlyIfShiroRole:true,shiroRole:'admin',valueRoles:'user',blank:false,nullable:false)
+		contactType(addOnlyIfShiroRole:true,shiroRole:'admin',valueRoles:'user',blank:false,nullable:false)
     }
     String toString() {
         return emailAddress 

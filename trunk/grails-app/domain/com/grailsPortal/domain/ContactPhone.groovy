@@ -1,5 +1,5 @@
 /*
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -27,8 +27,8 @@ class ContactPhone implements Serializable{
     	areaCode(size:1..4,nullable:true, blank:true)
     	internationalCode(size:1..2,nullable:true,blank:true)
         phoneNumber(size: 1..20, blank: false,nullable:false)
-		party(nullable:false,blank:false)
-		contactType(nullable:false,blank:false)
+		party(addOnlyIfShiroRole:true,shiroRole:'admin',valueRoles:'user',nullable:false,blank:false)
+		contactType(addOnlyIfShiroRole:true,shiroRole:'admin',valueRoles:'user',nullable:false,blank:false)
 		active(nullable:false,blank:false)
     }
     String toString() {
