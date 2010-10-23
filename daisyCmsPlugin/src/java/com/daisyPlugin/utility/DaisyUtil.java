@@ -2,6 +2,7 @@ package com.daisyPlugin.utility;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 
 import org.outerj.daisy.repository.Repository;
 
@@ -20,6 +21,18 @@ public interface DaisyUtil {
 	 * @throws Exception
 	 */
 	public String getContentIdFromName(String name) throws Exception;
+	/**
+	 * get ContentName from Id
+	 * 
+	 */
+	public String getContentNameFromId(String id) throws Exception;
+	/**
+	 * Get all of the fields out of a document 
+	 * @param contentName
+	 * @return
+	 * @throws Exception
+	 */
+	public LinkedHashMap <String,String> getAllFields(String contentName) throws Exception;
 	/**
 	 * get the hteml content from the ID
 	 * @param contentId

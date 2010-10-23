@@ -13,8 +13,8 @@ def daisyService
 			response.setContentType("image/jpeg")
 		  }else
 		  if (documentType=="SimpleDocument"){
-			def osw=new OutputStreamWriter(osb,"UTF-8")
 			def osb=new BufferedOutputStream(response.getOutputStream())
+			def osw=new OutputStreamWriter(osb,"UTF-8")
 			osw.write(ds.getHtmlContent(theId))
 		  }
 		}
