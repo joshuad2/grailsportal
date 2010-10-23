@@ -16,16 +16,12 @@
 	<div class="main-body-title-text">
 		A SPA THAT GIVES YOU </div>
 	<!-- Main Body Text DIV -->
-	<div class="main-body-text">
-		<div id="main-text" style="direction: ltr">
-		<daisyCms:simpleText id="16"/>
-	  </div>
-	</div>
+	<div class="main-body-text"><div id="main-text" style="direction: ltr"><daisyCms:simpleText id="16"/></div></div></div></div>
 	<!--End of Main Body Text -->
 	<div class="main-body-sublinks">
-		<p><a href="#Wellness Essentialsclub"><span class="links">Wellness Essentials 
-		CLUB MEMBERSHIP</span></a> | <a href="#annual"><span class="links">ANNUAL 
-		MEMBERSHIP</span></a> </p>
+		<a href="#Wellness Essentialsclub"><span class="links">Wellness Essentials 
+		CLUB MEMBERSHIP</span></a> | <a href="#annual">
+		<span class="links">ANNUAL MEMBERSHIP</span></a>
 	</div>
 </div>
 <!-- End of Main Body -->
