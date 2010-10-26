@@ -29,6 +29,7 @@ class PortalMenuConfiguration  implements Serializable{
  String  margin
  PortalConfig portalConfig
  String isActive
+ int    sequence
  static hasMany=[portalMenus:PortalMenu]
  static mapping={
 	 portalMenus lazy:false
@@ -36,6 +37,7 @@ class PortalMenuConfiguration  implements Serializable{
 
  static constraints={
 		menuName(size:1..100,blank:false,nullable:false)
+		sequence(range:1..100,blank:false,nullable:false)
 	    position(size:1..20,blank:false,nullable:false,inList:["static","dynamic"])
 	    hideDelay(size:1..20,blank:false,nullable:false)
 	    lazyLoad(size:1..2,inList:["Y","N"],blank:false,nullable:false)

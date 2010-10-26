@@ -24,6 +24,7 @@ class PortalSubMenu  implements Serializable{
   PortalMenu mainMenu
   String showAdmin
   String showAnonymous
+  int    sequence
   PortalMenuType portalMenuType
   static fetchMode = [mainMenu:"eager",portalMenuType:"eager"]
   static mapping = {
@@ -34,6 +35,7 @@ static constraints={
 		theController(display:true,size:1..40,nullable:false,blank:false)
 	    theAction(display:true,size:1..40,nullable:true,blank:true)
 	    text(display:true,size:1..100,nullable:false,blank:false)
+		sequence(display:true,range:(1..100),nullable:false,blank:false)
 	    isAjax(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
 		showSpinner(display:true,size:1..2,nullable:false,blank:false,inList:["Y","N"])
 		mainMenu(display:true,nullable:false,blank:false)
