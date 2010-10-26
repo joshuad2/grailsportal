@@ -21,6 +21,7 @@ class PortalMenu  implements Serializable{
 	PortalMenuType portalMenuType
 	PortalMenuConfiguration configuration
 	String isActive
+	int    sequence
 	static hasMany=[subMenus:PortalSubMenu]
     static mapping = {
 		subMenus lazy:false
@@ -29,6 +30,7 @@ class PortalMenu  implements Serializable{
     static constraints = {
 		itemLabel(size:1..40,blank:false,nullable:false)
 		itemText(size:1..100,blank:false,nullable:false)
+		sequence(range:1..100,blank:false,nullable:false)
 		portalMenuType(blank:false,nullable:false)
 		isActive(size:1..2,blank:false,nullable:false,inList:['Y','N'])
 		subMenus(blank:true,nullable:true)
