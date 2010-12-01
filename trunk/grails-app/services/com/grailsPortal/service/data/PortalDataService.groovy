@@ -28,8 +28,8 @@ import com.grailsPortal.domain.portalConfig.ViewAttributeComponentGroup;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 
 import org.apache.shiro.crypto.hash.Sha256Hash
+import org.codehaus.groovy.grails.commons.*
 import grails.util.Environment
-import org.woaf.portal.PortalData;
 import org.codehaus.groovy.grails.commons.GrailsClass;
 import com.grailsPortal.domain.*;
 import com.grailsPortal.domain.menu.*
@@ -40,7 +40,7 @@ import com.grailsPortal.domain.menu.*
  * @author Joshua Davis
  *
  */
-class PortalDataService implements PortalData{
+class PortalDataService {
 
     boolean transactional = true
     def portalConfigName="West Orlando Arts Foundation"
@@ -152,11 +152,11 @@ class PortalDataService implements PortalData{
 	   def adminMenu=initializePortalMenu(config,menus)
 	}
 	def intializePortalMenuTypes(){
-		def pmt=new PortalMenuType()
+		PortalMenuType pmt=new PortalMenuType()
 		pmt.menuTypeDesc="Admin Menu"
 		pmt.menuTypeName="admin"
 		pmt.save(flush:true)
-		def pmt1=new PortalMenuType()
+		PortalMenuType pmt1=new PortalMenuType()
         pmt1.menuTypeDesc="User Menu"
         pmt1.menuTypeName="user"
         pmt1.save(flush:true)
@@ -178,14 +178,17 @@ class PortalDataService implements PortalData{
 	   menuConfig.lazyLoad="N"
 	   menuConfig.menuName="Main Menu"
 	   menuConfig.portalConfig=portalConfig
+	   menuConfig.sequence=1
        menuConfig.save(flush:true)
 	   return menuConfig
 	}
 	def initializePortalMenu(menuConfig,menus){
+	   int x=1
 	   menus.each{
-		def pm1=new PortalMenu();
+		PortalMenu pm1=new PortalMenu();
 		pm1.configuration=menuConfig
 		pm1.isActive="Y"
+		pm1.sequence=x++
 		pm1.itemLabel=it.key
 		pm1.itemText=it.key
 		if (it.key.startsWith("Admin")){
@@ -195,6 +198,7 @@ class PortalDataService implements PortalData{
  	    }
 		pm1.save(flush:true)
 		def subMenus=it.value
+		int i=1
 		subMenus.each{
 			def action="index"
 			def psm=new PortalSubMenu()
@@ -204,6 +208,7 @@ class PortalDataService implements PortalData{
 			}else{
 			  psm.isAjax="N"
 		    }
+			psm.sequence=i++
 			psm.portalMenuType=PortalMenuType.findByMenuTypeName("user")
 			psm.theAction=action
 			psm.mainMenu=pm1
@@ -652,15 +657,14 @@ class PortalDataService implements PortalData{
         }
     }
     def void initializePortal() {
+	  def config = ConfigurationHolder.config
+	  if (config.portal.load.defaultData==true){
     	results =     JsecRole.findByName("Administrator")
         userResults=  JsecUser.findByUsername("admin")
         roleResults=  JsecRole.findByName("Administrator")
         userRoleResults=JsecRole.findByName("User")
         partyResults=Party.findByFirstName("Admin")
         adminParty=partyResults
-        if (Environment.current==Environment.DEVELOPMENT){
-          log.info("IN DEVELOPMENT ENVIRONMENT")
-        }
         adminParty=initializeAdmin(partyResults)
         initializeUserRoles(userRoleResults)        
         initializeUsers(userResults)
@@ -695,5 +699,6 @@ class PortalDataService implements PortalData{
 		initializeOrderStatuses(orderStatuses)
 		initializeStates(states)
         initializeMenu(pc,menus)
+	  }
     }
 }
