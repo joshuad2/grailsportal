@@ -101,7 +101,7 @@ class PortalScaffoldingGenerator {
 				buf << showSelect
 				buf << endLacksAllRoles
 			}
-			def shiroRole=cp.getMeetaConstraintValue("shiroRole")
+			def shiroRole=cp.getMetaConstraintValue("shiroRole")
 			def doAdd=cp.getMetaConstraintValue("addOnlyIfShiroRole")
 			if (doAdd!=null && shiroRole!=null ){
 				buf <<"<shiro:hasAllRoles in=\"['${shiroRole}']\">"
