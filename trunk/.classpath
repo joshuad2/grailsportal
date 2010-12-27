@@ -3,6 +3,9 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="test/unit"/>
+	<classpathentry kind="src" path="test/integration"/>
+	<classpathentry kind="src" path="scripts"/>
 	<classpathentry kind="src" path="taglib"/>
 	<classpathentry kind="src" path="groovy"/>
 	<classpathentry kind="src" path="grails-app/realms"/>
@@ -13,7 +16,6 @@
 	<classpathentry kind="src" path="grails-app/services"/>
 	<classpathentry kind="src" path="src/groovy"/>
 	<classpathentry kind="con" path="com.springsource.sts.grails.core.CLASSPATH_CONTAINER"/>
-	<classpathentry kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry kind="src" path="bubbling-2.1.2-grails-app-taglib">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
@@ -24,27 +26,17 @@
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="console-0.2.2-grails-app-controllers">
+	<classpathentry kind="src" path="console-1.0.1-grails-app-controllers">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="console-0.2.2-grails-app-i18n">
+	<classpathentry kind="src" path="console-1.0.1-grails-app-services">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="console-0.2.2-grails-app-services">
-		<attributes>
-			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="console-0.2.2-grails-app-utils">
-		<attributes>
-			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="src" path="console-0.2.2-grails-app-views">
+	<classpathentry kind="src" path="console-1.0.1-grails-app-views">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
@@ -59,62 +51,67 @@
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="BuildConfig.groovy|*DataSource.groovy|UrlMappings.groovy|Config.groovy|BootStrap.groovy|spring/resources.groovy" kind="src" path="grails-ui-1.1.1-grails-app-conf">
+	<classpathentry kind="src" path="grails-melody-0.8-src-groovy">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="grails-ui-1.1.1-grails-app-i18n">
+	<classpathentry excluding="BuildConfig.groovy|*DataSource.groovy|UrlMappings.groovy|Config.groovy|BootStrap.groovy|spring/resources.groovy" kind="src" path="grails-ui-1.2-SNAPSHOT-grails-app-conf">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="grails-ui-1.1.1-grails-app-services">
+	<classpathentry kind="src" path="grails-ui-1.2-SNAPSHOT-grails-app-services">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="grails-ui-1.1.1-grails-app-taglib">
+	<classpathentry kind="src" path="grails-ui-1.2-SNAPSHOT-grails-app-taglib">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="grails-ui-1.1.1-src-groovy">
+	<classpathentry kind="src" path="grails-ui-1.2-SNAPSHOT-src-groovy">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry excluding="BuildConfig.groovy|*DataSource.groovy|UrlMappings.groovy|Config.groovy|BootStrap.groovy|spring/resources.groovy" kind="src" path="shiro-1.1-SNAPSHOT-grails-app-conf">
+	<classpathentry kind="src" path="perf4j-0.1.1-grails-app-i18n">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="shiro-1.1-SNAPSHOT-grails-app-i18n">
+	<classpathentry excluding="BuildConfig.groovy|*DataSource.groovy|UrlMappings.groovy|Config.groovy|BootStrap.groovy|spring/resources.groovy" kind="src" path="shiro-1.1.1-grails-app-conf">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="shiro-1.1-SNAPSHOT-grails-app-services">
+	<classpathentry kind="src" path="shiro-1.1.1-grails-app-i18n">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="shiro-1.1-SNAPSHOT-grails-app-taglib">
+	<classpathentry kind="src" path="shiro-1.1.1-grails-app-services">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="shiro-1.1-SNAPSHOT-src-java">
+	<classpathentry kind="src" path="shiro-1.1.1-grails-app-taglib">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="shiro-1.1-SNAPSHOT-src-groovy">
+	<classpathentry kind="src" path="shiro-1.1.1-src-java">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="src" path="tomcat-1.3.3-src-groovy">
+	<classpathentry kind="src" path="shiro-1.1.1-src-groovy">
+		<attributes>
+			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="src" path="tomcat-1.3.5-src-groovy">
 		<attributes>
 			<attribute name="com.springsource.sts.grails.core.SOURCE_FOLDER" value="true"/>
 		</attributes>
