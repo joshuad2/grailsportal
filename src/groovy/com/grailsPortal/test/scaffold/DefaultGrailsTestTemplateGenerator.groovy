@@ -7,7 +7,8 @@ import groovy.text.Template
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import org.codehaus.groovy.grails.commons.ApplicationHolder
-import org.codehaus.groovy.grails.commons.GrailsDomainClass
+import org.codehaus.groovy.grails.commons.GrailsControllerClass
+import org.codehaus.groovy.grails.commons.GrailsServiceClass
 import org.springframework.context.ResourceLoaderAware
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.FileSystemResource
@@ -18,28 +19,25 @@ import org.codehaus.groovy.grails.cli.CommandLineHelper
 import org.codehaus.groovy.grails.commons.ConfigurationHolder
 import org.codehaus.groovy.grails.plugins.PluginManagerHolder
 import org.codehaus.groovy.grails.scaffolding.*
+import org.hsqldb.lib.HashMap;
 
 
 class DefaultGrailsTestTemplateGenerator implements GrailsTestTemplateGenerator, ResourceLoaderAware {
 
     static final Log LOG = LogFactory.getLog(DefaultGrailsTestTemplateGenerator)
 
-    String basedir = "."
+    String basedir = "./"
+	def scaffoldedMethods=["index","update","list","show"]
     boolean overwrite = false
     def engine = new SimpleTemplateEngine()
     ResourceLoader resourceLoader
     Template renderEditorTemplate
-    String domainSuffix = 'Instance'
 
     /**
      * Used by the scripts so that they can pass in their AntBuilder instance.
      */
     DefaultGrailsTestTemplateGenerator(ClassLoader classLoader) {
         engine = new SimpleTemplateEngine(classLoader)
-        def suffix = ConfigurationHolder.config?.grails?.test?.templates?.domainSuffix
-        if (suffix != [:]) {
-            domainSuffix = suffix
-        }
     }
 
     /**
@@ -51,33 +49,96 @@ class DefaultGrailsTestTemplateGenerator implements GrailsTestTemplateGenerator,
         LOG.info "Test Scaffolding template generator set to use resource loader ${rl}"
         this.resourceLoader = rl
     }
+	void generateTestDomains(domainClass, destdir) {
+		LOG.info "In GenerateTestDomains"
+		Assert.hasText destdir, "Argument [destdir] not specified"
 
-    // uses the type to render the appropriate editor
-    def renderEditor = { property ->
-        def domainClass = property.domainClass
-        def cp
-        if (PluginManagerHolder.pluginManager.hasGrailsPlugin('hibernate')) {
-            cp = domainClass.constrainedProperties[property.name]
-        }
+		if (domainClass) {
+			def fullName = domainClass.fullName
+			def pkg = ""
+			def pos = fullName.lastIndexOf('.')
+			if (pos != -1) {
+				// Package name with trailing '.'
+				pkg = fullName[0..pos]
+			}
 
-        if (!renderEditorTemplate) {
-            // create template once for performance
-            def templateText = getTemplateText("renderEditor.template")
-            renderEditorTemplate = engine.createTemplate(templateText)
-        }
+			def destFile = new File("${destdir}/test/unit/${pkg.replace('.' as char, '/' as char)}${domainClass.shortName}Tests.groovy")
+			if (canWrite(destFile)) {
+				destFile.parentFile.mkdirs()
+				destFile.withWriter { w ->
+					generateTestDomains(domainClass, w)
+				}
+				LOG.info("Domain generated at ${destFile}")
+			}
+		}
+	}
+	
+	void generateTestDomains(domainClass, Writer out) {
+		def templateText = getTemplateText("src/grails/templates/test/unit/domainUnitTest.groovy")
+		java.util.Vector closures = new java.util.Vector()
+		def uris=domainClass.getURIs()
+		def props=domainClass.getProperties()
+		uris.each {
+			String uri=it
+			String propertyName=domainClass.getClosurePropertyName(uri)
+			closures.add(propertyName)
+		}
+		  def binding = [
+					   packageName: serviceClass.packageName,
+					   serviceClass: serviceClass,
+					   className: serviceClass.shortName,
+					   closures: closures
+					   ]
+		  def t = engine.createTemplate(templateText)
+		  t.make(binding).writeTo(out)
+	}
+	void generateTestServices(serviceClass, destdir) {
+		LOG.info "In GenerateTestServices"
+		Assert.hasText destdir, "Argument [destdir] not specified"
 
-        def binding = [property: property,
-                       domainClass: domainClass,
-                       cp: cp,
-                       domainInstance:getPropertyName(domainClass)]
-        return renderEditorTemplate.make(binding).toString()
-    }
+		if (serviceClass) {
+			def fullName = serviceClass.fullName
+			def pkg = ""
+			def pos = fullName.lastIndexOf('.')
+			if (pos != -1) {
+				// Package name with trailing '.'
+				pkg = fullName[0..pos]
+			}
 
-    void generateTestControllers(GrailsDomainClass domainClass, String destdir) {
-        Assert.hasText destdir, "Argument [destdir] not specified"
-
-        if (domainClass) {
-            def fullName = domainClass.fullName
+			def destFile = new File("${destdir}/test/unit/${pkg.replace('.' as char, '/' as char)}${serviceClass.shortName}Tests.groovy")
+			if (canWrite(destFile)) {
+				destFile.parentFile.mkdirs()
+				destFile.withWriter { w ->
+					generateTestServices(serviceClass, w)
+				}
+				LOG.info("Service generated at ${destFile}")
+			}
+		}
+	}
+	
+	void generateTestServices(serviceClass, Writer out) {
+		def templateText = getTemplateText("c:/Workspace/Portal/src/templates/test/unit/ServiceUnitTest.groovy")
+		java.util.Vector closures = new java.util.Vector()
+		GrailsServiceClass sc=serviceClass
+		def uris = sc.getProperties()
+		uris.each {
+			String propertyName=it
+			closures.add(propertyName)
+		}
+		  def binding = [
+					   packageName: serviceClass.packageName,
+					   serviceClass: serviceClass,
+					   className: serviceClass.shortName,
+					   closures: closures
+					   ]
+		  def t = engine.createTemplate(templateText)
+		  t.make(binding).writeTo(out)
+	}
+	
+    void generateTestControllers(controllerClass, destdir) {
+		Assert.hasText destdir, "Argument [destdir] not specified"
+        if (controllerClass) {
+            def fullName = controllerClass.fullName
             def pkg = ""
             def pos = fullName.lastIndexOf('.')
             if (pos != -1) {
@@ -85,73 +146,51 @@ class DefaultGrailsTestTemplateGenerator implements GrailsTestTemplateGenerator,
                 pkg = fullName[0..pos]
             }
 
-            def destFile = new File("${destdir}/test/unit/controllers/${pkg.replace('.' as char, '/' as char)}${domainClass.shortName}ControllerUnitTest.groovy")
+            def destFile = new File("${destdir}/test/unit/${pkg.replace('.' as char, '/' as char)}${controllerClass.shortName}Tests.groovy")
             if (canWrite(destFile)) {
                 destFile.parentFile.mkdirs()
-
                 destFile.withWriter { w ->
-                    generateTestControllers(domainClass, w)
+                    generateTestControllers(controllerClass, w)
                 }
-
                 LOG.info("Controller generated at ${destFile}")
             }
         }
     }
 	
-    void generateTestControllers(GrailsDomainClass domainClass, Writer out) {
-        def templateText = getTemplateText("ControllerUnitTest.groovy")
-
-        boolean hasHibernate = PluginManagerHolder.pluginManager.hasGrailsPlugin('hibernate')
-        def binding = [packageName: domainClass.packageName,
-                       domainClass: domainClass,
-                       className: domainClass.shortName,
-                       propertyName: getPropertyName(domainClass),
-                       comparator: hasHibernate ? DomainClassPropertyComparator : SimpleDomainClassPropertyComparator]
-
-        def t = engine.createTemplate(templateText)
-        t.make(binding).writeTo(out)
-    }
-
-	
-	void generateTestDomains(GrailsDomainClass domainClass, String destdir){
-		Assert.hasText destdir, "Argument [destdir] not specified"
-		
-				if (domainClass) {
-					def fullName = domainClass.fullName
-					def pkg = ""
-					def pos = fullName.lastIndexOf('.')
-					if (pos != -1) {
-						// Package name with trailing '.'
-						pkg = fullName[0..pos]
-					}
-		
-					def destFile = new File("${destdir}/test/unit/domain/${pkg.replace('.' as char, '/' as char)}${domainClass.shortName}Domain.groovy")
-					if (canWrite(destFile)) {
-						destFile.parentFile.mkdirs()
-		
-						destFile.withWriter { w ->
-							generateTestDomain(domainClass, w)
-						}
-		
-						LOG.info("Controller generated at ${destFile}")
-					}
+    void generateTestControllers(controllerClass, Writer out) {
+        def templateText = getTemplateText("/src/grails/templates/test/unit/ControllerUnitTest.groovy")
+		java.util.Vector closures = new java.util.Vector()
+		def uris=controllerClass.getURIs()
+		def props=controllerClass.getProperties()
+		Boolean isScaffolded=false
+		uris.each {
+			String uri=it
+			String propertyName=controllerClass.getClosurePropertyName(uri)
+			if (propertyName =="scaffold" || propertyName.endsWith("Service")|| closures.indexOf(propertyName)!=-1){
+				if (propertyName == "scaffold"){
+					isScaffolded=true
 				}
-	}
-	
-	void generateTestDomains(GrailsDomainClass domainClass, Writer out) {
-		def templateText = getTemplateText("DomainUnitTest.groovy")
-
-		boolean hasHibernate = PluginManagerHolder.pluginManager.hasGrailsPlugin('hibernate')
-		def binding = [packageName: domainClass.packageName,
-					   domainClass: domainClass,
-					   className: domainClass.shortName,
-					   propertyName: getPropertyName(domainClass),
-					   comparator: hasHibernate ? DomainClassPropertyComparator : SimpleDomainClassPropertyComparator]
-
-		def t = engine.createTemplate(templateText)
-		t.make(binding).writeTo(out)
-	}
-    private String getPropertyName(GrailsDomainClass domainClass) { "${domainClass.propertyName}${domainSuffix}" }
+				}else{
+			  closures.add(propertyName)
+			}
+		}
+		if (isScaffolded){
+			scaffoldedMethods.each{
+			String name=it
+		 	if (closures.indexOf(name)==-1){
+			  closures.add(name)  
+		      }
+			}
+		}
+          def binding = [
+			           packageName: controllerClass.packageName,
+                       controllerClass: controllerClass,
+                       className: controllerClass.shortName,
+					   closures: closures
+					   ]
+          def t = engine.createTemplate(templateText)
+          t.make(binding).writeTo(out)
+    }
 
     private helper = new CommandLineHelper()
     private canWrite(testFile) {
@@ -168,28 +207,11 @@ class DefaultGrailsTestTemplateGenerator implements GrailsTestTemplateGenerator,
         }
         return true
     }
-
-    private getTemplateText(String template) {
-        def application = ApplicationHolder.getApplication()
-        // first check for presence of template in application
-        if (resourceLoader && application?.warDeployed) {
-            return resourceLoader.getResource("/WEB-INF/templates/test/unit/${template}").inputStream.text
-        }
-
-        def templateFile = new FileSystemResource("${basedir}/src/templates/test/unit/${template}")
-        if (!templateFile.exists()) {
-            // template not found in application, use default template
-            def grailsHome = BuildSettingsHolder.settings?.grailsHome
-
-            if (grailsHome) {
-                templateFile = new FileSystemResource("${grailsHome}/src/grails/templates/test/unit/${template}")
-            }
-            else {
-                templateFile = new ClassPathResource("src/grails/templates/test/unit/${template}")
-            }
-        }
-        return templateFile.inputStream.getText()
-    }
+	private getTemplateText(template) {
+		def application = ApplicationHolder.getApplication()
+		def templateFile = new FileSystemResource(template)
+		return templateFile.inputStream.getText()
+	}
 
 }
 
