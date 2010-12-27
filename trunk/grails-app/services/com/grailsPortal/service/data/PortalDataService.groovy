@@ -41,7 +41,7 @@ import com.grailsPortal.domain.menu.*
  *
  */
 class PortalDataService {
-
+    static profiled=true
     boolean transactional = true
     def portalConfigName="West Orlando Arts Foundation"
     def attributeNames=["headerText"]
@@ -290,29 +290,7 @@ class PortalDataService {
              }
     }
 
-    def initializeValue= {cls, className, name, cd, dsc,valResults->
-    	if (valResults==null){
-    		if (name!=null){
-    			cls.name=name
-    		}
-    		if (cd!=null){
-    			cls.cd=cd
-    		}
-    		if (dsc!=null){
-    			cls.dsc=dsc
-    		}
-			cls.validate()
-    		cls.save(flush:true)
-      	   if (cls.hasErrors()){
-     		   log.error("Couldn't add "+className+" - "+name)
-			   log.error(cls.errors.allErrors)
-     	   }else{
-     	     log.error("Added "+className+" - "+name)
-     	   }
-    		return cls
-    	}
-    	
-    }
+
     def void initializeAttributeDataTypes(dataTypes){
     	dataTypes.each{
     		def dt=new AttributeDataType()
@@ -379,9 +357,34 @@ class PortalDataService {
     		initializeValue(new Component(),"Component",it,it,it,Component.findByName(it))
     	}
     }
-    def void initializeAttributeTypes(attrTypes){
+	def initializeValue(cls, className, name, cd, dsc,valResults){
+		if (valResults==null){
+			if (name!=null){
+				cls.name=name
+			}
+			if (cd!=null){
+				cls.cd=cd
+			}
+			if (dsc!=null){
+				cls.dsc=dsc
+			}
+			cls.validate()
+			cls.save(flush:true)
+			 if (cls.hasErrors()){
+				log.error("Couldn't add "+className+" - "+name)
+			   log.error(cls.errors.allErrors)
+			}else{
+			  log.error("Added "+className+" - "+name)
+			}
+			return cls
+		}
+	}
+	
+	def void initializeAttributeTypes(attrTypes){
         attrTypes.each{
-            initializeValue(new AttributeType(), "AttributeType",it,it,it,AttributeType.findByName(it))
+            initializeValue(new AttributeType(),
+				            "AttributeType",it,it,it,
+				            AttributeType.findByName(it))
           }
    }
     

@@ -19,7 +19,7 @@ import java.util.HashMap;
 
 import com.grailsPortal.domain.*
 class PortalConfigurationService {
-
+    static profiled=true
     boolean transactional = true
     def String portalId
     PortalConfig pc
