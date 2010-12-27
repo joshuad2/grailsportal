@@ -17,7 +17,7 @@ import org.apache.shiro.subject.Subject
 import org.apache.shiro.session.Session
 import com.grailsPortal.domain.*;
 class SecurityService {
-
+    static profiled=true
     boolean transactional = true
 
     def JsecUser getRegisteredUser() {

@@ -22,6 +22,7 @@ import com.grailsPortal.domain.portalConfig.ViewAttribute;
 import com.grailsPortal.domain.*;
 import com.grailsPortal.ui.portalView.PortalViewHandler;
 class PortalviewService {
+    static profiled=true
     PortalViewHandler pvh=new PortalViewHandler()
     boolean transactional = false
     // isValidView will return true if all of the fields are valid on the view

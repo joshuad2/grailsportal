@@ -20,6 +20,7 @@ import com.grailsPortal.domain.*;
 import com.grailsPortal.exception.ValidationException
 import com.grailsPortal.service.config.*;
 class RegistrationService {
+	static profiled=true
 	private static final String elements=["email",
 		                                  "phone",
 										  "address"]

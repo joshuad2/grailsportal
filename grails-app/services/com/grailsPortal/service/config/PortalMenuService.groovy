@@ -15,6 +15,7 @@ package com.grailsPortal.service.config;
 import com.grailsPortal.domain.menu.PortalMenuConfiguration
 import com.grailsPortal.domain.portalConfig.PortalConfig
 class PortalMenuService {
+static profiled=true
 	def getPortalMenu(portalConfigId){
 		def pcId=portalConfigId
 		if (portalConfigId==null){

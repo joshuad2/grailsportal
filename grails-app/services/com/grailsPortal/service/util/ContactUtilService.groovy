@@ -18,6 +18,7 @@ import com.grailsPortal.ui.util.ContactUtilHandler
 import com.grailsPortal.domain.*
 import org.grails.grailsui.DialogTagLib
 class ContactUtilService {
+	    static profiled=true
 		private static final String DATEFORMAT="yyyy-MM-dd"
 		private static final String ADDRESS1="address1"
 		private static final String ADDRESS2="address2"
@@ -129,16 +130,8 @@ class ContactUtilService {
     }
 	
 	def getContactTypes(Party party,String contactClassName){
-		def retArr=[]
 		def cts= ContactType.list()
-		cts.each{
-		  def ct=it
-		  def pcp = ContactPhone.find("from "+contactClassName+" where party=? and contactType=?",party,ct)
-		  if (pcp==null){
-			  retArr.add it
-			}
-		}
-		return retArr
+		return cts
 	}
 	def getProfilePhoneContactTypes(Party party){
         return getContactTypes(party,"ContactPhone")
