@@ -4,7 +4,6 @@
 <title>
   <g:layoutTitle default="Portal" />
 </title>
-<gui:resources components="dialog" />
 <g:javascript library="prototype" />
 <g:javascript>
 function showSpinner(elementName)
