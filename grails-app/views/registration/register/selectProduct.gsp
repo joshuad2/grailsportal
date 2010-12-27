@@ -30,39 +30,39 @@
 	<table>
 		<th>
 		<tr>
-			<td colspan="2">Select Weeks to Register For</td>
+			<td colspan="2">Select The Product you are interested in</td>
 			<td>Cost</td>
 		</tr>
 		</th>
 		<tbody>
 			<g:if test="${regEvent.id == null}">
-				<g:each in="${products}">
+				<g:each in="${session.prods}">
 					<tr class="prop">
-						<td valign="top" class="name"><label for="${it.name}">Week
-						of ${it.name}
-						</label></td>
-						<td valign="top"><g:checkBox name="${it.cd}" value="${false}" />
+						<td valign="top" class="name"><label for="${it.name}"></label></td>
+						<td valign="top">
+						  <g:checkBox name="${it.cd}" value="${false}" />
+						<td valign="top" align="left" class="name">
+						  <g:formatNumber number="${it.netCostAmount}" format="\$###,##0.00" />
 						</td>
-						<td valign="top" align="left" class="name"><g:formatNumber
-							number="${it.netCostAmount}" format="\$###,##0.00" /></td>
 					</tr>
 				</g:each>
 			</g:if>
 			<g:else>
-				<g:each in="${Product.list()}">
+				<g:each in="${session.prods}">
 					<tr class="prop">
-						<td valign="top" class="name"><label for="${it.name}">Week
-						of ${it.name}
-						</label></td>
-						<td valign="top"><g:set var="cli"
-							value="${OrderRecordLineItem.findByOrderRecordAndProduct(regEvent.orderRecord,it)}" />
-						<g:if test="${cli==null}">
+						<td valign="top" class="name"><label for="${it.name}"></label></td>
+						<td valign="top">
+						  <g:set var="cli" value="${OrderRecordLineItem.findByOrderRecordAndProduct(regEvent.orderRecord,it)}" />
+						  <g:if test="${cli==null}">
 							<g:checkBox name="${it.cd}" value="${false}" />
-						</g:if> <g:else>
-							<g:checkBox name="${it.cd}" value="${true}" />
-						</g:else></td>
-						<td valign="top" align="left" class="name"><g:formatNumber
-							number="${it.netCostAmount}" format="\$###,##0.00" /></td>
+						  </g:if> 
+						  <g:else>
+							 <g:checkBox name="${it.cd}" value="${true}" />
+						  </g:else>
+						</td>
+						<td valign="top" align="left" class="name">
+						    <g:formatNumber number="${it.netCostAmount}" format="\$###,##0.00" />
+						</td>
 					</tr>
 				</g:each>
 			</g:else>
