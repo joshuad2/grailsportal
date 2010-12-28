@@ -12,10 +12,12 @@
  * limitations under the License.
  */
 dataSource {
-	pooled = true
-	driverClassName = "com.mysql.jdbc.Driver"
-	username = "grailsPortal"
-	password = "grailsPortal"
+	pooled = false; //it is recommended not to use connection pool unless file encryption is enabled 
+	driverClassName = "org.h2.Driver" 
+	username = "sa" 
+	password = "" 
+	dbCreate="create-drop"
+	dialect="org.hibernate.dialect.HSQLDialect"
 }
 hibernate {
     cache.use_second_level_cache=true
@@ -26,19 +28,19 @@ environments {
 	development {
 		dataSource {
 			dbCreate = "create-drop" // one of 'create', 'create-drop','update'
-			url = "jdbc:mysql://localhost/grailsPortal"
+			url = "jdbc:h2:file:~/data/.h2Dev"
 		}
 	}
 	test {
 		dataSource {
 			dbCreate = "create-drop"
-			url = "jdbc:mysql://localhost/grailsPortal"
+			url = "jdbc:h2:file:~/data/.h2Test"
 		}
 	}
 	production {
 		dataSource {
-			dbCreate = "create-drop"
-			url = "jdbc:mysql://localhost/grailsPortal"
+			dbCreate = "update"
+			url = "jdbc:h2:file:~/data/.h2Prod"
 		}
 	}
 }

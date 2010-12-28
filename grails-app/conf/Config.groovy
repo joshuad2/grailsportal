@@ -88,5 +88,20 @@ log4j = {
 //		com.grailsPortal.constraint.AddOnlyIfShiroRoleConstraint.ADD_ONLY_IF_SHIRO_ROLE_CONSTRAINT, com.grailsPortal.constraint.AddOnlyIfShiroRoleConstraint.class)
 //org.codehaus.groovy.grails.validation.ConstrainedProperty.registerNewConstraint(
 //		com.grailsPortal.constraint.ShiroRoleConstraint.SHIRO_ROLE_CONSTRAINT, com.grailsPortal.constraint.ShiroRoleConstraint.class)
-
-     
+plugins {
+	h2 {
+	  tcpserver { disable = false; tcpPort = 8043; tcpAllowOthers = true }
+	  pgserver { disable = false; pgPort = 5432; pgAllowOthers = true; baseDir = './data/h2'; trace = '' }
+	  database { //
+		devdb { // a Spring DriverManagerDataSource will be created as "${databaseName}DataSource"
+		  /**
+		   * refer to: http://www.h2database.com/html/features.html#database_url
+		   */
+		  url = "jdbc:h2:mem:devDB;MODE=MYSQL"; user = "sa"; //password = ""
+		  init {
+			//disable = true; initClass = "org.grails.plugins.h2.DBInitializer" // create a new instance and call its init( dataSource) method
+		  }
+		}
+	  }
+	}
+  }
