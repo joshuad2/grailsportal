@@ -62,11 +62,6 @@
 			<locationURI>GRAILS_ROOT/1.3.5/projects/Portal/plugins/db-util-0.4/grails-app/views</locationURI>
 		</link>
 		<link>
-			<name>grails-melody-0.8-src-groovy</name>
-			<type>2</type>
-			<locationURI>GRAILS_ROOT/1.3.5/projects/Portal/plugins/grails-melody-0.8/src/groovy</locationURI>
-		</link>
-		<link>
 			<name>grails-ui-1.2-SNAPSHOT-grails-app-conf</name>
 			<type>2</type>
 			<locationURI>GRAILS_ROOT/1.3.5/projects/Portal/plugins/grails-ui-1.2-SNAPSHOT/grails-app/conf</locationURI>
@@ -89,7 +84,22 @@
 		<link>
 			<name>groovy</name>
 			<type>2</type>
-			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/src/groovy</location>
+			<location>/home/jdavis/Desktop/C::/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/src/groovy</location>
+		</link>
+		<link>
+			<name>h2-0.2.6-grails-app-i18n</name>
+			<type>2</type>
+			<location>/data/jdavis/.grails/1.3.6/projects/Portal/plugins/h2-0.2.6/grails-app/i18n</location>
+		</link>
+		<link>
+			<name>h2-0.2.6-grails-app-views</name>
+			<type>2</type>
+			<location>/data/jdavis/.grails/1.3.6/projects/Portal/plugins/h2-0.2.6/grails-app/views</location>
+		</link>
+		<link>
+			<name>h2-0.2.6-src-groovy</name>
+			<type>2</type>
+			<location>/data/jdavis/.grails/1.3.6/projects/Portal/plugins/h2-0.2.6/src/groovy</location>
 		</link>
 		<link>
 			<name>perf4j-0.1.1-grails-app-i18n</name>
@@ -129,12 +139,12 @@
 		<link>
 			<name>taglib</name>
 			<type>2</type>
-			<location>C:/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/grails-app/taglib</location>
+			<location>/home/jdavis/Desktop/C::/Documents and Settings/ctsuser/.grails/1.3.1/projects/Portal/plugins/grails-ui-1.1.1/grails-app/taglib</location>
 		</link>
 		<link>
-			<name>tomcat-1.3.5-src-groovy</name>
+			<name>tomcat-1.3.6-src-groovy</name>
 			<type>2</type>
-			<locationURI>GRAILS_ROOT/1.3.5/projects/Portal/plugins/tomcat-1.3.5/src/groovy</locationURI>
+			<location>/data/jdavis/.grails/1.3.6/projects/Portal/plugins/tomcat-1.3.6/src/groovy</location>
 		</link>
 		<link>
 			<name>yui-2.7.0.1-grails-app-i18n</name>
