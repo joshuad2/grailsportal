@@ -1,6 +1,17 @@
-#Sun Feb 21 23:28:52 EST 2010
+#Sat Jan 01 10:00:09 EST 2011
+com.springsource.sts.grails.core.com.springsource.sts.grails.core.install.name=Grails 1.3.6
+com.springsource.sts.grails.core.source.attachment-grails-bootstrap-1.3.3.jar=C\:/springsource/grails-1.3.3/src/java
 com.springsource.sts.grails.core.source.attachment-grails-core-1.2.0.jar=C\:/work/grails1.2/grails-grails-core-658ddf8/src/java
 com.springsource.sts.grails.core.source.attachment-grails-core-1.2.1.jar=C\:/work/grails1.2/grails-grails-core-658ddf8/src/java
+com.springsource.sts.grails.core.source.attachment-grails-core-1.3.3.jar=C\:/STS/springsource/grails-1.3.5/src/java
+com.springsource.sts.grails.core.source.attachment-grails-crud-1.3.3.jar=C\:/springsource/grails-1.3.3/src/java
+com.springsource.sts.grails.core.source.attachment-grails-gorm-1.3.3.jar=C\:/springsource/grails-1.3.3/src/java
+com.springsource.sts.grails.core.source.attachment-grails-resources-1.3.3.jar=C\:/springsource/grails-1.3.3/src/java
+com.springsource.sts.grails.core.source.attachment-grails-spring-1.3.3.jar=C\:/springsource/grails-1.3.3/src/java
+com.springsource.sts.grails.core.source.attachment-grails-test-1.3.3.jar=C\:/springsource/grails-1.3.3/src/java
+com.springsource.sts.grails.core.source.attachment-grails-tomcat-plugin-1.0.jar=C\:/springsource/grails-1.3.3/src/java
+com.springsource.sts.grails.core.source.attachment-grails-web-1.3.3.jar=C\:/springsource/grails-1.3.3/src/java
+com.springsource.sts.grails.core.source.attachment-grails-webflow-1.2.1.jar=C\:/springsource/grails-1.3.3/src/java
 com.springsource.sts.grails.core.source.attachment-shiro-all-1.0-incubating-SNAPSHOT.jar=C\:/work/shiro/core/src/main/java
-com.springsource.sts.grails.core.use.default.install=false
+com.springsource.sts.grails.core.use.default.install=true
 eclipse.preferences.version=1
