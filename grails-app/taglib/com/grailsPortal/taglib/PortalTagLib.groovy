@@ -20,17 +20,22 @@ import com.grailsPortal.domain.ContactType
 import com.grailsPortal.domain.Party
 import com.grailsPortal.domain.ContactPhone
 import grails.converters.JSON;
-import org.codehaus.groovy.grails.web.json.*; // package containing JSONObject, JSONArray,...
+import org.codehaus.groovy.grails.web.json.*; 
 import org.codehaus.groovy.grails.plugins.web.taglib.FormTagLib;
 
 
 class PortalTagLib {
 
 	def contactUtilService
+	def portalViewService
 	def static headingHtml
 	static namespace = 'portal'
-    FormTagLib formTagLib= new FormTagLib()
 
+	/**
+	 * doContactTypesInSelect do the contact types
+	 * @param contactType
+	 * @return
+	 */
 	private String doContactTypesInSelect(contactType){
 		def t="""
 		  <select name="${contactType}">   
@@ -50,9 +55,9 @@ class PortalTagLib {
 	 */
 	def heading={attrs, body->
 		if (headingHtml==null || headingHtml=="" || attrs?.refresh=="Y") {
-			def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
-			PortalviewService pc=ctx.getBean("portalviewService")
-			headingHtml=pc.doHeader(attrs,body())
+			//def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+			//PortalviewService pc=ctx.getBean("portalviewService")
+			headingHtml=portalViewService.doHeader(attrs,body())
 			out<< headingHtml
 		}
 		else{
@@ -72,140 +77,85 @@ class PortalTagLib {
 	 *   - eventId  
 	 */
 	def addressAttributes={attrs->
-		def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
-		def pc=ctx.getBean("PortalviewService")
-		def attributeComponents=pc.getComponentGroupAttributesByViewAndGroup(attrs["viewName"], "address")
+//		def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+//		def pc=ctx.getBean("PortalviewService")
+		def attributeComponents=portalViewService.getComponentGroupAttributesByViewAndGroup(attrs["viewName"], "address")
 		def mode="edit"
-		def attributeValues=pc.getRegistrationValuesForComponent(attrs["viewname"],"address",attrs["eventId"])
-		out << pc.renderComponentGroup(mode,attrs["viewName"],"address",attributeComponents, attributeValues)
+		def attributeValues=portalViewService.getRegistrationValuesForComponent(attrs["viewname"],"address",attrs["eventId"])
+		out << portalViewService.renderComponentGroup(mode,attrs["viewName"],"address",attributeComponents, attributeValues)
+	}
+	/**
+	 * Show the standard party
+	 * @param fnameValue
+	 * @param lNameValue
+	 * @return
+	 */
+	def doShowParty(fnameValue,lnameValue){
+		def firstName=doDisplayValue(fnameValue,"First Name:","firstName")
+		def lastName=doDisplayValue(lnameValue,"Last Name","lastName")
+		out <<firstName+lastName
 	}
 	/**
 	 * tag for showing all of the party information which is last name and first name in a table form
+	 */
 	 def showParty={attrs->
-	 def id=attrs.id
-	 def instance
-	 def fnameValue=""
-	 def lnameValue=""
-	 if (id!=null && id!=""){
-	 instance=Party.get(id)
-	 fnameValue=instance.firstName
-	 lnameValue=instance.lastName
+	   def id=attrs.id
+	   def instance
+	   def fnameValue=""
+	   def lnameValue=""
+	   if (id!=null && id!=""){
+	     instance=Party.get(id)
+	     fnameValue=instance.firstName
+	     lnameValue=instance.lastName
+	     }
+	   else{
+	     fnameValue=""
+		 lnameValue=""
 	 }
-	 else{
-	 instance=new Party()
+	 out << doShowParty(fnameValue,lnameValue)
 	 }
-	 def t="""
-	 <tr class="prop">
-	 <td valign="top" class="name">
-	 <label for="firstName">First Name*:</label>
-	 </td>
-	 <td valign="top">
-	 ${g.textField(["maxlength":"100",
-	 "id":"firstName",
-	 "name":"firstName",
-	 "value":"${fnameValue}"])
-	 }
-	 </td>
-	 </tr>                         
-	 <tr class="prop">
-	 <td valign="top" class="name">
-	 <label for="lastName">Last Name*:</label>
-	 </td>
-	 <td valign="top" >
-	 ${g.textField(["maxlength":"100",
-	 "id":"lastName",
-	 "name":"lastName",
-	 "value":"${lnameValue}"])
-	 }
-	 </td>
-	 </tr> 
-	 """
-	 out <<t
-	 }
+	 /**
+	  * Phone tag
+	  */
 	 def phone={attrs->
-	 def partyId=attrs.id
-	 def controller=attrs.controller
-	 def party=Party.get(partyId)
-	 def contactTypes=ContactType.list()	
-	 def editAction=attrs.editAction
-	 def createAction=attrs.createAction	
-	 if (editAction==null || editAction==""){
-	 editAction="edit"
+	   def partyId=attrs.id
+	   def controller=attrs.controller
+	   def party=Party.get(partyId)
+	   def contactTypes=ContactType.list()	
+	   def editAction=attrs.editAction
+	   def createAction=attrs.createAction	
+	   if (editAction==null || editAction==""){
+	     editAction="edit"
+	   }
+	   if (createAction==null || createAction==""){
+	     createAction="create"
+	   }
+	   if (controller==null || controller==""){
+	     controller="contactPhone"
+	   }
+	   def t="<TABLE>" 
+	   party?.phoneList.each{
+			 ContactPhone phn=it
+			 t+=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
+		   }
+	 out << t+"</TABLE>"
 	 }
-	 if (createAction==null || createAction==""){
-	 createAction="create"
-	 }
-	 if (controller==null || controller==""){
-	 controller="contactPhone"
-	 }
-	 def t="""
-	 <TABLE> 
-	 """
-	 if (party!=null){
-	 party.phoneList.each{
-	 def phn=it
-	 t+="""
-	 <tr class="prop">
-	 <td valign="top" class="name">
-	 <label for="phoneNumber">Phone Number:</label>
-	 </td>
-	 <td valign="top" class="value">
-	 (${phn.areaCode})${phn.phoneNumber}
-	 </td>
-	 </tr>
-	 <tr class="prop">
-	 <td valign="top" class="name">
-	 <label for="contactType">
-	 Type of Phone Number:
-	 </label>
-	 </td>
-	 <td>
-	 ${phn.contactType}
-	 </td>
-	 </tr>   
-	 <tr>
-	 <td colspan="2">
-	 ${g.link([controller:"${controller}",
-	 action:"${editAction}",
-	 id:"${phn.id}"],
-	 "Edit Phone Number")
-	 } 
-	 </td>
-	 </tr>
-	 <tr>
-	 <td colspan="2">
-	 <div style="border-style:solid;border-width:2px;"/>
-	 </td>
-	 </tr>"""
-	 }
-	 }
-	 t+="""
-	 <tr><td>Add</td>
-	 <td>"""
-	 contactTypes.each{
-	 def ct=it
-	 t+="""
-	 ${g.link([controller:"${controller}",action:"${createAction}",params:["contactType.id":"${ct.id}","party.id":"${party.id}"]],"${ct.name}Phone")
-	 }"""
-	 }
-	 t+="""
-	 </div>
-	 </td>
-	 </tr>
-	 </TABLE>
-	 """
-	 out << t
-	 }
+	/**
+	 * DoFormListField
+	 * @param label
+	 * @param labelField
+	 * @param fieldName
+	 * @param instanceName
+	 * @param field
+	 * @param fieldLength
+	 * @param listOfValues
+	 * @return
 	 */
 	def doFormListField(label, labelField, fieldName, instanceName, field, fieldLength, listOfValues){
-		def listHtml="""
-		<select name="${fieldName}">
-	  """
+		def listHtml="<select name='${fieldName}'>"
 		listOfValues.each {
 			def ct=it
-			listHtml+="""
-		  <option value="${ct.key}">${ct.value}</option>
-		"""
+			listHtml+="<option value='${ct.key}'>${ct.value}</option>"
 		}
 		listHtml+="</select>"
 		return """
@@ -213,12 +163,13 @@ class PortalTagLib {
 			<td valign="top" class="name">
 			   <label for="${labelField}}">${label}</label>
 			</td>
-			<td valign="top">
-			  ${listHtml}
-			</td>
+			<td valign="top">${listHtml}</td>
 		  </tr>
 	"""
 	}
+	/**
+	 * Form List Field
+	 */
 	def formListField={attrs->
 		def label=attrs.label
 		def labelField=attrs.labelField
@@ -229,7 +180,17 @@ class PortalTagLib {
 		def listOfValues = JSON.parse(attrs.listOfValues);
 		out<<doFormListField(label, labelField, fieldName, instanceName, field, fieldLength, listOfValues)
 	}
-
+/**
+ * Do the form Input field
+ * @param label
+ * @param labelField
+ * @param fieldName
+ * @param instanceName
+ * @param field
+ * @param fieldLength
+ * @param fieldValue
+ * @return
+ */
 	def doFormInputField(label, labelField, fieldName,instanceName, field, fieldLength, fieldValue){
 		if (!fieldValue){
 			fieldValue=""
@@ -245,6 +206,9 @@ class PortalTagLib {
 		  </tr>
 	"""
 	}
+	/**
+	 * do the form input field tag
+	 */
 	def formInputField={attrs->
 		def label=attrs.label
 		def labelField=attrs.labelField
@@ -258,16 +222,23 @@ class PortalTagLib {
 		}
 		out<<doFormInputField(label, labelField, fieldName, instanceName, field, fieldLength, fieldValue)
 	}
-
-	def doLinkValue(controller, action, linkId, linkLabel, editAction){
+    /**
+     * doLinkValue
+     * @param controller
+     * @param action
+     * @param linkId
+     * @param linkLabel
+     * @param editAction
+     * @return
+     */
+	def doLinkValue(controller, editAction, linkId, linkLabel){
 		return """
 		<tr>
 			   <td colspan="2">
-			${g.link([controller:"${controller}",
-		action:"${editAction}",
-		id:"${linkId}"],
-	"${linkLabel}")
-}
+			     ${g.link([controller:"${controller}",
+		                   action:"${editAction}",
+		                   id:"${linkId}"],
+		                   {"${linkLabel}"})}
 				</td>
 			 </tr>
 			 <tr>
@@ -275,363 +246,275 @@ class PortalTagLib {
 				 <div style="border-style:solid;border-width:2px;"/>
 			   </td>
 			 </tr>"""
-}
+  }
 
-def linkValue={attrs->
-def  controller=attrs.controller
-def action=attrs.action
-def linkId=attrs.linkId
-def linkLabel=attrs.linkLabel
-def editAction=attrs.editAction
-out << doLinkValue(controller, action, linkId, linkLabel, editAction)
-}
-
+/**
+ * linkValue tag
+ */
+  def linkValue={attrs->
+    def  controller=attrs.controller
+    def action=attrs.action
+    def linkId=attrs.linkId
+    def linkLabel=attrs.linkLabel
+     out << doLinkValue(controller, action, linkId, linkLabel)
+   }
+/**
+ * doDisplayValue
+ * @param value
+ * @param label
+ * @param fieldName
+ * @return
+ */
+  def doDisplayValue(value,label,fieldName){
+  return """
+		<tr class="prop">
+		<td valign="top" class="name">
+		  <label for="${fieldName}">${label}</label>
+		 </td>
+		 <td valign="top" class="value">${value}</td>
+	   </tr>
+	   """
+  }
+/**
+ * Do the display value
+ */
 def displayValue={attrs->
-def value=attrs.value
-def label=attrs.label
-def fieldName=attrs.fieldName
-def t="""
-	<tr class="prop">
-	<td valign="top" class="name">
-	  <label for="${fieldName}">${label}</label>
-	 </td>
-	 <td valign="top" class="value">${value}</td>
-   </tr>
-   """
-out <<t
+  def value=attrs.value
+  def label=attrs.label
+  def fieldName=attrs.fieldName
+  out << doDisplayValue(value,label,fieldName)
+  }
+/**
+ * do formCheckboxField
+ * @param label
+ * @param labelField
+ * @param fieldName
+ * @param instanceName
+ * @param field
+ * @param fieldLength
+ * @return
+ */
+def doFormCheckboxField(label,labelField,fieldName,instanceName,field,value){
+  def checked=""
+  if (value!=null && value!=""){
+    checked="CHECKED"
+  } 
+  return """
+		<tr class="prop">
+		  <td valign="top" class="name">
+			 <label for="${labelField}}">${label}</label>
+		  </td>
+		  <td valign="top">
+			 <input type="checkbox" id="${field}" name="${field}" ${checked}/>
+		  </td>
+		</tr>
+  """
 }
+
 def formCheckboxField={attrs->
-def label=attrs.label
-def labelField=attrs.labelField
-def fieldName=attrs.fieldName
-def instanceName=attrs.instanceName
-def field=attrs.field
-def fieldLength=attrs.fieldLength
-def t="""
-		  <tr class="prop">
-			<td valign="top" class="name">
-			   <label for="${labelField}}">${label}</label>
-			</td>
-			<td valign="top">
-			   <input type="checkbox" id="${field}" name="${field}"/>
-			</td>
-		  </tr>
-	"""
-out<<t
+  def label=attrs.label
+  def labelField=attrs.labelField
+  def fieldName=attrs.fieldName
+  def instanceName=attrs.instanceName
+  def field=attrs.field
+  def checked=attrs.checked
+  out<< doFormCheckboxField(label,labelField,fieldName,instanceName,checked)
 }
+/**
+ * doDisplayPhone
+ * @param areaCode
+ * @param num
+ * @param contactType
+ * @param controller
+ * @param editAction
+ * @param phnId
+ * @return
+ */
+def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId){
+	def phoneNumber=doDisplayValue("(${areaCode})${num}","Phone Number:","phoneNumber")
+	def ct=doDisplayValue(contactType,"Contact Type:","contactType")
+	def lv=doLinkValue(controller,editAction,phnId,"Edit Phone Number")
+	return "${phoneNumber}${ct}${lv}"
+	}
+/**
+ * doInputPhone
+ * @param cts
+ * @param partyId
+ * @return
+ */
+  def doInputPhone(cts,partyId,createAction,value){
+    def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","contactPhoneInstance","areaCode","4",value.areaCode)
+    def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","contactPhoneInstance","phoneNumber","20",value.phoneNumber)
+    def contactTypeInput=doFormListField("ContactType","contactType","contactPhoneInstance","contactType","20",cts,value.contactType)
+    def activeInput=doFormCheckboxField("Active","active","active","contactPhoneInstance","active","")
 
-
-def flowPhone={attrs->
-   def partyId=attrs.id
-   def controller=attrs.controller
-   def party=Party.get(partyId)
-   def contactTypes=ContactType.list()
-   def editAction=attrs.editAction
-   def createAction=attrs.createAction
-   def contactPhoneId=attrs.contactPhoneId
-   def contactPhoneInstance
-   if (contactPhoneId==null || contactPhoneId==""){
+    return """
+     <tr><td>Phones</td></tr>
+     <tr><td>
+       <form method="post" action="${createAction}" target="_self" >
+			   <div class="dialog">
+				   <table>
+					 <tbody>
+					   ${areaCodeInput}${phoneNumberInput}${contactTypeInput}${activeInput}
+					   <input type="hidden" name="party" value"${partyId}"/>
+					 </tbody>
+				   </table>
+			   </div>
+			   <div class="buttons">
+				   <span class="button"><input class="save" type="submit" value="Save" /></span>
+			   </div>
+	</form>
+   </td>
+  </tr>
+  """
+}
+/**
+ * flowPhone tag
+ */
+  def flowPhone={attrs->
+    def partyId=attrs.id
+    def controller=attrs.controller
+    def party=Party.get(partyId)
+    def contactTypes=ContactType.list()
+    def editAction=attrs.editAction
+    def createAction=attrs.createAction
+    def contactPhoneId=attrs.contactPhoneId
+    def contactPhoneInstance
+    if (contactPhoneId==null || contactPhoneId==""){
 	 contactPhoneInstance=new ContactPhone()
 	 contactPhoneInstance.party=party
-   }else{
-	 contactPhoneInstance=ContactPhone.get(contactPhoneId)
-   }
-   def ctId
-   if (contactPhoneInstance==null || contactPhoneInstance.contactType==null){
-	ctId=1
-   }else{
-	ctId=contactPhoneInstance.contactType.id
+    }else{
+	  contactPhoneInstance=ContactPhone.get(contactPhoneId)
     }
-  def t="<TABLE>"
-  if (party && party?.phoneList){
-	  party?.phoneList.each{
-	    ContactPhone phn=it
-		t+="""
-	      ${displayValue(["value":"(${phn.areaCode})${phn.phoneNumber}","label":"Phone Number","fieldName":"phoneNumber"])}
-	      ${displayValue(["value":"${phn.contactType}","label":"Contact Type","fieldName":"contactType"])}
-          ${linkValue(["controller":"${controller}","editAction":"${editAction}","linkId":"${phn.id}","linkLabel":"Edit Phone Number"])}
-          """
+    def ctId
+    if (contactPhoneInstance==null || contactPhoneInstance.contactType==null){
+	  ctId=1
+    }else{
+	  ctId=contactPhoneInstance.contactType.id
       }
-  }
-  def converter = contactTypes as JSON
-  def cts=converter.toString()
-  t+="""
-	 <tr><td>Phones</td></tr>
-	 
-	 <tr><TD>
-	 """
-  def areaCodeText="""${formInputField(["label":"Area Code",
-                                    "labelField":"areaCode",
-                                    "fieldName":"areaCode",
-                                    "instanceName":"contactPhoneInstance",
-                                    "field":"areaCode",
-                                    "fieldLength":"4"])}"""
-
-  def phoneNumberText="""${formInputField(["label":"Phone Number",
-                                          "labelField":"phoneNumber",
-                                          "fieldName":"phoneNumber",
-                                          "instanceName":"contactPhoneInstance",
-                                          "field":"areaCode","fieldLength":"20"])}"""
-
-  def contactTypeText="""${formListField([ "label":"Contact Type",
-                                         "labelField":"contactType",
-                                          "fieldName":"contactType",
-                                          "instanceName":"contactPhoneInstance",
-                                          "field":"contactType",
-                                          "fieldLength":"20",
-                                          "listOfValues":"${cts}"])}"""
-
-  def active="""${formCheckboxField(['label':'Active',
-                                   'labelField':'Active',
-                                   'fieldName':'active',
-                                   'instanceName':'contactPhoneInstance',
-                                   'field':'active'])}"""
-  t+="""
-  <form method="post" action="${createAction}" target="_self" >
-                <div class="dialog">
-                    <table>
-                      <tbody>
-                        ${areaCodeText}
-                        ${phoneNumberText}
-                        ${contactTypeText}
-                        <input type="hidden" name="party" value"${partyId}"/>
-                        ${active}                                               
-                      </tbody>
-                    </table>
-                </div>
-                <div class="buttons">
-                    <span class="button"><input class="save" type="submit" value="Save" /></span>
-                </div>
-     </form>
-    </td>
-   </tr>
-  </TABLE>
-   """
-out << t
-}
+    def t="<TABLE>"
+	party?.phoneList.each{
+	    ContactPhone phn=it
+		t+=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
+      }
+    t+=doInputPhone(contactTypes,partyId,createAction,contactPhoneInstance)
+    t+="</TABLE>"
+    out << t
+    }
 /**
  * tag for displaying the phone on the page using the attributes defined.
  */
 def editPhone={attrs->
-def partyId=attrs.id
-def phoneId=attrs.phoneId
-def controller=attrs.controller
-def party=Party.get(partyId)
-def phn=ContactPhone.get(phoneId)
-def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
-def editAction=attrs.editAction
-if (editAction==null || editAction==""){
-editAction="edit"
+  def partyId=attrs.id
+  def phoneId=attrs.phoneId 
+  def controller=attrs.controller
+  def party=Party.get(partyId)
+  def phn=ContactPhone.get(phoneId)
+  def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
+  def editAction=attrs.editAction
+  if (editAction==null || editAction==""){
+    editAction="edit"
+  }
+  if (controller==null || controller==""){
+    controller="contactPhone"
+  }
+  def disp=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
+  out<<"<TABLE>${disp}</TABLE>"
+  }
+/**
+ * doAddressDisplay
+ * @param controller
+ * @param editAction
+ * @param createAction
+ * @param party
+ * @return
+ */
+def doAddressDisplay(controller,editAction,createAction,party){
+	def t=""
+	party?.addressList.each{
+	  def addr=it
+	  def addr1Text=this.doDisplayValue("Address 1","Address*:",addr.address1)
+	  def addr2Text=this.doDisplayValye("Address 2","Address 2:",addr.address2)
+	  def cityText=this.doDisplayValue("City","City:",addr.city)
+	  def stateText=this.doDisplayValue("State","State:",addr.state)
+	  def zipCodeText=this.doDisplayValue("ZipCode","Zip Code:",addr.zipCode)
+	  def contactTypeText=this.doDisplayValue("contactType","Type of Address",addr.contactType)
+	  def lv=doLinkValue(controller,editAction,addr.id,"Edit Address")
+	  t+="<TABLE>${addr1Text}${addr2Text}${cityText}${stateText}${zipCodeText}${contactTypeText}${lv}</TABLE>"
+	}
+	return t
 }
-if (controller==null || controller==""){
-controller="contactPhone"
-}
-def t="""
-	           <TABLE>
-				 <tr class="prop">
-				   <td valign="top" class="name">
-					 <label for="phoneNumber">Phone Number:</label>
-					</td>
-					<td valign="top" class="value">
-					(${phn.areaCode})${phn.phoneNumber}
-					</td>
-				  </tr>
-				  <tr class="prop">
-					<td valign="top" class="name">
-					  <label for="contactType">
-					  Type of Phone Number:
-					  </label>
-					</td>
-					<td>
-					${phn.contactType}
-					</td>
-				  </tr>
-				  <tr>
-					<td colspan="2">
-					  ${g.link([controller:"${controller}",
-action:"${editAction}",
-id:"${phn.id}"],
-"Edit Phone Number")
-}
-					</td>
-				  </tr>
-				  <tr>
-					<td colspan="2">
-					  <div style="border-style:solid;border-width:2px;"/>
-					</td>
-				  </tr>
-	 <tr><td>Add</td>
- <td>
-   </div>
-   </td>
-   </tr>
-  </TABLE>
-   """
-out << t
-}
-
-
+/**
+ * address tag
+ */
 def address={attrs->
-def partyId=attrs.id
-def party
-if (partyId==null || partyId==""){
-party=new Party()
+  def partyId=attrs.id
+  def party
+  if (partyId==null || partyId==""){
+    party=new Party()
+  }
+  party=Party.get(partyId)
+  def controller=attrs.controller
+  def p=attrs.params
+  def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
+  def editAction=attrs.editAction
+  def createAction=attrs.createAction
+  if (editAction==null || editAction==""){
+    editAction="edit"
+  }
+  if (createAction==null || createAction==""){
+    createAction="create"
+  }
+  if (controller==null || controller==""){
+    controller="contactAddress"
+  }
+out << doAddressDisplay(controller,editAction,createAction,party)
 }
-party=Party.get(partyId)
-def controller=attrs.controller
-def p=attrs.params
-def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
-def editAction=attrs.editAction
-def createAction=attrs.createAction
-if (editAction==null || editAction==""){
-editAction="edit"
-}
-if (createAction==null || createAction==""){
-createAction="create"
-}
-if (controller==null || controller==""){
-controller="contactAddress"
-}
-def t="""
-    <TABLE> 
-     """
-if (party!=null){
-party.addressList.each{
-def addr=it
-t+="""
-    <tr class="prop">
-       <td valign="top" class="name"><label for="Address 1">Address*:</label></td>
-       <td valign="top" class="value">${addr.address1}</td>
-   </tr> 
-   <tr class="prop">
-       <td valign="top" class="name"><label for="Address 2">Address 2:</label></td>
-       <td>${addr.address2}</td>
-   </tr>
-   <tr class="prop">
-       <td valign="top" class="name"><label for="City">City:</label></td>
-         <td valign="top" class="value">${addr.city}</td>
-   </tr>
-   <tr class="prop">
-       <td valign="top" class="name"><label for="state">State:</label></td>
-         <td valign="top" class="value">${addr.state}</td>
-   </tr>           
-   <tr class="prop">
-       <td valign="top" class="name"><label for="Zipcode">Zip Code:</label></td>
-       <td>${addr.zipcode}</td>
-   </tr>
-   <tr class="prop">
-       <td valign="top" class="name"><label for="contactType">Type of Address:</label></td>
-       <td>${addr.contactType}</td>
-   </tr>
-   <tr>
-	 <td colspan="2">
-		<div id="editTheContactAddress${addr.contactType}">
-		  ${g.link([controller:"${controller}",action:"${editAction}",id:"${addr.id}",
-params:["party":${party },"contactType":${addr.contactType }]],"Edit Address")
-}
-	    </div>
-     </td>
-   </tr>                            
-   <tr>
-	<td colspan="2">
-		<div style="border-style:solid;border-width:2px;"></div>
-	</td>
-   </tr>
-</tr>"""
-}
-}
-t+="""
-	  <tr><td>Add</td>
-<td>
-<div id="createTheContactAddress">"""
-addressContactTypes.each{
-ContactType ct=it
-t+="""
-    ${g.link([controller:"${controller}",action:"${createAction}",params:["contactType.id":"${ct.id}","party.id":"${party.id}"]],"${ct.name} Address")
-}"""
-}
-t+="""
-</div>
-</td>
-</tr>
-</TABLE>
-	"""
-out << t
+/**
+ * Do the email
+ * @param party
+ * @param controller
+ * @param contactTypes
+ * @param editAction
+ * @param createAction
+ * @return
+ */
+def doEmailDisplay(party,controller,contactTypes,editAction,createAction){
+	def t="<TABLE>"
+	party?.emailList.each{
+	  def eml=it
+	  def emailAddressText=this.doDisplayValue("Address 1","Address*:",eml.emailAddress)
+	  def contactTypeText=this.doDisplayValue("contactType","Type of Email",eml.contactType)
+	  def lv=doLinkValue(controller,editAction,eml.id,"Edit Email Address")
+	  t+="${emailAddressText}${contactTypeText}${lv}"
+	  }
+   return t+"</TABLE>"
+   
 }
 /**
  * Email tag
  */
-def email={attrs,body->
-def party
-def partyId=attrs.id
-if (partyId!=null){
-party=Party.get(partyId)
-}else{
-party=new Party()
-}
-def controller=attrs.controller
-def contactTypes=ContactType.list()
-def editAction=attrs.editAction
-def createAction=attrs.createAction
-if (editAction==null || editAction==""){
-editAction="edit"
-}
-if (createAction==null || createAction==""){
-createAction="create"
-}
-if (controller==null || controller==""){
-controller="contactPhone"
-}
-def t="""
-<TABLE> 
- """
-if (party!=null){
-party.emailList.each{
-def eml=it
-t+="""
-    <tr class="prop">
-    <td valign="top" class="name"><label for="emailAddress">Email Address:</label></td>
-    <td valign="top" class="value">${eml.email.emailAddress}</td>
-  </tr>
-  <tr class="prop">
-    <td valign="top" class="name"><label for="contactType">Type of Email:</label></td>
-    <td>${eml.contactType}</td>
-  </tr>   
- <tr>
-  <td colspan="2">
-         ${g.link([controller:"contactEmail",
-			      action:"${editAction}}",
-id:"${eml.email.id}"],
-"Edit Email")
-}
-  </td>
- </tr>
- <tr>
-    <td colspan="2">
-	  <div style="border-style:solid;border-width:2px;"></div>
-    </td></tr>
-    """
-}
-}
-t+=
-"""
-<tr><td>Add</td>
-<td>
-<div id="createTheContactEmail">"""
-contactTypes.each{
-ContactType ct=it
-t+="""
-${g.link([controller:"${controller}",action:"${createAction}",params:["contactType.id":"${ct.id}","party.id":"${party.id}"]],"${ct.name}Email")
-}
-"""
-}
-t+=
-"""
-</div>
-</td>
-</tr>
-</TABLE>
-	"""
-out << t
-}
+  def email={attrs,body->
+    def party
+    def partyId=attrs.id
+    if (partyId!=null){
+      party=Party.get(partyId)
+    }else{ 
+       party=new Party()
+    }
+    def controller=attrs.controller
+    def contactTypes=ContactType.list()
+    def editAction=attrs.editAction
+    def createAction=attrs.createAction
+    if (editAction==null || editAction==""){
+      editAction="edit"
+    }
+    if (createAction==null || createAction==""){
+      createAction="create"
+    }
+    if (controller==null || controller==""){
+      controller="contactPhone"
+    }
+   out << doEmailDisplay(party,controller,contactTypes,editAction,createAction)+body()
+   }
 }
