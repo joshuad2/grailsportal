@@ -67,7 +67,7 @@ class PortalTagLibTests extends TagLibUnitTestCase {
 		mockDomain(Party,instances)
 		return instances
 	}
-	def doPhones(Party party,ContactType contactType){
+	def doPhones(party,contactType){
 		ContactPhone phone = new ContactPhone();
 		phone.id=1
 		phone.active=true
@@ -151,10 +151,17 @@ class PortalTagLibTests extends TagLibUnitTestCase {
 	public void testPhone(){
 		def party=doParty()
 		def contactType=doContactType()
-		doPhones party, contactType[0]
+		doPhones(party[0], contactType[0])
 		def pt1=new PortalTagLib()
 		def paramValues=["id":"1","editAction":"edit","createAction":"create","controller":"controller"]
 		pt1.phone(paramValues)
+		assert true
+	}
+	
+	public void testDoFormListField(){
+		def pt= new PortalTagLib()
+		def contactType=doContactType()
+		def retVal=pt.doFormListField("label","labelField","fieldName","instanceName","field","10",["1":"test"])
 		assert true
 	}
 }
