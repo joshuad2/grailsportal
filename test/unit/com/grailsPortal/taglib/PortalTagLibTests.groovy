@@ -1,13 +1,15 @@
 package com.grailsPortal.taglib;
 
 import static org.junit.Assert.*;
-
+import groovy.mock.interceptor.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import com.grailsPortal.taglib.PortalTagLib;
 import grails.test.TagLibUnitTestCase;
 import com.grailsPortal.domain.*
+import com.grailsPortal.service.util.ContactUtilService;
+
 class PortalTagLibTests extends TagLibUnitTestCase {
 
 	@BeforeClass
@@ -65,6 +67,18 @@ class PortalTagLibTests extends TagLibUnitTestCase {
 		mockDomain(Party,instances)
 		return instances
 	}
+	def doPhones(Party party,ContactType contactType){
+		ContactPhone phone = new ContactPhone();
+		phone.id=1
+		phone.active=true
+		phone.areaCode="407"
+		phone.contactType=contactType
+		phone.internationalCode="1"
+		phone.party=party
+		phone.phoneNumber="1231234"
+		mockDomain(ContactPhone,[phone])
+		return [phone]
+	}
 	public void testFlowPhone() throws Exception {
 		doParty()
 		doContactType()
@@ -76,5 +90,71 @@ class PortalTagLibTests extends TagLibUnitTestCase {
 				   "contactPhoneId":""]
 		def test=taglib.flowPhone(attrs)
 		System.out.println(test)
+	}
+	def doMockSetup={service->
+		def mock= new MockFor(ContactUtilService)
+		mock.demand.getProfilePhoneContactTypes{party->
+			return ContactType.list()
+		}
+		return mock
+	}
+
+	public void testEditPhone() throws Exception{
+		def party=doParty()
+		def contactTypes=doContactType()
+		def phones=doPhones(party[0],contactTypes[0])
+		
+		def attrs=["id":"1",
+			"phoneId":"1",
+			"controller":"registration",
+			"editAction":"editPhone",
+			"createAction":"createPhone",
+			"contactPhoneId":""]
+		mockLogging(ContactUtilService)
+		mockLogging(PortalTagLib)
+		PortalTagLib.metaClass.getG= new org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib()
+		PortalTagLib.metaClass.link={parameters,label->
+			def controller=	parameters.controller
+			def action=	parameters.action
+			def linkId=	parameters.id
+			return """<a href='${controller}/${action}/id=${linkId}'>${label}</a>"""
+		}
+		PortalTagLib taglib=new PortalTagLib()
+		def contactUtilService = new ContactUtilService()
+		taglib.contactUtilService=contactUtilService
+        def test=taglib.editPhone(attrs)
+        System.out.println(test)
+		assert true
+	}
+	
+	public void testDoContactTypesInSelect(){
+	  def contactTypes=doContactType()
+	  def ptl=new PortalTagLib()
+	  def retVal=ptl.doContactTypesInSelect( contactTypes[0] )	
+	assert true
+	}
+	
+	public void testDoShowParty(){
+		def pt1=new PortalTagLib()
+		pt1.doShowParty "TESTFirstName", "TESTLastName"
+		assert true
+	}
+	
+	public void testShowParty(){
+		doParty()
+		def pt1=new PortalTagLib()
+		def paramValues=["id":"1"]
+		pt1.showParty(paramValues)
+		assert true
+	}
+	
+	public void testPhone(){
+		def party=doParty()
+		def contactType=doContactType()
+		doPhones party, contactType[0]
+		def pt1=new PortalTagLib()
+		def paramValues=["id":"1","editAction":"edit","createAction":"create","controller":"controller"]
+		pt1.phone(paramValues)
+		assert true
 	}
 }
