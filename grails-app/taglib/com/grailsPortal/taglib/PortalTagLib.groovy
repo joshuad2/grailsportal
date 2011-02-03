@@ -27,10 +27,31 @@ import org.codehaus.groovy.grails.plugins.web.taglib.FormTagLib;
 class PortalTagLib {
 
 	def contactUtilService
-	def portalViewService
+	def portalviewService
 	def static headingHtml
 	static namespace = 'portal'
-
+	
+	def getPortalviewService(){
+		if (portalviewService==null){
+		  def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+		  def pvs=ctx.getBean("portalviewService")
+		  portalViewService=pvs
+		  return pvs
+		}else{
+		  return portalviewService
+		}
+	}
+	
+	def getContactUtilService(){
+		if (contactUtilService==null){
+		  def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+		  def cus=ctx.getBean("contactUtilService")
+		  contactUtilService=cus
+		  return cus
+		}else{
+		  return contactUtilService
+		}
+	}
 	/**
 	 * doContactTypesInSelect do the contact types
 	 * @param contactType
@@ -55,9 +76,7 @@ class PortalTagLib {
 	 */
 	def heading={attrs, body->
 		if (headingHtml==null || headingHtml=="" || attrs?.refresh=="Y") {
-			//def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
-			//PortalviewService pc=ctx.getBean("portalviewService")
-			headingHtml=portalViewService.doHeader(attrs,body())
+			headingHtml=getPortalviewService().doHeader(attrs,body())
 			out<< headingHtml
 		}
 		else{
@@ -77,11 +96,9 @@ class PortalTagLib {
 	 *   - eventId  
 	 */
 	def addressAttributes={attrs->
-//		def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
-//		def pc=ctx.getBean("PortalviewService")
 		def attributeComponents=portalViewService.getComponentGroupAttributesByViewAndGroup(attrs["viewName"], "address")
 		def mode="edit"
-		def attributeValues=portalViewService.getRegistrationValuesForComponent(attrs["viewname"],"address",attrs["eventId"])
+		def attributeValues=getPortalviewService().getRegistrationValuesForComponent(attrs["viewname"],"address",attrs["eventId"])
 		out << portalViewService.renderComponentGroup(mode,attrs["viewName"],"address",attributeComponents, attributeValues)
 	}
 	/**
@@ -138,6 +155,12 @@ class PortalTagLib {
 			 ContactPhone phn=it
 			 t+=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
 		   }
+	   def cts=[:]
+	   contactTypes.each{
+		   cts.put it.id, it.name
+	   }
+	   t+="<BR>"
+	   t+=this.doInputPhone (cts, partyId, createAction, new ContactPhone())
 	 out << t+"</TABLE>"
 	 }
 	/**
@@ -145,13 +168,12 @@ class PortalTagLib {
 	 * @param label
 	 * @param labelField
 	 * @param fieldName
-	 * @param instanceName
 	 * @param field
 	 * @param fieldLength
 	 * @param listOfValues
 	 * @return
 	 */
-	def doFormListField(label, labelField, fieldName, instanceName, field, fieldLength, listOfValues){
+	def doFormListField(label, labelField, fieldName, field, fieldLength, listOfValues){
 		def listHtml="<select name='${fieldName}'>"
 		listOfValues.each {
 			def ct=it
@@ -174,11 +196,10 @@ class PortalTagLib {
 		def label=attrs.label
 		def labelField=attrs.labelField
 		def fieldName=attrs.fieldName
-		def instanceName=attrs.instanceName
 		def field=attrs.field
 		def fieldLength=attrs.fieldLength
 		def listOfValues = JSON.parse(attrs.listOfValues);
-		out<<doFormListField(label, labelField, fieldName, instanceName, field, fieldLength, listOfValues)
+		out<<doFormListField(label, labelField, fieldName, field, fieldLength, listOfValues)
 	}
 /**
  * Do the form Input field
@@ -191,7 +212,7 @@ class PortalTagLib {
  * @param fieldValue
  * @return
  */
-	def doFormInputField(label, labelField, fieldName,instanceName, field, fieldLength, fieldValue){
+	def doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue){
 		if (!fieldValue){
 			fieldValue=""
 		}
@@ -213,14 +234,13 @@ class PortalTagLib {
 		def label=attrs.label
 		def labelField=attrs.labelField
 		def fieldName=attrs.fieldName
-		def instanceName=attrs.instanceName
 		def field=attrs.field
 		def fieldLength=attrs.fieldLength
 		def fieldValue=attrs?.fieldValue
 		if (!fieldValue){
 			fieldValue=""
 		}
-		out<<doFormInputField(label, labelField, fieldName, instanceName, field, fieldLength, fieldValue)
+		out<<doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue)
 	}
     /**
      * doLinkValue
@@ -294,7 +314,7 @@ def displayValue={attrs->
  * @param fieldLength
  * @return
  */
-def doFormCheckboxField(label,labelField,fieldName,instanceName,field,value){
+def doFormCheckboxField(label,labelField,fieldName,field,value){
   def checked=""
   if (value!=null && value!=""){
     checked="CHECKED"
@@ -315,10 +335,9 @@ def formCheckboxField={attrs->
   def label=attrs.label
   def labelField=attrs.labelField
   def fieldName=attrs.fieldName
-  def instanceName=attrs.instanceName
   def field=attrs.field
   def checked=attrs.checked
-  out<< doFormCheckboxField(label,labelField,fieldName,instanceName,checked)
+  out<< doFormCheckboxField(label,labelField,fieldName,checked)
 }
 /**
  * doDisplayPhone
@@ -338,15 +357,17 @@ def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId){
 	}
 /**
  * doInputPhone
- * @param cts
- * @param partyId
+ * @param cts - The list of Contact Types
+ * @param partyId - The partyId
+ * @param createAction - The action it should goto on Saving
+ * @param value - The value which is an instance of the ContactPhone domain class
  * @return
  */
   def doInputPhone(cts,partyId,createAction,value){
-    def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","contactPhoneInstance","areaCode","4",value.areaCode)
-    def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","contactPhoneInstance","phoneNumber","20",value.phoneNumber)
-    def contactTypeInput=doFormListField("ContactType","contactType","contactPhoneInstance","contactType","20",cts,value.contactType)
-    def activeInput=doFormCheckboxField("Active","active","active","contactPhoneInstance","active","")
+    def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","areaCode","4",value.areaCode)
+    def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","phoneNumber","20",value.phoneNumber)
+    def contactTypeInput=doFormListField("Contact Type:","ContactType","contactType","contactType","20",cts)
+    def activeInput=doFormCheckboxField("Active","active","active","active","")
 
     return """
      <tr><td>Phones</td></tr>
@@ -392,12 +413,16 @@ def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId){
     }else{
 	  ctId=contactPhoneInstance.contactType.id
       }
+	def cts=[:]
+	contactTypes.each{
+		cts.put it.id, it.name
+	}
     def t="<TABLE>"
 	party?.phoneList.each{
 	    ContactPhone phn=it
 		t+=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
       }
-    t+=doInputPhone(contactTypes,partyId,createAction,contactPhoneInstance)
+    t+=doInputPhone(cts,partyId,createAction,contactPhoneInstance)
     t+="</TABLE>"
     out << t
     }
@@ -410,7 +435,7 @@ def editPhone={attrs->
   def controller=attrs.controller
   def party=Party.get(partyId)
   def phn=ContactPhone.get(phoneId)
-  def contactTypes=contactUtilService.getProfilePhoneContactTypes(party)
+  def contactTypes=getContactUtilService().getProfilePhoneContactTypes(party)
   def editAction=attrs.editAction
   if (editAction==null || editAction==""){
     editAction="edit"
@@ -456,7 +481,7 @@ def address={attrs->
   party=Party.get(partyId)
   def controller=attrs.controller
   def p=attrs.params
-  def addressContactTypes=contactUtilService.getProfileAddressContactTypes(party)
+  def addressContactTypes=getContactUtilService().getProfileAddressContactTypes(party)
   def editAction=attrs.editAction
   def createAction=attrs.createAction
   if (editAction==null || editAction==""){
