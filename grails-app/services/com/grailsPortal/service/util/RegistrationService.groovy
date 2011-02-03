@@ -79,10 +79,6 @@ class RegistrationService {
 		theParty.lastName=lastName
 		theParty.birthDate=birthDate
 		theParty.partyType=partyType
-		//portalviewService.handleEmail(emailParams)
-		//portalviewService.handlePhone(phoneParams)
-		//portalviewService.handleAddress(addressParams)
-		//portalviewService.handleOtherParams(otherParams)
 		return validate(theParty)
 	}
 	
