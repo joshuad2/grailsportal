@@ -1,6 +1,8 @@
 package com.grailsPortal.taglib;
 
 import static org.junit.Assert.*;
+import grails.converters.JSON;
+import org.codehaus.groovy.grails.web.json.*;
 import groovy.mock.interceptor.*;
 import org.junit.After;
 import org.junit.Before;
@@ -117,6 +119,7 @@ class PortalTagLibTests extends TagLibUnitTestCase {
 			def controller=	parameters.controller
 			def action=	parameters.action
 			def linkId=	parameters.id
+			
 			return """<a href='${controller}/${action}/id=${linkId}'>${label}</a>"""
 		}
 		PortalTagLib taglib=new PortalTagLib()
@@ -161,7 +164,104 @@ class PortalTagLibTests extends TagLibUnitTestCase {
 	public void testDoFormListField(){
 		def pt= new PortalTagLib()
 		def contactType=doContactType()
-		def retVal=pt.doFormListField("label","labelField","fieldName","instanceName","field","10",["1":"test"])
+		def retVal=pt.doFormListField("label","labelField","fieldName","field","10",["1":"test"])
 		assert true
+	}
+	
+	public void testFormListField(){
+		def pt=new PortalTagLib()
+		def testJson= ["1":"Test1","2":"Test2","3":"Test3"] as JSON
+		
+		def attrs=["label":"label",
+			      "labelField":"labelField",
+				  "fieldName":"fieldName",
+				  "instanceName":"instanceName",
+				  "field":"field",
+				  "fieldLength":"10","listOfValues":testJson.toString()]
+		def retVal=pt.formListField(attrs)
+		assert true
+	}
+	
+	public void testDoFormInputField(){
+		def pt=new PortalTagLib()
+		def retVal=pt.doFormInputField("label","labelField","fieldName","field","2","Test")
+	    assert true
+	}	
+	
+	public void testFormInputField(){
+		def pt=new PortalTagLib()
+		def attrs=["label":"label",
+			       "labelField":"labelField",
+			       "fieldName":"fieldName",
+				   "instanceName":"instanceName",
+				   "field":"field",
+				   "fieldLength":"2",
+				   "fieldValue":"Test"]			
+		def retVal=pt.formInputField(attrs)
+		assert true
+	}
+	
+	public void testDoLinkValue(){
+		PortalTagLib.metaClass.getG= new org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib()
+		PortalTagLib.metaClass.link={parameters,label->
+			def controller=	parameters.controller
+			def action=	parameters.action
+			def linkId=	parameters.id
+			
+			return """<a href='${controller}/${action}/id=${linkId}'>${label}</a>"""
+		}
+		PortalTagLib ptl=new PortalTagLib()
+		def retVal=ptl.doLinkValue ("controller", "editAction", "linkId", "linkLabel")
+		assert true
+	}
+	
+	public void testLinkValue(){
+		PortalTagLib.metaClass.getG= new org.codehaus.groovy.grails.plugins.web.taglib.ApplicationTagLib()
+		PortalTagLib.metaClass.link={parameters,label->
+			def controller=	parameters.controller
+			def action=	parameters.action
+			def linkId=	parameters.id
+			
+			return """<a href='${controller}/${action}/id=${linkId}'>${label}</a>"""
+		}
+		PortalTagLib ptl=new PortalTagLib()
+		def attrs=["controller":"controller","editAction":"editAction","linkId":"linkId","linkLabel":"linkLabel"]
+		def retVal=ptl.linkValue(attrs)
+		assert true
+	}
+	
+	public void testDoDisplayValue(){
+		PortalTagLib ptl=new PortalTagLib()
+		def retValue=ptl.doDisplayValue("testValue","testLabel","testFieldName")
+		assert true
+	}
+	
+	public void testDisplayValue(){
+		PortalTagLib ptl=new PortalTagLib()
+		def attrs=["value":"testValue","label":"testLabel","fieldName":"testFieldName"]
+		def retValue=ptl.displayValue(attrs)
+		assert true
+	}
+	
+	public void testDoFormCheckboxField(){
+		PortalTagLib ptl=new PortalTagLib()
+		def retVal= ptl.doFormCheckboxField ("testlabel",
+			                                 "testlabelField",
+											 "testfieldName",
+											 "testfield", 
+											 "t")
+        assert true
+	}
+	
+	public void testFormCheckboxField(){
+		PortalTagLib ptl=new PortalTagLib()
+		def attrs=["label":"testlabel",
+			       "labelField":"testlabelField",
+			       "fieldName":"testfieldName",
+				   "field":"testfield",
+				   "checked":"t"]
+		def retVal= ptl.formCheckboxField (attrs)
+		assert true
+
 	}
 }
