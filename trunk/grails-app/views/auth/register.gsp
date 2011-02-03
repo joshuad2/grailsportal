@@ -13,10 +13,10 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${authErrorInstance}">
-            <div class="errors">
-                <g:renderErrors bean="${authErrorInstance.errors}" as="list" />
-            </div>
+            <g:hasErrors bean="${authErrorInstance}" field="">
+              <div class="errors">
+                <g:renderErrors bean="${authErrorInstance.errors}" field="" as="list" />
+              </div>
             </g:hasErrors>
               <g:form action="registerUser"  >
 <br/>Please enter the information below.
@@ -24,37 +24,33 @@
 The "*" indicates a mandatory field.
                 <div class="dialog">
                     <table>
-                        <tbody>                        
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="firstName">First Name*:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:authInstance,field:'firstName','errors')}">
-                                    <g:textField maxlength="100" id="firstName" name="firstName" value="${fieldValue(bean:authInstance.party,field:'firstName')}"/>
-                                </td>
-                            </tr>                         
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="lastName">Last Name*:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:authInstance,field:'lastName','errors')}">
-                                    <g:textField maxlength="100" id="lastName" name="lastName" value="${fieldValue(bean:authInstance.party,field:'lastName')}"/>
-                                </td>
-                            </tr>                         
-                            <tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="userName">User Name*:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:authInstance,field:'userName','errors')}">
-                                  <shiro:isNotLoggedIn>
-                                    <g:textField maxlength="100" id="userName" name="userName" value="${fieldValue(bean:authInstance,field:'username')}"/>
-                                  </shiro:isNotLoggedIn>
-                                  <shiro:isLoggedIn>
-                                    ${fieldValue(bean:authInstance,field:'username')}
-                                    <g:hiddenField name="userName" id="userName" value="${fieldValue(bean:authInstance,field:'username')}"/>
-                                  </shiro:isLoggedIn>  
-                                </td>
-                            </tr>
+                        <tbody>   
+                          <portal:formInputField 
+                            fieldValue="${fieldValue(bean:authInstance.party,field:'firstName')}" 
+                            labelField="firstName"
+                            fieldName="firstName"
+                            fieldLength="100"
+                            label="First Name:*" fieldName="firstName"/> 
+                          <portal:formInputField 
+                            fieldValue="${fieldValue(bean:authInstance.party,field:'lastName')}" 
+                            labelField="lastName"
+                            fieldName="lastName"
+                            fieldLength="100"
+                            label="Last Name:*" fieldName="lastName"/>                                            
+                          <shiro:isNotLoggedIn>
+                            <portal:formInputField 
+                                      fieldValue="${fieldValue(bean:authInstance,field:'username')}"
+                                      label="User Name*:"
+                                      labelField="userName"
+                                      fieldLength="100"
+                                      fieldName="userName"/>
+                           </shiro:isNotLoggedIn>
+                           <shiro:isLoggedIn>
+                             <portal:displayValue value="${fieldValue(bean:authInstance,field:'username')}"
+                                                  label="User Name:"
+                                                  fieldName="name"/>
+                             <g:hiddenField name="userName" id="userName" value="${fieldValue(bean:authInstance,field:'username')}"/>
+                           </shiro:isLoggedIn>  
 							<tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="password">Password:</label>
@@ -71,10 +67,8 @@ The "*" indicates a mandatory field.
                                     <g:passwordField maxlength="20" id="passwordVerify" name="passwordVerify" />
                                 </td>
                             </tr>
-                           </tr>
                            </tbody>
                            </table>
-                        
                            <shiro:isLoggedIn>
                            <gui:accordion>
                             <gui:accordionElement title="Phone Numbers">
