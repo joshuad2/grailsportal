@@ -142,7 +142,7 @@ class PortalTagLib {
 	   def editAction=attrs.editAction
 	   def createAction=attrs.createAction	
 	   if (editAction==null || editAction==""){
-	     editAction="edit"
+	     editAction="editPhone"
 	   }
 	   if (createAction==null || createAction==""){
 	     createAction="create"
@@ -150,17 +150,24 @@ class PortalTagLib {
 	   if (controller==null || controller==""){
 	     controller="contactPhone"
 	   }
-	   def t="<TABLE>" 
+	   def t="<TABLE id='phoneList'>" 
 	   party?.phoneList.each{
 			 ContactPhone phn=it
-			 t+=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
+			 t+=this.doDisplayPhone(phn.areaCode,
+				                    phn.phoneNumber,
+				                    phn.contactType,
+									controller,
+									editAction,
+									phn.id)
 		   }
+	   t+="</TABLE>"
 	   def cts=[:]
 	   contactTypes.each{
 		   cts.put it.id, it.name
 	   }
 	   t+="<BR>"
-	   t+=this.doInputPhone (cts, partyId, createAction, new ContactPhone())
+	   t+="<TABLE id='inputPhone'>"
+	   t+=this.doInputPhone (cts, partyId, "contactPhone","updateOrCreatePhone", new ContactPhone(),"Phones:")
 	 out << t+"</TABLE>"
 	 }
 	/**
@@ -242,6 +249,31 @@ class PortalTagLib {
 		}
 		out<<doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue)
 	}
+	/**
+	* doRemoteLinkValue
+	* @param controller
+	* @param action
+	* @param linkId
+	* @param linkLabel
+	* @param editAction
+	* @return
+	*/
+   def doRemoteLinkValue(controller, editAction, linkId, linkLabel,update){
+	   return """
+	   <tr>
+			  <td colspan="2">
+				${g.remoteLink([controller:"${controller}",
+						  action:"${editAction}",
+						  id:"${linkId}",update:"${update}"],
+						  {"${linkLabel}"})}
+			   </td>
+			</tr>
+			<tr>
+			  <td colspan="2">
+				<div style="border-style:solid;border-width:2px;"/>
+			  </td>
+			</tr>"""
+ }
     /**
      * doLinkValue
      * @param controller
@@ -251,13 +283,11 @@ class PortalTagLib {
      * @param editAction
      * @return
      */
-	def doLinkValue(controller, editAction, linkId, linkLabel){
+	def doLinkValue(controller, editAction, linkId, linkLabel,parameters){
 		return """
 		<tr>
 			   <td colspan="2">
-			     ${g.link([controller:"${controller}",
-		                   action:"${editAction}",
-		                   id:"${linkId}"],
+			     ${g.remoteLink([controller:"${controller}",action:"${editAction}",id:"${linkId}"],
 		                   {"${linkLabel}"})}
 				</td>
 			 </tr>
@@ -268,6 +298,29 @@ class PortalTagLib {
 			 </tr>"""
   }
 
+  def doPasswordInput(fieldValue,fieldName,label, maxLength){
+  if (!fieldValue){
+	  fieldValue=""
+  }
+  return """
+	<tr class="prop">
+	  <td valign="top" class="name">
+		 <label for="${fieldName}}">${label}</label>
+	  </td>
+	  <td valign="top">
+	     ${g.passwordField(["name":"${fieldName}","value":"${fieldValue}","maxLength":"${maxLength}"])}
+	  </td>
+	</tr>
+"""
+  }
+
+  def passwordInput={attrs->
+  def fieldValue=attrs.fieldValue
+  def fieldName=attrs.fieldName
+  def label=attrs.label
+  def maxLength=attrs.maxLength
+  out << doPasswordInput(fieldValue,fieldName,label,maxLength)	  
+  }
 /**
  * linkValue tag
  */
@@ -276,7 +329,8 @@ class PortalTagLib {
     def action=attrs.action
     def linkId=attrs.linkId
     def linkLabel=attrs.linkLabel
-     out << doLinkValue(controller, action, linkId, linkLabel)
+	def parameters=attrs.parameters
+     out << doLinkValue(controller, action, linkId, linkLabel,parameters)
    }
 /**
  * doDisplayValue
@@ -352,9 +406,26 @@ def formCheckboxField={attrs->
 def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId){
 	def phoneNumber=doDisplayValue("(${areaCode})${num}","Phone Number:","phoneNumber")
 	def ct=doDisplayValue(contactType,"Contact Type:","contactType")
-	def lv=doLinkValue(controller,editAction,phnId,"Edit Phone Number")
+    def phn=ContactPhone.get(phnId)
+	def party=phn.party
+	def lv=doRemoteLinkValue(controller,editAction,phnId,"Edit Phone Number","inputPhone")
 	return "${phoneNumber}${ct}${lv}"
 	}
+
+
+def doHiddenPhone(contactPhoneId){
+	def props=ContactPhone.getProperties()
+	
+}
+def displayPhone={attrs->
+	def areaCode=attrs.areaCode
+	def num=attrs.num
+	def contactType=attrs.contactTpye
+	def controller=attrs.controller
+	def editAction=attrs.editAction
+	def phnId=attrs.phnId
+	return this.doDisplayPhone (areaCode, num, contactType, controller, editAction, phnId)
+}
 /**
  * doInputPhone
  * @param cts - The list of Contact Types
@@ -363,31 +434,31 @@ def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId){
  * @param value - The value which is an instance of the ContactPhone domain class
  * @return
  */
-  def doInputPhone(cts,partyId,createAction,value){
+  def doInputPhone(cts,partyId,controller,createAction,value,inputLabel){
     def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","areaCode","4",value.areaCode)
     def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","phoneNumber","20",value.phoneNumber)
     def contactTypeInput=doFormListField("Contact Type:","ContactType","contactType","contactType","20",cts)
-    def activeInput=doFormCheckboxField("Active","active","active","active","")
-
-    return """
-     <tr><td>Phones</td></tr>
-     <tr><td>
-       <form method="post" action="${createAction}" target="_self" >
-			   <div class="dialog">
+    def activeInput=doFormCheckboxField("Active","active","active","active","${value.active}")
+    def url=["action":createAction,"controller":controller]
+	def startRow=" <tr><td>"
+	def endRow="</td></tr>"
+	def label="${startRow}${inputLabel}${endRow}"
+	def str=submitToRemote(["url":url,"update":"phoneList","value":"Submit Phone"])
+	def dialog="""		   
+	            <div class="dialog">
 				   <table>
 					 <tbody>
 					   ${areaCodeInput}${phoneNumberInput}${contactTypeInput}${activeInput}
-					   <input type="hidden" name="party" value"${partyId}"/>
+					   <TR><TD><input type="hidden" name="party" value="${partyId}"/></TD></TR>
+					   <TR><TD>${str}</TD></TR>
 					 </tbody>
 				   </table>
 			   </div>
-			   <div class="buttons">
-				   <span class="button"><input class="save" type="submit" value="Save" /></span>
-			   </div>
-	</form>
-   </td>
-  </tr>
-  """
+				   
+			   """
+	def attrs=["action":createAction,"controller":controller]
+	def inputForm="${g.form(attrs,dialog)}"
+	return label+startRow+inputForm+endRow
 }
 /**
  * flowPhone tag
@@ -422,7 +493,7 @@ def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId){
 	    ContactPhone phn=it
 		t+=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
       }
-    t+=doInputPhone(cts,partyId,createAction,contactPhoneInstance)
+    t+=doInputPhone(cts,partyId,"contactPhone","update",contactPhoneInstance,"Phones:")
     t+="</TABLE>"
     out << t
     }
@@ -464,7 +535,7 @@ def doAddressDisplay(controller,editAction,createAction,party){
 	  def stateText=this.doDisplayValue("State","State:",addr.state)
 	  def zipCodeText=this.doDisplayValue("ZipCode","Zip Code:",addr.zipCode)
 	  def contactTypeText=this.doDisplayValue("contactType","Type of Address",addr.contactType)
-	  def lv=doLinkValue(controller,editAction,addr.id,"Edit Address")
+	  def lv=doLinkValue(controller,editAction,addr.id,"Edit Address","[id:'${addr.id}']")
 	  t+="<TABLE>${addr1Text}${addr2Text}${cityText}${stateText}${zipCodeText}${contactTypeText}${lv}</TABLE>"
 	}
 	return t
@@ -510,7 +581,7 @@ def doEmailDisplay(party,controller,contactTypes,editAction,createAction){
 	  def eml=it
 	  def emailAddressText=this.doDisplayValue("Address 1","Address*:",eml.emailAddress)
 	  def contactTypeText=this.doDisplayValue("contactType","Type of Email",eml.contactType)
-	  def lv=doLinkValue(controller,editAction,eml.id,"Edit Email Address")
+	  def lv=doLinkValue(controller,editAction,eml.id,"Edit Email Address","[id:'${eml.id}]")
 	  t+="${emailAddressText}${contactTypeText}${lv}"
 	  }
    return t+"</TABLE>"
