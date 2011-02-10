@@ -2,8 +2,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="layout" content="main" />
-        <gui:resources components="['accordion','dialog']"/>  
+        <meta name="layout" content="main" /> 
 		<g:javascript library="prototype" />
         <title>User Profile</title>         
     </head>
@@ -18,11 +17,12 @@
                 <g:renderErrors bean="${authErrorInstance.errors}" field="" as="list" />
               </div>
             </g:hasErrors>
-              <g:form action="registerUser"  >
+
 <br/>Please enter the information below.
 <br/>
 The "*" indicates a mandatory field.
                 <div class="dialog">
+                  <g:form action="registerUser"  >
                     <table>
                         <tbody>   
                           <portal:formInputField 
@@ -50,46 +50,26 @@ The "*" indicates a mandatory field.
                                                   label="User Name:"
                                                   fieldName="name"/>
                              <g:hiddenField name="userName" id="userName" value="${fieldValue(bean:authInstance,field:'username')}"/>
-                           </shiro:isLoggedIn>  
-							<tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="password">Password:</label>
-                                </td>
-                                <td valign="top" class="value ${hasErrors(bean:authInstance,field:'password','errors')}">
-                                    <g:passwordField maxlength="20" id="password" name="password"/>
-                                </td>
-                            </tr>
-							<tr class="prop">
-                                <td valign="top" class="name">
-                                    <label for="verifyPassword">Verify Password:</label>
-                                </td>
-                                <td valign="top">
-                                    <g:passwordField maxlength="20" id="passwordVerify" name="passwordVerify" />
-                                </td>
-                            </tr>
-                           </tbody>
-                           </table>
-                           <shiro:isLoggedIn>
-                           <gui:accordion>
-                            <gui:accordionElement title="Phone Numbers">
-                              <portal:phone id="${authInstance.party.id}"/>
-                           </gui:accordionElement>
-                           <gui:accordionElement title="Email">
-                             <portal:email id="${authInstance.party.id}"/>
-                           </gui:accordionElement>
-                           <gui:accordionElement title="Address">  
-                            <portal:address id="${authInstance.party.id }"/>
-                          </gui:accordionElement> 
-                          </gui:accordion>
-                          </shiro:isLoggedIn>
-                          <TABLE>
+                           </shiro:isLoggedIn>
+                           <portal:passwordInput fieldName="password" fieldValue="" label="Password:" maxLength="20" />  
+                           <portal:passwordInput fieldName="verifyPassword" fieldValue="" label="Verify Password:" maxLength="20" />  
                            <TR>
                             <td></td>
                             <td><g:submitButton value="Save Profile" name="reg" />
                             </tr>
-                        </table>
-                </div>
-            </g:form>
+                          </tbody>
+                         </table>
+                       </g:form>
+                           <shiro:isLoggedIn>
+                           <TABLE>
+                           <tbody>
+                             <portal:phone id="${authInstance.party.id}"/>
+                             <portal:email id="${authInstance.party.id}"/>
+                            <portal:address id="${authInstance.party.id}"/>
+                          </tbody>
+                          </TABLE>
+                          </shiro:isLoggedIn>
+                        </div>
         </div>
     </body>
 </html>
