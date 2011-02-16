@@ -55,16 +55,9 @@ class ContactPhoneController {
 		cp.party=Party.get(partyId)
 		cp.phoneNumber=params.phoneNumber
 		cp.save(flush:true)
-		def party=cp.party
-	    def phones=party?.phoneList
 	    def controller="contactPhone"
 		def action="editPhone"
 		PortalTagLib ptl=new PortalTagLib()
-	    phones.each{
-			def phn=it
-		    retVal+=ptl.doDisplayPhone(phn.areaCode,phn.phoneNumber,
-				                       phn.contactType,controller,action,phn.id)
-		}
-		render retVal
+		render ptl.doPhone (cp.party, controller, action, "updateOrCreatePhone", cp,ContactType.list(),true)
 	}
 }
