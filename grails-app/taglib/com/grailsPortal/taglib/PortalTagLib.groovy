@@ -22,8 +22,8 @@ import com.grailsPortal.domain.ContactPhone
 import grails.converters.JSON;
 import org.codehaus.groovy.grails.web.json.*; 
 import org.codehaus.groovy.grails.plugins.web.taglib.FormTagLib;
-
-
+import org.springframework.validation.FieldError;
+import org.springframework.validation.BeanPropertyBindingResult
 class PortalTagLib {
 
 	def contactUtilService
@@ -132,6 +132,52 @@ class PortalTagLib {
 	 out << doShowParty(fnameValue,lnameValue)
 	 }
 	 /**
+	  * does the regular phone tag
+	  * @param partyId
+	  * @param controller
+	  * @param editAction
+	  * @param createAction
+	  * @return
+	  */
+	 def doPhone(party,controller,editAction,createAction,contactPhone,contactTypes,isAjax=false){
+		 if (editAction==null || editAction==""){
+			 editAction="editPhone"
+		   }
+		   if (createAction==null || createAction==""){
+			 createAction="create"
+		   }
+		   if (controller==null || controller==""){
+			 controller="contactPhone"
+		   }
+		   def cts=[:]
+		   contactTypes.each{
+			   cts.put it.id, it.name
+		   }
+		   def t=""
+		   if (!isAjax){
+			   t="<TABLE id='phoneSection' >"
+		   }
+		   t+="<tr><td><TABLE id='inputPhone'>"
+		   t+=this.doInputPhone (cts, party.id, "contactPhone","updateOrCreatePhone", contactPhone,"Phones:")
+		   t+="</TABLE></TD>"
+		   t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='phoneList' >"
+		   party?.phoneList.each{
+				 ContactPhone phn=it
+				 t+=this.doDisplayPhone(phn.areaCode,
+										phn.phoneNumber,
+										phn.contactType,
+										controller,
+										editAction,
+										phn.id)
+			   }
+		   t+="</TABLE></div>"
+		   t+="</td></tr>"
+		 if (!isAjax){
+			 t+="</TABLE>"
+		 }
+		 return  t
+	 }
+	 /**
 	  * Phone tag
 	  */
 	 def phone={attrs->
@@ -140,35 +186,9 @@ class PortalTagLib {
 	   def party=Party.get(partyId)
 	   def contactTypes=ContactType.list()	
 	   def editAction=attrs.editAction
-	   def createAction=attrs.createAction	
-	   if (editAction==null || editAction==""){
-	     editAction="editPhone"
-	   }
-	   if (createAction==null || createAction==""){
-	     createAction="create"
-	   }
-	   if (controller==null || controller==""){
-	     controller="contactPhone"
-	   }
-	   def t="<TABLE id='phoneList'>" 
-	   party?.phoneList.each{
-			 ContactPhone phn=it
-			 t+=this.doDisplayPhone(phn.areaCode,
-				                    phn.phoneNumber,
-				                    phn.contactType,
-									controller,
-									editAction,
-									phn.id)
-		   }
-	   t+="</TABLE>"
-	   def cts=[:]
-	   contactTypes.each{
-		   cts.put it.id, it.name
-	   }
-	   t+="<BR>"
-	   t+="<TABLE id='inputPhone'>"
-	   t+=this.doInputPhone (cts, partyId, "contactPhone","updateOrCreatePhone", new ContactPhone(),"Phones:")
-	 out << t+"</TABLE>"
+	   def createAction=attrs.createAction
+	   def contactPhone=attrs?.contactPhone	
+	 out << doPhone(party,controller,editAction,createAction,contactPhone,ContactType.list())
 	 }
 	/**
 	 * DoFormListField
@@ -219,7 +239,7 @@ class PortalTagLib {
  * @param fieldValue
  * @return
  */
-	def doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue){
+	def doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue,haveErrors){
 		if (!fieldValue){
 			fieldValue=""
 		}
@@ -228,7 +248,7 @@ class PortalTagLib {
 			<td valign="top" class="name">
 			   <label for="${labelField}}">${label}</label>
 			</td>
-			<td valign="top">
+			<td valign="top" class="value ${haveErrors}">
 			   <input type="text" maxlength="${fieldLength}" id="${field}" name="${field}" value="${fieldValue}"/>
 			</td>
 		  </tr>
@@ -244,10 +264,11 @@ class PortalTagLib {
 		def field=attrs.field
 		def fieldLength=attrs.fieldLength
 		def fieldValue=attrs?.fieldValue
+		def haveErrors=attrs.haveErrors
 		if (!fieldValue){
 			fieldValue=""
 		}
-		out<<doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue)
+		out<<doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue,haveErrors)
 	}
 	/**
 	* doRemoteLinkValue
@@ -267,12 +288,7 @@ class PortalTagLib {
 						  id:"${linkId}",update:"${update}"],
 						  {"${linkLabel}"})}
 			   </td>
-			</tr>
-			<tr>
-			  <td colspan="2">
-				<div style="border-style:solid;border-width:2px;"/>
-			  </td>
-			</tr>"""
+	   </tr>"""
  }
     /**
      * doLinkValue
@@ -287,18 +303,13 @@ class PortalTagLib {
 		return """
 		<tr>
 			   <td colspan="2">
-			     ${g.remoteLink([controller:"${controller}",action:"${editAction}",id:"${linkId}"],
+			     ${g.link([controller:"${controller}",action:"${editAction}",id:"${linkId}"],
 		                   {"${linkLabel}"})}
 				</td>
-			 </tr>
-			 <tr>
-			   <td colspan="2">
-				 <div style="border-style:solid;border-width:2px;"/>
-			   </td>
 			 </tr>"""
   }
 
-  def doPasswordInput(fieldValue,fieldName,label, maxLength){
+  def doPasswordInput(fieldValue,fieldName,label, maxLength, haveErrors){
   if (!fieldValue){
 	  fieldValue=""
   }
@@ -307,7 +318,7 @@ class PortalTagLib {
 	  <td valign="top" class="name">
 		 <label for="${fieldName}}">${label}</label>
 	  </td>
-	  <td valign="top">
+	  <td valign="top" class="value ${haveErrors}">
 	     ${g.passwordField(["name":"${fieldName}","value":"${fieldValue}","maxLength":"${maxLength}"])}
 	  </td>
 	</tr>
@@ -319,7 +330,8 @@ class PortalTagLib {
   def fieldName=attrs.fieldName
   def label=attrs.label
   def maxLength=attrs.maxLength
-  out << doPasswordInput(fieldValue,fieldName,label,maxLength)	  
+  def haveErrors=attrs.haveErrors
+  out << doPasswordInput(fieldValue,fieldName,label,maxLength,haveErrors)	  
   }
 /**
  * linkValue tag
@@ -368,7 +380,7 @@ def displayValue={attrs->
  * @param fieldLength
  * @return
  */
-def doFormCheckboxField(label,labelField,fieldName,field,value){
+def doFormCheckboxField(label,labelField,fieldName,field,value,haveErrors){
   def checked=""
   if (value!=null && value!=""){
     checked="CHECKED"
@@ -378,7 +390,7 @@ def doFormCheckboxField(label,labelField,fieldName,field,value){
 		  <td valign="top" class="name">
 			 <label for="${labelField}}">${label}</label>
 		  </td>
-		  <td valign="top">
+		  <td valign="top" class="value ${haveErrors}">
 			 <input type="checkbox" id="${field}" name="${field}" ${checked}/>
 		  </td>
 		</tr>
@@ -391,7 +403,8 @@ def formCheckboxField={attrs->
   def fieldName=attrs.fieldName
   def field=attrs.field
   def checked=attrs.checked
-  out<< doFormCheckboxField(label,labelField,fieldName,checked)
+  def haveErrors=attrs.haveErrors
+  out<< doFormCheckboxField(label,labelField,fieldName,checked,haveErrors)
 }
 /**
  * doDisplayPhone
@@ -403,13 +416,14 @@ def formCheckboxField={attrs->
  * @param phnId
  * @return
  */
-def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId){
+def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId,deleteAction="deleteRemote"){
 	def phoneNumber=doDisplayValue("(${areaCode})${num}","Phone Number:","phoneNumber")
 	def ct=doDisplayValue(contactType,"Contact Type:","contactType")
     def phn=ContactPhone.get(phnId)
 	def party=phn.party
-	def lv=doRemoteLinkValue(controller,editAction,phnId,"Edit Phone Number","inputPhone")
-	return "${phoneNumber}${ct}${lv}"
+	def lv=doRemoteLinkValue(controller,editAction,phnId,"Edit","inputPhone")
+	def dl=doRemoteLinkValue(controller,deleteAction,phnId,"Delete","phoneSection")
+	return "${phoneNumber}${ct}${lv}${dl}"
 	}
 
 
@@ -435,15 +449,24 @@ def displayPhone={attrs->
  * @return
  */
   def doInputPhone(cts,partyId,controller,createAction,value,inputLabel){
-    def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","areaCode","4",value.areaCode)
-    def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","phoneNumber","20",value.phoneNumber)
+	def errorVal=""
+	if (value==null){
+		value=new ContactPhone()
+	}else{
+	  value?.validate()
+	  if (value.hasErrors()){
+         errorVal+= g.message(code:"ContactPhone.input.error",args:['',''])
+	  }
+	}
+    def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","areaCode","4",value.areaCode,g.hasErrors([bean:value,field:"areaCode"]))
+    def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","phoneNumber","20",value.phoneNumber,g.hasErrors([bean:value,field:"phoneNumber"]))
     def contactTypeInput=doFormListField("Contact Type:","ContactType","contactType","contactType","20",cts)
-    def activeInput=doFormCheckboxField("Active","active","active","active","${value.active}")
+    def activeInput=doFormCheckboxField("Active","active","active","active","${value.active}",g.hasErrors([bean:value,field:"active"]))
     def url=["action":createAction,"controller":controller]
 	def startRow=" <tr><td>"
 	def endRow="</td></tr>"
 	def label="${startRow}${inputLabel}${endRow}"
-	def str=submitToRemote(["url":url,"update":"phoneList","value":"Submit Phone"])
+	def str=submitToRemote(["url":url,"update":"phoneSection","value":"Submit Phone"])
 	def dialog="""		   
 	            <div class="dialog">
 				   <table>
@@ -458,7 +481,7 @@ def displayPhone={attrs->
 			   """
 	def attrs=["action":createAction,"controller":controller]
 	def inputForm="${g.form(attrs,dialog)}"
-	return label+startRow+inputForm+endRow
+	return errorVal+label+startRow+inputForm+endRow
 }
 /**
  * flowPhone tag

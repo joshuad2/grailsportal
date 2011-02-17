@@ -61,13 +61,9 @@ The "*" indicates a mandatory field.
                          </table>
                        </g:form>
                            <shiro:isLoggedIn>
-                           <TABLE>
-                           <tbody>
                              <portal:phone id="${authInstance.party.id}"/>
                              <portal:email id="${authInstance.party.id}"/>
                             <portal:address id="${authInstance.party.id}"/>
-                          </tbody>
-                          </TABLE>
                           </shiro:isLoggedIn>
                         </div>
         </div>
