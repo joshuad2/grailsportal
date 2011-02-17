@@ -177,7 +177,8 @@ class AuthController {
 		}
 		catch (AuthenticationException ex){
 			flash.message = message(code: "login.failed")
-			log.error(ex.printStackTrace())
+			log.error("Could not Authenticate ${params?.username}")
+			SecurityUtils.subject?.logout()
 			def m = [ username: params.username ]
 			if (params.rememberMe) {
 				m['rememberMe'] = true
