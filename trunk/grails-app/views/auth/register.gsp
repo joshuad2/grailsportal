@@ -12,9 +12,9 @@
             <g:if test="${flash.message}">
             <div class="message">${flash.message}</div>
             </g:if>
-            <g:hasErrors bean="${authErrorInstance}" field="">
+            <g:hasErrors bean="${authErrorInstance}">
               <div class="errors">
-                <g:renderErrors bean="${authErrorInstance.errors}" field="" as="list" />
+                <g:renderErrors bean="${authErrorInstance.errors}" as="list" />
               </div>
             </g:hasErrors>
 
@@ -29,6 +29,7 @@ The "*" indicates a mandatory field.
                             fieldValue="${fieldValue(bean:authInstance.party,field:'firstName')}" 
                             labelField="firstName"
                             fieldName="firstName"
+                            field="firstName"
                             fieldLength="100"
                             label="First Name:*" fieldName="firstName"/> 
                           <portal:formInputField 
@@ -36,12 +37,14 @@ The "*" indicates a mandatory field.
                             labelField="lastName"
                             fieldName="lastName"
                             fieldLength="100"
+                            field="lastName"
                             label="Last Name:*" fieldName="lastName"/>                                            
                           <shiro:isNotLoggedIn>
                             <portal:formInputField 
                                       fieldValue="${fieldValue(bean:authInstance,field:'username')}"
                                       label="User Name*:"
                                       labelField="userName"
+                                      field="userName"
                                       fieldLength="100"
                                       fieldName="userName"/>
                            </shiro:isNotLoggedIn>
@@ -49,10 +52,11 @@ The "*" indicates a mandatory field.
                              <portal:displayValue value="${fieldValue(bean:authInstance,field:'username')}"
                                                   label="User Name:"
                                                   fieldName="name"/>
-                             <g:hiddenField name="userName" id="userName" value="${fieldValue(bean:authInstance,field:'username')}"/>
+                             
+                           <TR><TD><g:hiddenField name="userName" id="userName" value="${fieldValue(bean:authInstance,field:'username')}"/></TD></TR>
                            </shiro:isLoggedIn>
-                           <portal:passwordInput fieldName="password" fieldValue="" label="Password:" maxLength="20" />  
-                           <portal:passwordInput fieldName="verifyPassword" fieldValue="" label="Verify Password:" maxLength="20" />  
+                           <portal:passwordInput fieldName="password" fieldValue="" field="password" label="Password*:" maxLength="20" />  
+                           <portal:passwordInput fieldName="passwordVerify" fieldValue="" field="passwordVerify" label="Verify Password*:" maxLength="20" />  
                            <TR>
                             <td></td>
                             <td><g:submitButton value="Save Profile" name="reg" />
