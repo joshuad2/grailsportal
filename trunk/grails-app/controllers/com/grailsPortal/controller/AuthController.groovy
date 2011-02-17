@@ -62,23 +62,27 @@ class AuthController {
 			Party userParty
 			JsecUser user
 			JsecUser ju
+			def firstName=params?.firstName
+			def lastName=params?.lastName
+			def password=params?.password
+			def passwordV=params?.passwordVerify
 			boolean isValidationError=false
-			def userName=params.userName
+			def userName=params?.userName
 			try{
 				ju=securityService.getRegisteredUser()
 			}catch (Exception e){
 				ju=null;
 			}
 			if (userName==null ||
-			userName=="" ||
-			params.firstName==null ||
-			params.firstName=="" ||
-			params.lastName==null ||
-			params.lastName=="" ||
-			params.password==null ||
-			params.password=="" ||
-			params.passwordVerify==null ||
-			params.passwordVerify==""){
+			    userName=="" ||
+			    firstName==null ||
+			    firstName=="" ||
+			    lastName==null ||
+			    lastName=="" ||
+			    password==null ||
+			    password=="" ||
+			    passwordV==null ||
+			    passwordV==""){
 				flash.message="We are sorry, you"+
 				" have to enter a user name, "+
 				"First name, Last Name, "+
@@ -97,21 +101,31 @@ class AuthController {
 					session.clear()
 				}
 			}
-			if (params.password!=params.passwordVerify){
+			if (password!=passwordV){
 				flash.message="We are sorry your passwords do not match,"+
 				" please try again"
 				render(model:[authInstance:user],view:'register')
 				isValidationError=true
 			}
-			def jsecUser=new JsecUser()
-			jsecUser.party=new Party()
+			def jsecUser
+			if (!ju){
+			  jsecUser=new JsecUser()
+			  jsecUser.party=new Party()
+			}else{
+			  jsecUser=ju
+			}
 			user=contactUtilService.doUser(jsecUser,PartyType.findByName("User"),params)
-			if (user.hasErrors() || user.party.hasErrors()){
+			user.validate()
+			user.party.validate()
+			def partyErrors=user?.party.errors.allErrors
+			def userErrors=user.errors.allErrors
+			
+			if (user?.hasErrors() || user?.party.hasErrors()){
 				flash.message = "ERROR-09:There was a problem "+
 				"validating the information, please try again"
 				render(model:[authInstance:user,
-				authErrorInstance:user.party.errors.allErrors],
-				view:"register")
+				       authErrorInstance:user?.party?.errors?.allErrors],
+				       view:"register")
 				session.clear()
 				return
 			}
