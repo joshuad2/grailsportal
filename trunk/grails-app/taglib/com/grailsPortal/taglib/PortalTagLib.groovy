@@ -163,12 +163,12 @@ class PortalTagLib {
 		   t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='phoneList' >"
 		   party?.phoneList.each{
 				 ContactPhone phn=it
-				 t+=this.doDisplayPhone(phn.areaCode,
-										phn.phoneNumber,
-										phn.contactType,
+				 t+=this.doDisplayPhone(phn?.areaCode,
+										phn?.phoneNumber,
+										phn?.contactType,
 										controller,
 										editAction,
-										phn.id)
+										phn?.id)
 			   }
 		   t+="</TABLE></div>"
 		   t+="</td></tr>"
@@ -458,8 +458,10 @@ def displayPhone={attrs->
          errorVal+= g.message(code:"ContactPhone.input.error",args:['',''])
 	  }
 	}
-    def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","areaCode","4",value.areaCode,g.hasErrors([bean:value,field:"areaCode"]))
-    def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","phoneNumber","20",value.phoneNumber,g.hasErrors([bean:value,field:"phoneNumber"]))
+	def areaCodeError=g.hasErrors([bean:value,field:"areaCode"],'errors')
+	def phoneNumberError=g.hasErrors([bean:value,field:"phoneNumber"],'errors')
+    def areaCodeInput=doFormInputField("Area Code","areaCode","areaCode","areaCode","4",value.areaCode,areaCodeError)
+    def phoneNumberInput=doFormInputField("Phone Number","phoneNumber","phoneNumber","phoneNumber","20",value.phoneNumber,phoneNumberError)
     def contactTypeInput=doFormListField("Contact Type:","ContactType","contactType","contactType","20",cts)
     def activeInput=doFormCheckboxField("Active","active","active","active","${value.active}",g.hasErrors([bean:value,field:"active"]))
     def url=["action":createAction,"controller":controller]
