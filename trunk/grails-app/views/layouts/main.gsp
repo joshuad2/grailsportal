@@ -69,6 +69,7 @@ body {
                     <menu:portalMenu portalConfigId="1" menuType="user"/>
 				</shiro:hasAllRoles>
 			</shiro:user>
+	   </ul>
 	</menu:menuContainer>
  
 <div id="content"

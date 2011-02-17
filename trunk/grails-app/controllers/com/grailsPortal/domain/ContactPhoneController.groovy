@@ -60,4 +60,14 @@ class ContactPhoneController {
 		PortalTagLib ptl=new PortalTagLib()
 		render ptl.doPhone (cp.party, controller, action, "updateOrCreatePhone", cp,ContactType.list(),true)
 	}
+	
+	def deleteRemote={
+		def contactPhoneId=params.id
+		def cp=ContactPhone.get(contactPhoneId)
+		def party=cp.party
+	    cp.delete(flush:true)
+		cp=null
+		PortalTagLib ptl=new PortalTagLib()
+		render ptl.doPhone (party, "ContactPhone", "editPhone", "updateOrCreatePhone", cp,ContactType.list(),true)
+	}
 }
