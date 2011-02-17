@@ -55,8 +55,8 @@ class ContactUtilService {
 		      ju.party.partyType=partyType
 			  ju.active=true
 			  ju.passwordHash=new Sha256Hash(attrs.password).toHex()
-			  ju.party.save()
-  		      ju.save()
+			  ju.party.save(flush:true)
+  		      ju.save(flush:true)
 			return ju
 		}
 
