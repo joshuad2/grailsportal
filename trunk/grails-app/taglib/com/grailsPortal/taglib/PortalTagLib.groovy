@@ -19,6 +19,9 @@ import com.grailsPortal.ui.portalView.PortalViewHandler
 import com.grailsPortal.domain.ContactType
 import com.grailsPortal.domain.Party
 import com.grailsPortal.domain.ContactPhone
+import com.grailsPortal.domain.ContactEmail
+import com.grailsPortal.domain.ContactAddress
+import com.grailsPortal.domain.portalConfig.State
 import grails.converters.JSON;
 import org.codehaus.groovy.grails.web.json.*; 
 import org.codehaus.groovy.grails.plugins.web.taglib.FormTagLib;
@@ -131,65 +134,7 @@ class PortalTagLib {
 	 }
 	 out << doShowParty(fnameValue,lnameValue)
 	 }
-	 /**
-	  * does the regular phone tag
-	  * @param partyId
-	  * @param controller
-	  * @param editAction
-	  * @param createAction
-	  * @return
-	  */
-	 def doPhone(party,controller,editAction,createAction,contactPhone,contactTypes,isAjax=false){
-		 if (editAction==null || editAction==""){
-			 editAction="editPhone"
-		   }
-		   if (createAction==null || createAction==""){
-			 createAction="create"
-		   }
-		   if (controller==null || controller==""){
-			 controller="contactPhone"
-		   }
-		   def cts=[:]
-		   contactTypes.each{
-			   cts.put it.id, it.name
-		   }
-		   def t=""
-		   if (!isAjax){
-			   t="<TABLE id='phoneSection' >"
-		   }
-		   t+="<tr><td><TABLE id='inputPhone'>"
-		   t+=this.doInputPhone (cts, party.id, "contactPhone","updateOrCreatePhone", contactPhone,"Phones:")
-		   t+="</TABLE></TD>"
-		   t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='phoneList' >"
-		   party?.phoneList.each{
-				 ContactPhone phn=it
-				 t+=this.doDisplayPhone(phn?.areaCode,
-										phn?.phoneNumber,
-										phn?.contactType,
-										controller,
-										editAction,
-										phn?.id)
-			   }
-		   t+="</TABLE></div>"
-		   t+="</td></tr>"
-		 if (!isAjax){
-			 t+="</TABLE>"
-		 }
-		 return  t
-	 }
-	 /**
-	  * Phone tag
-	  */
-	 def phone={attrs->
-	   def partyId=attrs.id
-	   def controller=attrs.controller
-	   def party=Party.get(partyId)
-	   def contactTypes=ContactType.list()	
-	   def editAction=attrs.editAction
-	   def createAction=attrs.createAction
-	   def contactPhone=attrs?.contactPhone	
-	 out << doPhone(party,controller,editAction,createAction,contactPhone,ContactType.list())
-	 }
+
 	/**
 	 * DoFormListField
 	 * @param label
@@ -200,7 +145,7 @@ class PortalTagLib {
 	 * @param listOfValues
 	 * @return
 	 */
-	def doFormListField(label, labelField, fieldName, field, fieldLength, listOfValues){
+	def doFormListField(label, labelField, fieldName, field, fieldLength, listOfValues,value=""){
 		def listHtml="<select name='${fieldName}'>"
 		listOfValues.each {
 			def ct=it
@@ -239,14 +184,14 @@ class PortalTagLib {
  * @param fieldValue
  * @return
  */
-	def doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue,haveErrors){
+	def doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue="",haveErrors){
 		if (!fieldValue){
 			fieldValue=""
 		}
 		return """
 		  <tr class="prop">
 			<td valign="top" class="name">
-			   <label for="${labelField}}">${label}</label>
+			   <label for="${labelField}">${label}</label>
 			</td>
 			<td valign="top" class="value ${haveErrors}">
 			   <input type="text" maxlength="${fieldLength}" id="${field}" name="${field}" value="${fieldValue}"/>
@@ -264,7 +209,7 @@ class PortalTagLib {
 		def field=attrs.field
 		def fieldLength=attrs.fieldLength
 		def fieldValue=attrs?.fieldValue
-		def haveErrors=attrs.haveErrors
+		def haveErrors=attrs?.haveErrors
 		if (!fieldValue){
 			fieldValue=""
 		}
@@ -426,11 +371,6 @@ def doDisplayPhone(areaCode,num,contactType,controller,editAction,phnId,deleteAc
 	return "${phoneNumber}${ct}${lv}${dl}"
 	}
 
-
-def doHiddenPhone(contactPhoneId){
-	def props=ContactPhone.getProperties()
-	
-}
 def displayPhone={attrs->
 	def areaCode=attrs.areaCode
 	def num=attrs.num
@@ -440,6 +380,48 @@ def displayPhone={attrs->
 	def phnId=attrs.phnId
 	return this.doDisplayPhone (areaCode, num, contactType, controller, editAction, phnId)
 }
+/**
+ * Displays the address
+ * @param address1
+ * @param address2
+ * @param city
+ * @param state
+ * @param zipcode
+ * @param contactType
+ * @param controller
+ * @param editAction
+ * @param addrId
+ * @return
+ */
+def doDisplayAddress(address1,address2,city,state,zipcode,contactType,controller,editAction,addrId,deleteAction="deleteRemote"){
+	 def addr1Text=this.doDisplayValue(address1,"Address 1","Address:")
+	 def addr2Text=this.doDisplayValue(address2,"Address 2","Address 2:")
+	 def cityText=this.doDisplayValue(city,"City","City:")
+	 def stateText=this.doDisplayValue(state,"State","State:")
+	 def zipCodeText=this.doDisplayValue(zipcode,"ZipCode","Zip Code:")
+	 def contactTypeText=this.doDisplayValue(contactType,"contactType","Type of Address")
+	 def lv=doRemoteLinkValue(controller,editAction,addrId,"Edit","inputAddress")
+	 def dl=doRemoteLinkValue(controller,deleteAction,addrId,"Delete","addressSection")
+	 return "<TABLE>${addr1Text}${addr2Text}${cityText}${stateText}${zipCodeText}${contactTypeText}${lv}${dl}</TABLE>"
+}
+/**
+ * Display the email
+ * @param emailAddress
+ * @param contactType
+ * @param controller
+ * @param editAction
+ * @param emlId
+ * @return
+ */
+def doDisplayEmail(emailAddress,contactType,controller,editAction,emlId,deleteAction="deleteRemote"){
+   def emailAddressDisplay=doDisplayValue("(${emailAddress})${num}","Email Address:","emailAddress")
+   def ct=doDisplayValue(contactType,"Contact Type:","contactType")
+   def eml=ContactEmail.get(emlId)
+   def party=eml.party
+   def lv=doRemoteLinkValue(controller,editAction,phnId,"Edit","inputPhone")
+   def dl=doRemoteLinkValue(controller,deleteAction,phnId,"Delete","phoneSection")
+   return "${emailAddress}${ct}${lv}${dl}"
+   }
 /**
  * doInputPhone
  * @param cts - The list of Contact Types
@@ -486,156 +468,283 @@ def displayPhone={attrs->
 	return errorVal+label+startRow+inputForm+endRow
 }
 /**
- * flowPhone tag
+ * Create the form for the creation and editing of addresses
+ * @param cts
+ * @param partyId
+ * @param controller
+ * @param createAction
+ * @param value
+ * @param inputLabel
+ * @return
  */
-  def flowPhone={attrs->
-    def partyId=attrs.id
-    def controller=attrs.controller
-    def party=Party.get(partyId)
-    def contactTypes=ContactType.list()
-    def editAction=attrs.editAction
-    def createAction=attrs.createAction
-    def contactPhoneId=attrs.contactPhoneId
-    def contactPhoneInstance
-    if (contactPhoneId==null || contactPhoneId==""){
-	 contactPhoneInstance=new ContactPhone()
-	 contactPhoneInstance.party=party
-    }else{
-	  contactPhoneInstance=ContactPhone.get(contactPhoneId)
-    }
-    def ctId
-    if (contactPhoneInstance==null || contactPhoneInstance.contactType==null){
-	  ctId=1
-    }else{
-	  ctId=contactPhoneInstance.contactType.id
-      }
-	def cts=[:]
-	contactTypes.each{
-		cts.put it.id, it.name
-	}
-    def t="<TABLE>"
-	party?.phoneList.each{
-	    ContactPhone phn=it
-		t+=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
-      }
-    t+=doInputPhone(cts,partyId,"contactPhone","update",contactPhoneInstance,"Phones:")
-    t+="</TABLE>"
-    out << t
-    }
+  def doInputAddress(cts,partyId,controller,createAction,value,inputLabel){
+	  def errorVal=""
+	  if (value==null){
+		  value=new ContactAddress()
+	  }else{
+		value?.validate()
+		if (value.hasErrors()){
+		   errorVal+= g.message(code:"ContactAddress.input.error",args:['',''])
+		}
+	  }
+	  def states=[:]
+	  State.list().each{
+		  State s=it
+		  states.put s.id, s.name
+	  }
+	  def address1Error=g.hasErrors([bean:value,field:"address1"],'errors')
+	  def cityError=g.hasErrors([bean:value,field:"city"],'errors')
+	  def zipCodeError=g.hasErrors([bean:value,field:"city"],'errors')
+	  def address1Input=doFormInputField("Address:","address1","address1","address1","100",value?.address1,address1Error)
+	  def address2Input=doFormInputField("Address 2:","address2","address2","address2","100",value?.address2)
+	  def cityInput=doFormInputField("City:","city","city","city","80",value?.city,cityError)
+	  def stateInput=doFormListField("State:","state","state","state","30",states)
+	  def zipCodeInput=doFormInputField("ZipCode:","zipcode","zipcode","zipcode","10",value?.zipcode,zipCodeError)
+	  def contactTypeInput=doFormListField("Contact Type:","ContactType","contactType","contactType","20",cts)
+	  def activeInput=doFormCheckboxField("Active","active","active","active","${value.active}",g.hasErrors([bean:value,field:"active"]))
+	  def url=["action":createAction,"controller":controller]
+	  def startRow=" <tr><td>"
+	  def endRow="</td></tr>"
+	  def label="${startRow}${inputLabel}${endRow}"
+	  def str=submitToRemote(["url":url,"update":"addressSection","value":"Submit Address"])
+	  def dialog="""
+				  <div class="dialog">
+					 <table>
+					   <tbody>
+						 ${address1Input}${address2Input}${cityInput}${stateInput}${zipCodeInput}${contactTypeInput}${activeInput}
+						 <TR><TD><input type="hidden" name="party" value="${partyId}"/></TD></TR>
+						 <TR><TD>${str}</TD></TR>
+					   </tbody>
+					 </table>
+				 </div>
+					 
+				 """
+	  def attrs=["action":createAction,"controller":controller]
+	  def inputForm="${g.form(attrs,dialog)}"
+	  return errorVal+label+startRow+inputForm+endRow
+  }
+  /**
+  * doInputPhone
+  * @param cts - The list of Contact Types
+  * @param partyId - The partyId
+  * @param createAction - The action it should goto on Saving
+  * @param value - The value which is an instance of the ContactPhone domain class
+  * @return
+  */
+   def doInputEmail(cts,partyId,controller,createAction,value,inputLabel){
+	 def errorVal=""
+	 if (value==null){
+		 value=new ContactEmail()
+	 }else{
+	   value?.validate()
+	   if (value.hasErrors()){
+		  errorVal+= g.message(code:"ContactEmail.input.error",args:['',''])
+	   }
+	 }
+	 def emailAddressError=g.hasErrors([bean:value,field:"emailAddress"],'errors')
+	 def emailAddressInput=doFormInputField("Email Address","emailAddress","emailAddress","emailaddress","100",value.emailAddress,emailAddressError)
+	 def contactTypeInput=doFormListField("Contact Type:","ContactType","contactType","contactType","20",cts)
+	 def activeInput=doFormCheckboxField("Active","active","active","active","${value.active}",g.hasErrors([bean:value,field:"active"]))
+	 def url=["action":createAction,"controller":controller]
+	 def startRow=" <tr><td>"
+	 def endRow="</td></tr>"
+	 def label="${startRow}${inputLabel}${endRow}"
+	 def str=submitToRemote(["url":url,"update":"emailSection","value":"Submit Email"])
+	 def dialog="""
+				 <div class="dialog">
+					<table>
+					  <tbody>
+						${emailAddressInput}${contactTypeInput}${activeInput}
+						<TR><TD><input type="hidden" name="party" value="${partyId}"/></TD></TR>
+						<TR><TD>${str}</TD></TR>
+					  </tbody>
+					</table>
+				</div>
+					
+				"""
+	 def attrs=["action":createAction,"controller":controller]
+	 def inputForm="${g.form(attrs,dialog)}"
+	 return errorVal+label+startRow+inputForm+endRow
+ }
 /**
- * tag for displaying the phone on the page using the attributes defined.
- */
-def editPhone={attrs->
-  def partyId=attrs.id
-  def phoneId=attrs.phoneId 
-  def controller=attrs.controller
-  def party=Party.get(partyId)
-  def phn=ContactPhone.get(phoneId)
-  def contactTypes=getContactUtilService().getProfilePhoneContactTypes(party)
-  def editAction=attrs.editAction
-  if (editAction==null || editAction==""){
-    editAction="edit"
-  }
-  if (controller==null || controller==""){
-    controller="contactPhone"
-  }
-  def disp=doDisplayPhone(phn.areaCode,phn.phoneNumber,phn.contactType,controller,editAction,phn.id)
-  out<<"<TABLE>${disp}</TABLE>"
-  }
-/**
- * doAddressDisplay
+ * do the address
+ * @param party
  * @param controller
  * @param editAction
  * @param createAction
- * @param party
+ * @param contactAddress
+ * @param contactTypes
  * @return
  */
-def doAddressDisplay(controller,editAction,createAction,party){
-	def t=""
-	party?.addressList.each{
-	  def addr=it
-	  def addr1Text=this.doDisplayValue("Address 1","Address*:",addr.address1)
-	  def addr2Text=this.doDisplayValye("Address 2","Address 2:",addr.address2)
-	  def cityText=this.doDisplayValue("City","City:",addr.city)
-	  def stateText=this.doDisplayValue("State","State:",addr.state)
-	  def zipCodeText=this.doDisplayValue("ZipCode","Zip Code:",addr.zipCode)
-	  def contactTypeText=this.doDisplayValue("contactType","Type of Address",addr.contactType)
-	  def lv=doLinkValue(controller,editAction,addr.id,"Edit Address","[id:'${addr.id}']")
-	  t+="<TABLE>${addr1Text}${addr2Text}${cityText}${stateText}${zipCodeText}${contactTypeText}${lv}</TABLE>"
-	}
-	return t
-}
+def doAddress(party,controller,editAction,createAction,contactAddress,contactTypes,isAjax=false){
+		 if (editAction==null || editAction==""){
+			 editAction="editAddress"
+		   }
+		   if (createAction==null || createAction==""){
+			 createAction="create"
+		   }
+		   if (controller==null || controller==""){
+			 controller="contactAddress"
+		   }
+		   def cts=[:]
+		   contactTypes.each{
+			   cts.put it.id, it.name
+		   }
+		   def t=""
+		   if (!isAjax){
+			   t="<TABLE id='addressSection' >"
+		   }
+		   t+="<tr><td><TABLE id='inputAddress'>"
+		   t+=this.doInputAddress(cts, party.id, "contactAddress","updateOrCreateAddress", contactAddress,"Address:")
+		   t+="</TABLE></TD>"
+		   t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='phoneList' >"
+		   party?.addressList.each{
+				 ContactAddress addr=it
+				 t+=this.doDisplayAddress(addr.address1,
+										addr.address2,
+										addr.city,
+										addr.state,
+										addr.zipcode,
+										addr.contactType,
+										controller,
+										editAction,
+										addr.id)
+			   }
+		   t+="</TABLE></div>"
+		   t+="</td></tr>"
+		 if (!isAjax){
+			 t+="</TABLE>"
+		 }
+		 return  t
+	 }
 /**
  * address tag
  */
 def address={attrs->
-  def partyId=attrs.id
-  def party
-  if (partyId==null || partyId==""){
-    party=new Party()
-  }
-  party=Party.get(partyId)
-  def controller=attrs.controller
-  def p=attrs.params
-  def addressContactTypes=getContactUtilService().getProfileAddressContactTypes(party)
-  def editAction=attrs.editAction
-  def createAction=attrs.createAction
-  if (editAction==null || editAction==""){
-    editAction="edit"
-  }
-  if (createAction==null || createAction==""){
-    createAction="create"
-  }
-  if (controller==null || controller==""){
-    controller="contactAddress"
-  }
-out << doAddressDisplay(controller,editAction,createAction,party)
+	   def partyId=attrs.id
+	   def controller=attrs.controller
+	   def party=Party.get(partyId)
+	   def contactTypes=ContactType.list()	
+	   def editAction=attrs.editAction
+	   def createAction=attrs.createAction
+	   def contactAddress=attrs?.contactAddress	
+	 out << doAddress(party,controller,editAction,createAction,contactAddress,ContactType.list())
+	 }
+/**
+* does the regular phone tag
+* @param partyId
+* @param controller
+* @param editAction
+* @param createAction
+* @return
+*/
+def doPhone(party,controller,editAction,createAction,contactPhone,contactTypes,isAjax=false){
+   if (editAction==null || editAction==""){
+	   editAction="editPhone"
+	 }
+	 if (createAction==null || createAction==""){
+	   createAction="create"
+	 }
+	 if (controller==null || controller==""){
+	   controller="contactPhone"
+	 }
+	 def cts=[:]
+	 contactTypes.each{
+		 cts.put it.id, it.name
+	 }
+	 def t=""
+	 if (!isAjax){
+		 t="<TABLE id='phoneSection' >"
+	 }
+	 t+="<tr><td><TABLE id='inputPhone'>"
+	 t+=this.doInputPhone (cts, party.id, "contactPhone","updateOrCreatePhone", contactPhone,"Phones:")
+	 t+="</TABLE></TD>"
+	 t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='phoneList' >"
+	 party?.phoneList.each{
+		   ContactPhone phn=it
+		   t+=this.doDisplayPhone(phn?.areaCode,
+								  phn?.phoneNumber,
+								  phn?.contactType,
+								  controller,
+								  editAction,
+								  phn?.id)
+		 }
+	 t+="</TABLE></div>"
+	 t+="</td></tr>"
+   if (!isAjax){
+	   t+="</TABLE>"
+   }
+   return  t
 }
 /**
- * Do the email
- * @param party
- * @param controller
- * @param contactTypes
- * @param editAction
- * @param createAction
- * @return
- */
-def doEmailDisplay(party,controller,contactTypes,editAction,createAction){
-	def t="<TABLE>"
-	party?.emailList.each{
-	  def eml=it
-	  def emailAddressText=this.doDisplayValue("Address 1","Address*:",eml.emailAddress)
-	  def contactTypeText=this.doDisplayValue("contactType","Type of Email",eml.contactType)
-	  def lv=doLinkValue(controller,editAction,eml.id,"Edit Email Address","[id:'${eml.id}]")
-	  t+="${emailAddressText}${contactTypeText}${lv}"
-	  }
-   return t+"</TABLE>"
-   
+* Phone tag
+*/
+def phone={attrs->
+ def partyId=attrs.id
+ def controller=attrs.controller
+ def party=Party.get(partyId)
+ def contactTypes=ContactType.list()
+ def editAction=attrs.editAction
+ def createAction=attrs.createAction
+ def contactPhone=attrs?.contactPhone
+out << doPhone(party,controller,editAction,createAction,contactPhone,ContactType.list())
+}
+/**
+* does the regular phone tag
+* @param partyId
+* @param controller
+* @param editAction
+* @param createAction
+* @return
+*/
+def doEmail(party,controller,editAction,createAction,contactEmail,contactTypes,isAjax=false){
+   if (editAction==null || editAction==""){
+	   editAction="editEmail"
+	 }
+	 if (createAction==null || createAction==""){
+	   createAction="create"
+	 }
+	 if (controller==null || controller==""){
+	   controller="contactEmail"
+	 }
+	 def cts=[:]
+	 contactTypes.each{
+		 cts.put it.id, it.name
+	 }
+	 def t=""
+	 if (!isAjax){
+		 t="<TABLE id='emailSection' >"
+	 }
+	 t+="<tr><td><TABLE id='inputEmail'>"
+	 t+=this.doInputEmail (cts, party.id, "contactEmail","updateOrCreateEmail", contactEmail,"Email Addresses:")
+	 t+="</TABLE></TD>"
+	 t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='emailList' >"
+	 party?.emailList.each{
+		   ContactEmail eml=it
+		   t+=this.doDisplayEmail(eml?.emailAddress,
+								  eml?.contactType,
+								  controller,
+								  editAction,
+								  eml?.id)
+		 }
+	 t+="</TABLE></div>"
+	 t+="</td></tr>"
+   if (!isAjax){
+	   t+="</TABLE>"
+   }
+   return  t
 }
 /**
  * Email tag
  */
-  def email={attrs,body->
-    def party
-    def partyId=attrs.id
-    if (partyId!=null){
-      party=Party.get(partyId)
-    }else{ 
-       party=new Party()
-    }
-    def controller=attrs.controller
-    def contactTypes=ContactType.list()
-    def editAction=attrs.editAction
-    def createAction=attrs.createAction
-    if (editAction==null || editAction==""){
-      editAction="edit"
-    }
-    if (createAction==null || createAction==""){
-      createAction="create"
-    }
-    if (controller==null || controller==""){
-      controller="contactPhone"
-    }
-   out << doEmailDisplay(party,controller,contactTypes,editAction,createAction)+body()
-   }
+def email={attrs->
+ def partyId=attrs.id
+ def controller=attrs.controller
+ def party=Party.get(partyId)
+ def contactTypes=ContactType.list()
+ def editAction=attrs.editAction
+ def createAction=attrs.createAction
+ def contactEmail=attrs?.contactEmail
+out << doEmail(party,controller,editAction,createAction,contactEmail,ContactType.list())
+}
 }

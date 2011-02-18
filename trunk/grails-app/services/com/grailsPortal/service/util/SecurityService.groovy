@@ -31,23 +31,9 @@ class SecurityService {
     	else
     	  return false
     }
-    def ArrayList <RegistrationEvent> getEmergencyContacts(){
-    	def user=getRegisteredUser()
-    	def parties = new ArrayList()
-    	def regs=RegistrationEvent.findByRegistrationUser(user)
-    	regs.each{
-    		if (it.emergencyContact1 !=null){
-    			parties.add(it.emergencyContact1)
-    		}
-    		if (it.emergencyContact2 !=null){
-    			parties.add(it.emergencyContact2)
-    		}
-    		if (it.emergencyContact3 !=null){
-    			parties.add(it.emergencyContact3)
-    		}
-    		
-    	}
-    	return regs
-    }
+	
+	def logOut(){
+		SecurityUtils.subject?.logout()
+	}
    
 }
