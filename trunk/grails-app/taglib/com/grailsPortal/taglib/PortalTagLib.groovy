@@ -414,13 +414,13 @@ def doDisplayAddress(address1,address2,city,state,zipcode,contactType,controller
  * @return
  */
 def doDisplayEmail(emailAddress,contactType,controller,editAction,emlId,deleteAction="deleteRemote"){
-   def emailAddressDisplay=doDisplayValue("(${emailAddress})${num}","Email Address:","emailAddress")
+   def emailAddressDisplay=doDisplayValue(emailAddress,"Email Address:","emailAddress")
    def ct=doDisplayValue(contactType,"Contact Type:","contactType")
    def eml=ContactEmail.get(emlId)
    def party=eml.party
-   def lv=doRemoteLinkValue(controller,editAction,phnId,"Edit","inputPhone")
-   def dl=doRemoteLinkValue(controller,deleteAction,phnId,"Delete","phoneSection")
-   return "${emailAddress}${ct}${lv}${dl}"
+   def lv=doRemoteLinkValue(controller,editAction,emlId,"Edit","inputEmail")
+   def dl=doRemoteLinkValue(controller,deleteAction,emlId,"Delete","emailSection")
+   return "${emailAddressDisplay}${ct}${lv}${dl}"
    }
 /**
  * doInputPhone
@@ -542,7 +542,7 @@ def doDisplayEmail(emailAddress,contactType,controller,editAction,emlId,deleteAc
 	   }
 	 }
 	 def emailAddressError=g.hasErrors([bean:value,field:"emailAddress"],'errors')
-	 def emailAddressInput=doFormInputField("Email Address","emailAddress","emailAddress","emailaddress","100",value.emailAddress,emailAddressError)
+	 def emailAddressInput=doFormInputField("Email Address","emailAddress","emailAddress","emailAddress","100",value.emailAddress,emailAddressError)
 	 def contactTypeInput=doFormListField("Contact Type:","ContactType","contactType","contactType","20",cts)
 	 def activeInput=doFormCheckboxField("Active","active","active","active","${value.active}",g.hasErrors([bean:value,field:"active"]))
 	 def url=["action":createAction,"controller":controller]
