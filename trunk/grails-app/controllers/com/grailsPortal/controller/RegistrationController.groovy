@@ -219,7 +219,12 @@ def registerFlow = {
      		    return error()
      		}
      	 }.to ENTERPARENTINFO
-	     on(GOTOPARENTINFO2).to SECONDARYPARENTINFO    	 
+	     on(GOTOPARENTINFO2){
+			 def ctx = servletContext.getAttribute(GrailsApplicationAttributes.APPLICATION_CONTEXT)
+			 RegistrationService rs=    ctx.getBean(REGISTRATIONSERVICE)
+			 PortalviewService pvs=     ctx.getBean(PORTALVIEWSERVICE)
+			 
+			 }.to SECONDARYPARENTINFO    	 
          on(GOTOCANCEL){
      		 flash.message=CANCEL_MESSAGE
              session.regEventId=null;

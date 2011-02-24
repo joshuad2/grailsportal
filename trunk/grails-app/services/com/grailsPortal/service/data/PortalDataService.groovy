@@ -454,7 +454,7 @@ class PortalDataService {
 				p.name=it
 				p.netCostAmount=175.00
 			    p.netSalesAmount=175.00
-				p.ecommerceCode=it
+				p.ecommerceCode="2011Camp"
 				p.salesChannel=salesChannel
 		        p.productType=productType
 				p.save(flush:true)
