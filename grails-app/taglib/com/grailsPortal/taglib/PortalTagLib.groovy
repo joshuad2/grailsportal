@@ -145,20 +145,27 @@ class PortalTagLib {
 	 * @param listOfValues
 	 * @return
 	 */
-	def doFormListField(label, labelField, fieldName, field, fieldLength, listOfValues,value=""){
+	def doFormListField(label, labelField, fieldName, field, fieldLength, listOfValues,value="",addRow=true){
 		def listHtml="<select name='${fieldName}'>"
 		listOfValues.each {
 			def ct=it
 			listHtml+="<option value='${ct.key}'>${ct.value}</option>"
 		}
 		listHtml+="</select>"
+		def doAddRowStart=""
+		def doAddRowEnd=""
+		  if (addRow){
+			  doAddRowStart="<tr class=\"prop\">"
+			  doAddRowEnd="</tr>"
+		  }
+		
 		return """
-		  <tr class="prop">
+		  ${doAddRowStart}
 			<td valign="top" class="name">
 			   <label for="${labelField}}">${label}</label>
 			</td>
 			<td valign="top">${listHtml}</td>
-		  </tr>
+		  ${doAddRowEnd}
 	"""
 	}
 	/**
@@ -184,19 +191,25 @@ class PortalTagLib {
  * @param fieldValue
  * @return
  */
-	def doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue="",haveErrors){
+	def doFormInputField(label, labelField, fieldName, field, fieldLength, fieldValue="",haveErrors,addRow="true"){
 		if (!fieldValue){
 			fieldValue=""
 		}
+		def doAddRowStart=""
+		def doAddRowEnd=""
+		  if (addRow){
+			  doAddRowStart="<tr class=\"prop\">"
+			  doAddRowEnd="</tr>"
+		  }
 		return """
-		  <tr class="prop">
+		  ${doAddRowStart}
 			<td valign="top" class="name">
 			   <label for="${labelField}">${label}</label>
 			</td>
 			<td valign="top" class="value ${haveErrors}">
 			   <input type="text" maxlength="${fieldLength}" id="${field}" name="${field}" value="${fieldValue}"/>
 			</td>
-		  </tr>
+		  ${doAddRowEnd}
 	"""
 	}
 	/**
@@ -224,16 +237,24 @@ class PortalTagLib {
 	* @param editAction
 	* @return
 	*/
-   def doRemoteLinkValue(controller, editAction, linkId, linkLabel,update){
+   def doRemoteLinkValue(controller, editAction, linkId, linkLabel,update,addRow="true"){
+	   def doAddRowStart=""
+	   def doAddRowEnd=""
+	   def numCols="2"
+		 if (addRow){
+			 doAddRowStart="<tr class=\"prop\">"
+			 doAddRowEnd="</tr>"
+			 numCols="1"
+		 }
 	   return """
-	   <tr>
-			  <td colspan="2">
+	   ${doAddRowStart}
+			  <td colspan="${numCols}">
 				${g.remoteLink([controller:"${controller}",
 						  action:"${editAction}",
 						  id:"${linkId}",update:"${update}"],
 						  {"${linkLabel}"})}
 			   </td>
-	   </tr>"""
+	   ${doAddRowEnd}"""
  }
     /**
      * doLinkValue
@@ -244,29 +265,44 @@ class PortalTagLib {
      * @param editAction
      * @return
      */
-	def doLinkValue(controller, editAction, linkId, linkLabel,parameters){
+	def doLinkValue(controller, editAction, linkId, linkLabel,parameters,addRow="true"){
+		def doAddRowStart=""
+		def doAddRowEnd=""
+		def numCols="1"
+		  if (addRow){
+			  doAddRowStart="<tr class=\"prop\">"
+			  doAddRowEnd="</tr>"
+			  numCols="2"
+		  }
 		return """
-		<tr>
-			   <td colspan="2">
+		${doAddRowStart}
+			   <td colspan="${numCols}">
 			     ${g.link([controller:"${controller}",action:"${editAction}",id:"${linkId}"],
 		                   {"${linkLabel}"})}
 				</td>
-			 </tr>"""
+			 ${doAddRowEnd}
+			 """
   }
 
-  def doPasswordInput(fieldValue,fieldName,label, maxLength, haveErrors){
+  def doPasswordInput(fieldValue,fieldName,label, maxLength, haveErrors,addRow="true"){
   if (!fieldValue){
 	  fieldValue=""
   }
+  def doAddRowStart=""
+  def doAddRowEnd=""
+	if (addRow){
+		doAddRowStart="<tr class=\"prop\">"
+		doAddRowEnd="</tr>"
+	}
   return """
-	<tr class="prop">
+	${doAddRowStart}
 	  <td valign="top" class="name">
 		 <label for="${fieldName}}">${label}</label>
 	  </td>
 	  <td valign="top" class="value ${haveErrors}">
 	     ${g.passwordField(["name":"${fieldName}","value":"${fieldValue}","maxLength":"${maxLength}"])}
 	  </td>
-	</tr>
+	${doAddRowEnd}
 """
   }
 
@@ -296,14 +332,26 @@ class PortalTagLib {
  * @param fieldName
  * @return
  */
-  def doDisplayValue(value,label,fieldName){
+  def doDisplayValue(value,label,fieldName,addRow=true){
+	  def doAddRowStart=""
+	  def doAddRowEnd=""
+		if (addRow){
+			doAddRowStart="<tr class=\"prop\">"
+			doAddRowEnd="</tr>"
+        }
+		def doLabel=""
+		if (label!=""){
+		  doLabel="""
+			<td valign="top" class="name">
+			<label for="${fieldName}">${label}</label>
+		   </td>
+		   """
+		}
   return """
-		<tr class="prop">
-		<td valign="top" class="name">
-		  <label for="${fieldName}">${label}</label>
-		 </td>
+		${doAddRowStart}
+         ${doLabel}
 		 <td valign="top" class="value">${value}</td>
-	   </tr>
+	   ${doAddRowEnd}
 	   """
   }
 /**
@@ -325,20 +373,26 @@ def displayValue={attrs->
  * @param fieldLength
  * @return
  */
-def doFormCheckboxField(label,labelField,fieldName,field,value,haveErrors){
+def doFormCheckboxField(label,labelField,fieldName,field,value,haveErrors,addRow=true){
   def checked=""
   if (value!=null && value!=""){
     checked="CHECKED"
   } 
+  def doAddRowStart=""
+  def doAddRowEnd=""
+	if (addRow){
+		doAddRowStart="<tr class=\"prop\">"
+		doAddRowEnd="</tr>"
+	}
   return """
-		<tr class="prop">
+		${doAddRowStart}
 		  <td valign="top" class="name">
 			 <label for="${labelField}}">${label}</label>
 		  </td>
 		  <td valign="top" class="value ${haveErrors}">
 			 <input type="checkbox" id="${field}" name="${field}" ${checked}/>
 		  </td>
-		</tr>
+		${doAddRowEnd}
   """
 }
 
