@@ -454,6 +454,7 @@ class PortalDataService {
 				p.name=it
 				p.netCostAmount=175.00
 			    p.netSalesAmount=175.00
+				p.displayGroup="Painting Camp Ages 10-14"
 				p.ecommerceCode="2011Camp"
 				p.salesChannel=salesChannel
 		        p.productType=productType

@@ -19,6 +19,7 @@ class CamperRegistrationController {
 			  isInitial=true
 			}
 		}
+		regEvent.save(flush:true)
 		session.regEvent=regEvent
 		session.regEventId=regEvent.id
 		["registerInstance":regEvent,
@@ -27,6 +28,10 @@ class CamperRegistrationController {
 	
 	def campRegister={attrs->
 	    RegistrationEvent event=session?.regEvent
+	    if (event==null || event.id==null){
+			  session.regEvent=new RegistrationEvent()
+			  event=registrationService.handleInitialRegistrationEvent(session?.regEventId, new java.util.Date(),securityService.getRegisteredUser())// this has to run with the first step
+	    }
 	    PartyType partyType=PartyType.findByName("Child")
 		session?.regEvent?.registrationGrade=params["registrationGrade"]
 		def camper=registrationService.doParty(portalviewService,
@@ -41,7 +46,7 @@ class CamperRegistrationController {
 													   new ArrayList())
 		event.registrationFor=camper
 		camper.save(flush:true)
-		event.save(flush:true)
+		session.regEvent=event
 		render (model:["registerInstance":event,"regEvent":event],view:'camperRegistration')
 		}
 }

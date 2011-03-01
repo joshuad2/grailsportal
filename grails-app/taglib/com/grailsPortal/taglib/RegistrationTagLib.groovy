@@ -75,12 +75,12 @@ def handleOptionalRemoteLink={bl,controller, editAction, linkId, linkLabel,updat
 	}
 }
 
-def doHandleProduct(controller,productId,lineItemId,name,nameText,description,descriptionText,saleAmount,update="productInfo",selectAction="selectProduct",showSelect=false,removeAction="removeProduct", showRemove=false,moreInfoAction="moreInfo", showMoreInfo=false,showCost=true){
+def doHandleProduct(controller,productId,lineItemId,name,nameText,description,descriptionText,saleAmount,update="productSection",selectAction="selectProduct",showSelect=false,removeAction="removeProduct", showRemove=false,moreInfoAction="moreInfo", showMoreInfo=false,showCost=true){
 	PortalTagLib ptl=new PortalTagLib()
-	def selectLinkDisplay=handleOptionalRemoteLink(showSelect,"selectProduct",selectAction,productId,"${name} - ${saleAmount}",update,ptl,false)
+	def selectLinkDisplay=handleOptionalRemoteLink(showSelect,controller,selectAction,productId,"${name} - ${saleAmount}",update,ptl,false)
 	def removeLinkDisplay=""
 	if (showRemove){
-	  removeLinkDisplay=handleOptionalRemoteLink(showRemove,"removeProduct",removeAction,productId,"Remove",update,ptl,false)
+	  removeLinkDisplay=handleOptionalRemoteLink(showRemove,controller,removeAction,productId,"Remove",update,ptl,false)
 	}
 	
 	def moreInfoLinkDisplay=""
@@ -119,10 +119,10 @@ def doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeNam
 							   p.dsc,
 							   "",
 							   p.getNetSalesAmount(),
-						       "productInfo",
+						       "productSection",
 							   "selectProduct",
 							   true,
-							   "removeProduct",
+							   "",
 							   false,
 							   "",
 							   false,
@@ -133,7 +133,7 @@ def doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeNam
 	return t
 }
 def doProduct(isAjax,regEventId,ecommerceCode,productTypeName="Classes",salesChannelName="On-Line",controller="product"){
-    def regEvent=RegistrationEvent.get(regEventId)
+    RegistrationEvent regEvent=RegistrationEvent.get(regEventId)
 	
 	    if (regEvent?.registrationFor==null){
 		return ""
@@ -146,27 +146,34 @@ def doProduct(isAjax,regEventId,ecommerceCode,productTypeName="Classes",salesCha
 	 t+=doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeName,salesChannelName)
 	 t+="</TABLE></TD>"
 	 t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='productList' >"
-     def reorList=RegistrationEventOrderRecord.findByEvent(RegistrationEvent.get(regEventId))
-	 
-	 reorList.each {
-	   RegistrationEventOrderRecord reor=it
-	   OrderRecord or=reor.order
-	   if (or.orderStatus!="deleted")
-	   or.lineItems.each {
+     regEvent.orders.each{
+		 def reorList=it
+	   reorList.each {
+	     RegistrationEventOrderRecord reor=it
+	     OrderRecord or=reor.order
+	     if (or.orderStatus.name!="deleted"){
+	       or.lineItems.each {
 		      OrderRecordLineItem oli=it
 			  def p=oli.getProduct()
 			  t+=doHandleProduct(controller,
 				  p.id,
+				  oli.id,
 				  p.name,
 				  "",
 				  p.dsc,
 				  "",
 				  p.getNetSalesAmount(),
-				  "productInfo",
+				  "productSection",
 				  "selectProduct",
+				  true,
+				  "Remove",
+				  true,
+				  "",
 				  false,
-				  "Remove",true,"",false,true)
+				  true)
 		    }
+	   }
+	   }
 	}
 	 t+="</TABLE></div>"
 	 t+="</td></tr>"
