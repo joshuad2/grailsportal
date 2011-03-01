@@ -19,7 +19,8 @@ class Product implements Serializable{
          cd                  column:'cd',index: "product_cd_idx", unique: true
          dsc                 column:'dsc' 
          ecommerceCode       column:'ecommerce_code' 
-         name                column:'name' 
+         name                column:'name'
+		 displayGroup        column:'display_group'
          netCostAmount       column:'net_cost_amount' 
          netSalesAmount      column:'net_sales_amount' 
          productImageuripath column:'product_imageuripath' 
@@ -28,6 +29,7 @@ class Product implements Serializable{
     }
     String           cd
     String           dsc
+	String           displayGroup
     String           ecommerceCode
     String           name
     Double           netCostAmount
@@ -43,6 +45,7 @@ class Product implements Serializable{
         dsc                (size: 1..200, blank: true, nullable:true)
         ecommerceCode      (size: 1..100, blank: false, nullable:false)
         name               (size: 1..100, blank: false, nullable:false)
+		displayGroup       (size: 1..100, blank: false, nullable:false)
         netCostAmount      (nullable: false)
         netSalesAmount     (nullable: false)
         productImageuripath(size: 1..255, blank: true,nullable:true)

@@ -14,12 +14,40 @@
  */
 
 package com.grailsPortal.domain
-
+import com.grailsPortal.domain.OrderRecord
+import com.grailsPortal.taglib.RegistrationTagLib
 class ProductController {
-/**
- *  ProductController
- *  @author Joshua Davis    
- */
-	
+	/**
+	 *  ProductController
+	 *  @author Joshua Davis    
+	 */
+	def securityService
+	def registrationService
+	def contactUtilService
 	def scaffold = "true"
+
+	def selectProduct={
+		def productId=params.id
+		Product product=Product.get(productId)
+		def spRegEvent=session.regEvent
+		
+		OrderRecord orderRecord=registrationService.doOrderRecord(new OrderRecord(),
+				securityService.getRegisteredUser().party,
+				"online Order",
+				0.0,0.0,0.0,
+				new java.util.Date(),
+				"IA",
+				"Registration")
+		registrationService.handleSingleOrderRecordLineItem(orderRecord,productId)
+		RegistrationEventOrderRecord roer=registrationService.handleRegistrationEventOrderRecord(orderRecord,spRegEvent)
+		roer.save(flush:true)
+		if (spRegEvent.orders==null){
+			spRegEvent.orders=new ArrayList()
+		}
+		spRegEvent.orders.add(roer)
+		RegistrationTagLib rtl=new RegistrationTagLib()
+		def retVal=""
+		retVal=rtl.doProduct(true,spRegEvent.id,product.ecommerceCode,product.productType.name,product.salesChannel.name)
+        render retVal
+	}
 }

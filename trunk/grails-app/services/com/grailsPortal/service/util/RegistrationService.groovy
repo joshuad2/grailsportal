@@ -122,7 +122,13 @@ class RegistrationService {
 		reor.order=orderRecord
 		reor.event=registrationEvent
 		reor.isActive=true
-		return validate(reor)
+		reor=validate(reor)
+		if (registrationEvent.orders==null){
+			registrationEvent.orders=[reor]
+		}else{
+		   registrationEvent.orders.add(reor)
+		}
+		return reor
 	}
 	
 	
@@ -186,6 +192,21 @@ class RegistrationService {
 		orli.orderRecord=or
 		orli.product=product
 		return validate(orli)
+	}
+	def handleSingleOrderRecordLineItem(OrderRecord orderRecord,productId) throws ValidationException{
+		int i=1
+		int numItems=1//temporary
+		Product pr=Product.get(productId)
+		OrderRecordLineItem orli=doOrderRecordLineItem(orderRecord,pr,1,numItems)
+		orderRecord.totalAmount+=orli.lineItemAmount
+		orderRecord.grossAmount+=orli.lineItemAmount
+		orli.save()
+		if (orderRecord.lineItems==null){
+			orderRecord.lineItems=[orli]
+		}else{
+		  orderRecord.lineItems.add(orli)
+		}
+		orderRecord.save()
 	}
 	def handleOrderRecordLineItems(OrderRecord orderRecord,
 	params)throws ValidationException{
