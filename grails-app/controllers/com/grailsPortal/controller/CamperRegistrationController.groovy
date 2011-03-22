@@ -45,8 +45,14 @@ class CamperRegistrationController {
 													   new ArrayList(),
 													   new ArrayList())
 		event.registrationFor=camper
+		try{
 		camper.save(flush:true)
+		event.save(flush:true)
+		}catch(Exception e){
+		   e.printStackTrace()
+		}
 		session.regEvent=event
+		
 		render (model:["registerInstance":event,"regEvent":event],view:'camperRegistration')
 		}
 }
