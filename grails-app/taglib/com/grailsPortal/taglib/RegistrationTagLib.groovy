@@ -77,10 +77,16 @@ def handleOptionalRemoteLink={bl,controller, editAction, linkId, linkLabel,updat
 
 def doHandleProduct(controller,productId,lineItemId,name,nameText,description,descriptionText,saleAmount,update="productSection",selectAction="selectProduct",showSelect=false,removeAction="removeProduct", showRemove=false,moreInfoAction="moreInfo", showMoreInfo=false,showCost=true){
 	PortalTagLib ptl=new PortalTagLib()
-	def selectLinkDisplay=handleOptionalRemoteLink(showSelect,controller,selectAction,productId,"${name} - ${saleAmount}",update,ptl,false)
+	def selectLinkDisplay
+	if (showSelect){
+	  selectLinkDisplay=handleOptionalRemoteLink(showSelect,controller,selectAction,productId,"${name} - ${saleAmount}",update,ptl,false)
+	}else{
+	  selectLinkDisplay=ptl.doDisplayValue ("${name} - ${saleAmount}", "", "selectedProduct",false)
+	}
+
 	def removeLinkDisplay=""
 	if (showRemove){
-	  removeLinkDisplay=handleOptionalRemoteLink(showRemove,controller,removeAction,productId,"Remove",update,ptl,false)
+	  removeLinkDisplay=handleOptionalRemoteLink(showRemove,controller,removeAction,productId,"remove",update,ptl,false)
 	}
 	
 	def moreInfoLinkDisplay=""
@@ -142,10 +148,11 @@ def doProduct(isAjax,regEventId,ecommerceCode,productTypeName="Classes",salesCha
 	 if (!isAjax){
 		 t="<TABLE id='productSection' >"
 	 }
-	 t+="<tr><td div style=\"width: 200px; height:200px; overflow:'auto'\"><TABLE id='selectProduct'>"
+	 t+="<tr><td style=\"border-style:solid\">Available Camp Sessions</td><td style=\"border-style:solid\">Camp Sessions Selected</td></tr>"
+	 t+="<tr><td div style=\"width: 200px; height:100px; overflow:'auto'\"><TABLE id='selectProduct'>"
 	 t+=doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeName,salesChannelName)
 	 t+="</TABLE></TD>"
-	 t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\"><TABLE id='productList' >"
+	 t+="<td><div style=\"width: 250px; height:100px; overflow:'auto'\"><TABLE id='productList' >"
      regEvent.orders.each{
 		 def reorList=it
 	   reorList.each {
@@ -165,8 +172,8 @@ def doProduct(isAjax,regEventId,ecommerceCode,productTypeName="Classes",salesCha
 				  p.getNetSalesAmount(),
 				  "productSection",
 				  "selectProduct",
-				  true,
-				  "Remove",
+				  false,
+				  "remove",
 				  true,
 				  "",
 				  false,
