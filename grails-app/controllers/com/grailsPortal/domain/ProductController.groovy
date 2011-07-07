@@ -50,4 +50,16 @@ class ProductController {
 		retVal=rtl.doProduct(true,spRegEvent.id,product.ecommerceCode,product.productType.name,product.salesChannel.name)
         render retVal
 	}
+	
+  def remove={
+		def productId=params.id
+		Product product=Product.get(productId)
+		def spRegEvent=session.regEvent
+        def theList=registrationService.getRegistrationEventOrderRecordByProduct(product.id,spRegEvent.id)
+		registrationService.deleteOrders(theList)
+		RegistrationTagLib rtl=new RegistrationTagLib()
+		def retVal=""
+		retVal=rtl.doProduct(true,spRegEvent.id,product.ecommerceCode,product.productType.name,product.salesChannel.name)
+        render retVal
+  }
 }
