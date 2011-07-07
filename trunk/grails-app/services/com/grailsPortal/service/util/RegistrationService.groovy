@@ -131,6 +131,46 @@ class RegistrationService {
 		return reor
 	}
 	
+	def getRegistrationEventOrderRecordByProduct(productId,registrationEventId){
+		def p =Product.get(productId)
+		def re=RegistrationEvent.get(registrationEventId)
+		def query="from RegistrationEventOrderRecord as reor where "+
+		          " 1<=(select count(*) from "+
+		          " OrderRecord as orec,"+
+				  " OrderRecordLineItem as orli "+
+				  " where "+
+				  " reor.order=orec and "+
+				  " orli.orderRecord=orec and "+
+				  " orli.product = ? and "+
+				  " reor.event=?)"
+		def reors=RegistrationEventOrderRecord.findAll(query,p,re)
+		def theList=[]
+		reors.each{
+			RegistrationEventOrderRecord reor=it
+			theList.add (reor)
+		}
+		return theList
+	}
+	def deleteOrders(theList){
+		theList.each{
+			RegistrationEventOrderRecord roer=it
+			def orderRecord=roer.order
+			def delList=[]
+			orderRecord.lineItems.each{
+			  delList.add it
+			}
+			orderRecord.lineItems=null
+			delList.each{ 
+			 OrderRecordLineItem orli=it
+			  orli.orderRecord=null
+			  
+			  orli.product=null
+			  orli.delete(flush:true)
+			  }
+			roer.delete(flush:true)
+			orderRecord.delete(flush:true)
+		  }
+	}
 	
 	def handleDate(year,month,day){
 		SimpleDateFormat format=new SimpleDateFormat(DATEFORMAT)
