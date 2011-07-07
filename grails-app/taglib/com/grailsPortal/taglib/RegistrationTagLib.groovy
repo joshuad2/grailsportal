@@ -12,7 +12,7 @@ import com.grailsPortal.domain.OrderRecordLineItem
 import com.grailsPortal.domain.SalesChannel
 
 class RegistrationTagLib {
-	
+	public PortalTagLib portalTagLib = new PortalTagLib()
 	static namespace = 'registration'
 def doInputRegistrationEventParty(registrationEventId,controller,createAction,value,inputLabel,partyType,needsDOB='false'){
 	   def errorVal=""
@@ -51,15 +51,27 @@ def doInputRegistrationEventParty(registrationEventId,controller,createAction,va
 	   def inputForm="${g.form(attrs,dialog)}"
 	   return errorVal+label+startRow+inputForm+endRow
    }
+/**
+ * Do Display Registration Event Party
+ * @param firstName
+ * @param lastName
+ * @param birthDate
+ * @param controller
+ * @param editAction
+ * @param partyId
+ * @return
+ */
 def doDisplayRegistrationEventParty(firstName,lastName,birthDate,controller,editAction,partyId,deleteAction="deleteRemote"){
-	PortalTagLib ptl=new PortalTagLib()
-    def firstNameDisplay=ptl.doDisplayValue(firstName,"Name:","firstName")
-    def lastNameDisplay=ptl.doDisplayValue(lastName,"","lastName")
-    def birthDateDisplay=ptl.doDisplayValue(birthDate,"Birth Date:","birthDate")
-	def lvValue=ptl.doRemoteLinkValue(controller,editAction,partyId,"Edit","inputEmail")
-	def dlValue=ptl.doRemoteLinkValue(controller,deleteAction,partyId,"Delete","emailSection")
+    def firstNameDisplay=portalTagLib.doDisplayValue(firstName,"Name:","firstName")
+    def lastNameDisplay=portalTagLib.doDisplayValue(lastName,"","lastName")
+    def birthDateDisplay=portalTagLib.doDisplayValue(birthDate,"Birth Date:","birthDate")
+	def lvValue=portalTagLib.doRemoteLinkValue(controller,editAction,partyId,"Edit","inputEmail")
+	def dlValue=portalTagLib.doRemoteLinkValue(controller,deleteAction,partyId,"Delete","emailSection")
 	return "${firstNameDisplay}${lastNameDisplay}${lvValue}${dlValue}"
 	}
+/**
+ * 
+ */
 def handleOptionalDisplayValue={bl,value,text,fieldName,portalTagLib->
 	if (bl){
 		return portalTagLib.doDisplayValue(value,text,fieldName)
@@ -74,9 +86,19 @@ def handleOptionalRemoteLink={bl,controller, editAction, linkId, linkLabel,updat
 	return ""
 	}
 }
-
+/**
+ * do Handle the Product
+ * @param controller
+ * @param productId
+ * @param lineItemId
+ * @param name
+ * @param nameText
+ * @param description
+ * @param descriptionText
+ * @param saleAmount
+ * @return
+ */
 def doHandleProduct(controller,productId,lineItemId,name,nameText,description,descriptionText,saleAmount,update="productSection",selectAction="selectProduct",showSelect=false,removeAction="removeProduct", showRemove=false,moreInfoAction="moreInfo", showMoreInfo=false,showCost=true){
-	PortalTagLib ptl=new PortalTagLib()
 	def selectLinkDisplay
 	if (showSelect){
 	  selectLinkDisplay=handleOptionalRemoteLink(showSelect,controller,selectAction,productId,"${name} - ${saleAmount}",update,ptl,false)
@@ -95,7 +117,15 @@ def doHandleProduct(controller,productId,lineItemId,name,nameText,description,de
 	}
 	return "<tr class=\"prop\">${selectLinkDisplay} ${removeLinkDisplay} ${moreInfoLinkDisplay}</tr>"
 }
-
+/**
+ * do ShowProducts not Selected
+ * @param controller
+ * @param regEventId
+ * @param ecommerceCode
+ * @param productTypeName
+ * @param salesChannelName
+ * @return
+ */
 def doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeName,salesChannelName){
     def t=""
 	def re=RegistrationEvent.get(regEventId)
@@ -138,22 +168,28 @@ def doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeNam
 	}
 	return t
 }
+/**
+ * 
+ * @param isAjax
+ * @param regEventId
+ * @param ecommerceCode
+ * @return
+ */
 def doProduct(isAjax,regEventId,ecommerceCode,productTypeName="Classes",salesChannelName="On-Line",controller="product"){
-    RegistrationEvent regEvent=RegistrationEvent.get(regEventId)
-	
-	    if (regEvent?.registrationFor==null){
+    RegistrationEvent regEvent=RegistrationEvent.get(regEventId)	
+	if (regEvent?.registrationFor==null){
 		return ""
 	}
 	def t=""
-	 if (!isAjax){
-		 t="<TABLE id='productSection' >"
-	 }
-	 t+="<tr><td style=\"border-style:solid\">Available Camp Sessions</td><td style=\"border-style:solid\">Camp Sessions Selected</td></tr>"
-	 t+="<tr><td div style=\"width: 200px; height:100px; overflow:'auto'\"><TABLE id='selectProduct'>"
-	 t+=doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeName,salesChannelName)
-	 t+="</TABLE></TD>"
-	 t+="<td><div style=\"width: 250px; height:100px; overflow:'auto'\"><TABLE id='productList' >"
-     regEvent.orders.each{
+	if (!isAjax){
+      t="<TABLE id='productSection' >"
+	}
+	t+="<tr><td style=\"border-style:solid\">Available Camp Sessions</td><td style=\"border-style:solid\">Camp Sessions Selected</td></tr>"
+	t+="<tr><td div style=\"width: 200px; height:100px; overflow:'auto'\"><TABLE id='selectProduct'>"
+	t+=doShowProductsNotSelected(controller,regEventId,ecommerceCode,productTypeName,salesChannelName)
+	t+="</TABLE></TD>"
+	t+="<td><div style=\"width: 250px; height:100px; overflow:'auto'\"><TABLE id='productList' >"
+    regEvent.orders.each{
 		 def reorList=it
 	   reorList.each {
 	     RegistrationEventOrderRecord reor=it
@@ -212,4 +248,96 @@ def product={attrs->
 	}
 	out << doProduct(isAjax,regEventId,eCommerceCode,productType,salesChannel,controller)
  }
+/**
+ * doInputParty
+ * @param firstName
+ * @param lastName
+ * @param regEventId
+ * @param party
+ * @param label
+ * @return
+ */
+def doInputParty(firstName, lastName, regEventId, 
+	             party, label, 
+				 editAction="contactParty",
+				 createAction="updateOrCreateParty"){
+	
+}
+/**
+ * doDisplayParty
+ * @param firstName
+ * @param lastName
+ * @param regEventId
+ * @param party
+ * @param controller
+ * @param editAction
+ * @param createAction
+ * @return
+ */
+def doDisplayParty(firstName, lastName, regEventId, 
+	               party, controller, editAction,
+				   createAction){
+	
+}
+/**
+ * 
+ */
+def doStart={isAjax,itemType,doInput->
+	def t=""
+	if (!isAjax){
+		t="<TABLE id='${itemType}Section' >"
+	}
+	t+="<tr><td><TABLE id='input${itemType}'>"
+	t+=doInput
+	t+="</TABLE></TD>"
+	t+="<td><div style=\"width: 250px; height:200px; overflow:'auto'\">"
+	t+="<TABLE id='${itemType}List' >"
+
+}
+def doEnd={isAjax->
+	def t=""
+	t+="</TABLE></div>"
+	t+="</td></tr>"
+  if (!isAjax){
+	  t+="</TABLE>"
+  }
+  return t
+}
+/**
+ * doParty				   
+ * @param regEventId
+ * @param sequence
+ * @param partyType
+ * @param label
+ * @return
+ */
+def doParty(regEventId,
+			partyType,
+	        label,
+			editAction="editParty",
+			controller="party",
+			min="1",
+			max="1",
+			optional="false"){
+   RegistrationEvent regEvent=RegistrationEvent.get(regEventId)
+   def t=""
+   doStart(true,cts,regEventId,label,"party",doInputParty(regEventId,label))
+   regEvent.contacts.each{
+      Party party=it
+      t+=portalTagLib.doDisplayInput(controller,editAction,party.id)
+    }
+    t+=doEnd(isAjax)
+	return  t
+}
+def party={attrs->
+    def regEventId=attrs.regEventId
+	def partyType=attrs.partyType
+	def label=attrs.label
+	def editAction=attrs.editAction
+	def controller=attrs.controller
+	def min=attrs.min
+	def max=attrs.max
+	def optional=attrs.optional
+	return doParty(regEventId,partyType,label,editAction,controller,min,max,optional)
+	}
 }
